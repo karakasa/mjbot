@@ -1,11 +1,20 @@
 #pragma once
+
+// 主要定义了一些公用过程与数据类型。
+
 #define RON false
 #define TSUMO true
 #define is_akari(x) (((x).trait&TRAIT_AKARIPAI)==TRAIT_AKARIPAI)
 #define is_aka(x) (((x).trait&TRAIT_AKA)==TRAIT_AKA)
+#define compare_pai_thesame compare_pai_same
 
 
-char yakuname[64][20] = { "立直","一发","门前自摸","断幺","平和","一杯口","役牌/白","役牌/发","役牌/中","役牌/场风东","役牌/场风南",
+#define Daisyarin 1
+#define Daichikurin 2
+#define Daisuurin 3
+
+
+const char yakuname[64][20] = { "立直","一发","门前自摸","断幺","平和","一杯口","役牌/白","役牌/发","役牌/中","役牌/场风东","役牌/场风南",
 "役牌/场风西","役牌/场风北","役牌/自风东","役牌/自风南","役牌/自风西","役牌/自风北","役牌/连风东",
 "役牌/连风南","役牌/连风西","役牌/连风北","岭上","抢杠","海底","河底","三色同顺","一气","混全带幺九",
 "七对子","对对","三暗","三杠子","三色同刻","混老头","小三元","W立直","混一","纯全带幺九","二杯口",
@@ -17,15 +26,15 @@ char yakuname[64][20] = { "立直","一发","门前自摸","断幺","平和","一杯口","役牌/
 //paiorder 定义了在处理手牌时排序的顺序，本身应该是一个26成员的数组，
 //每个字母，如M、S、P对应一个次序，不硬编码的主要原因是可以让用户方便的进行重定义
 //数组中为0的成员都是无意义的
-int paiorder[30] = { 0,7,0,4,0,9,0,0,0,0,0,0,1,5,0,3,0,0,2,0,0,0,8,6,0,10,0,0,0,0 };
+const int paiorder[30] = { 0,7,0,4,0,9,0,0,0,0,0,0,1,5,0,3,0,0,2,0,0,0,8,6,0,10,0,0,0,0 };
 //                   B   D   F             M N   P     S       W X   Z
 
 const int funpai[7] = { 'D','N','X','B','Z','W','F' };
 
 // 牌的特征
-const unsigned char TRAIT_AKA = 1;
-const unsigned char TRAIT_AKARIPAI = 2;
-const unsigned char TRAIT_OPEN = 4;
+#define TRAIT_AKA 1
+#define TRAIT_AKARIPAI 2
+#define TRAIT_OPEN 4
 
 //牌数据结构。type 为颜色，分'M','S','P','D','N','X','B','W','F','Z'，这几种；fig 为数字；trait 为特征（包括赤等）
 struct pai {
@@ -87,7 +96,7 @@ struct yaku_table {
 struct judgeRequest
 {
 	int paicnt; //手牌数量，必须为 3n+1
-	pai pais[13]; //手牌
+	pai pais[13]; //手牌，必须是从小到大有序的
 	int fulucnt; //副露数量 0 or 1 or 2 or 3 or 4
 	mentsu fulus[4]; //副露 mentsu[0~fulucnt] 该结构中的 prev / next 值没有意义
 	int mode; //检测模式 0为听牌种类检测 1为和了役检测，为0时，后面的参数无意义
@@ -97,10 +106,7 @@ struct judgeRequest
 	char jyouhuun; //场风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
 	char jihuun; //自风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
 	int flags; //一组逻辑值，flags&1 立直 flags&2 W立直 flags&4 一发 flags&8 海底 flags&16 河底 flags&32 岭上 flags&64 抢杠
-	int doracnt; //几张DORA指示牌
-	pai doras[5]; //DORA指示牌 pai[0~doracnt]
-	int uracnt; //几张URA指示牌
-	pai uras[5]; //URA指示牌 pai[0~uracnt]
+	int doracnt; //几张DORA
 };
 
 //TenpaiAkariJudge 模块传递回的结构
@@ -120,16 +126,17 @@ struct judgeResult
 
 // 比较两张牌相同/不同
 // 本比较只比较花色和数字，不管是否为赤
-inline bool operator == (const pai& a, const pai& b);
-inline bool operator != (const pai& a, const pai& b);
+bool operator == (const pai& a, const pai& b);
+bool operator != (const pai& a, const pai& b);
+bool compare_pai (const pai& a, const pai& b);
 
 // 比较两张牌相同/不同 (含赤)
 // 本比较比较花色和数字，并比较赤的情况是否相同
-inline bool compare_pai_aka(const pai& a, const pai& b);
+bool compare_pai_aka(const pai& a, const pai& b);
 
 // 比较两张牌相同/不同 (全同)
 // 本比较要求两张牌全等，除花色和数字外，trait 也要一样
-inline bool compare_pai_same(const pai& a, const pai& b);
+bool compare_pai_same(const pai& a, const pai& b);
 
 // 获得牌的序号。1M-9M：0-8，1S-9S：9-17，1P-9P：18-26，之后依次为东南西北白发中：27-33。
 // 本函数不考虑是否为赤宝牌。

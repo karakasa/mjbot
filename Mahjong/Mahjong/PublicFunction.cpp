@@ -1,21 +1,26 @@
 #include "stdafx.h"
 #include "PublicFunction.h"
 
-inline bool operator == (const pai& a, const pai& b)
+bool operator == (const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig);
 }
 
-inline bool operator != (const pai& a, const pai& b)
+bool operator != (const pai& a, const pai& b)
 {
 	return (a.type != b.type) || (a.fig != b.fig);
 }
 
-inline bool compare_pai_aka(const pai& a, const pai& b)
+bool compare_pai (const pai& a, const pai& b)
+{
+	return (a.type == b.type) && (a.fig == b.fig);
+}
+
+bool compare_pai_aka(const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig) && ((a.trait & TRAIT_AKA) == (b.trait & TRAIT_AKA));
 }
-inline bool compare_pai_same(const pai& a, const pai& b)
+bool compare_pai_same(const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig) && (a.trait == b.trait);
 }

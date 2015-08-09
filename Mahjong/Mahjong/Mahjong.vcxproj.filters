@@ -27,6 +27,24 @@
     <ClInclude Include="PublicFunction.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="MemoryLeakMonitor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Kokushimusou.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Chiitoitsu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TenpaiAkariJudge.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="YamaControl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SyanTen.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -36,6 +54,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="PublicFunction.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryLeakMonitor.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TenpaiAkariJudge.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Kokushimusou.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Chiitoitsu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="YamaControl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SyanTen.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

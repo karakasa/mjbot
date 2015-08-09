@@ -9,7 +9,14 @@
 
 #include <stdio.h>
 #include <tchar.h>
+#include <cstring>
 
-
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <map>
+#include <random>
+#include <chrono>
 
 // TODO:  在此处引用程序需要的其他头文件

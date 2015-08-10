@@ -2,13 +2,15 @@
 
 #include "PublicFunction.h"
 #include "MemoryLeakMonitor.h"
+#include "YamaControl.h"
 
-class Yama
+Yama::Yama()
 {
-private:
-	std::default_random_engine* e1 = NULL;
-	const int kanpos[4] = { 128,126,124,122 };
-	void initalize_internal_func(int paiCnt)
+	e1 = NULL;
+	yama = NULL;
+	cpos = yamacnt = kancount = 0;
+}
+	void Yama::initalize_internal_func(int paiCnt)
 	{
 		if (e1 != NULL)
 			delete e1;
@@ -23,16 +25,13 @@ private:
 		cpos = 0;
 	}
 	
-public:
-	pai* yama = NULL;
-	int yamacnt = 0, cpos = 0, kancount = 0;
 
-	pai* getYama()
+	pai* Yama::getYama()
 	{
 		return yama;
 	}
 
-	void finalize()
+	void Yama::finalize()
 	{
 		if (e1 != NULL)
 		{
@@ -47,11 +46,11 @@ public:
 		}
 	}
 
-	void open_pai(int id)
+	void Yama::open_pai(int id)
 	{
 		yama[id].trait &= TRAIT_OPEN;
 	}
-	void init()
+	void Yama::init()
 	{
 		initalize_internal_func(136);
 		for (int i = 0; i<136; i++)
@@ -106,7 +105,7 @@ public:
 
 		open_pai(130); //翻第一张DORA指示牌
 	}
-	bool swap(int ID1, int ID2)
+	bool Yama::swap(int ID1, int ID2)
 	{
 		if (ID1 < cpos || ID1 >= yamacnt)
 			return false;
@@ -122,18 +121,18 @@ public:
 		yama[ID1] = tmp_pai;
 		return true;
 	}
-	bool next(pai* receive)
+	bool Yama::next(pai* receive)
 	{
 		if (cpos >= yamacnt - 14)
 			return false;
 		*receive = yama[cpos++];
 		return true;
 	}
-	int get_remaining()
+	int Yama::get_remaining()
 	{
 		return yamacnt - cpos;
 	}
-	int next_swapable_pai(int type, int fig)
+	int Yama::next_swapable_pai(int type, int fig)
 	{
 		for (int i = cpos; i<yamacnt; i++)
 		{
@@ -145,7 +144,7 @@ public:
 		return -1;
 	}
 
-	bool kang(pai* receive, pai* kandora = NULL)
+	bool Yama::kang(pai* receive, pai* kandora)
 	{
 		if (kancount == 4)
 			return false;
@@ -155,4 +154,4 @@ public:
 			*kandora = yama[kanpos[kancount]];
 		return true;
 	}
-};
+

@@ -122,6 +122,152 @@ struct judgeResult
 	int pt[16]; //对应役的翻数
 };
 
+//网络端数据包定义
+struct Packet
+{
+	unsigned char packetLength; //包长度, 包括该字节, 为0xFF 时为心跳包, 忽略之后所有数据；0xFE 时为控制包, 详情付
+	unsigned int crc; //校验和, 把该成员之后的每一个字节从(unsigned int)0开始相加
+	unsigned int id; //包id, 以服务器发送的握手包开始（1）, 客户端和服务器循环加一, 单个客户端会话中保持递增序列
+	unsigned char uType; //消息类型, 参interface
+	unsigned int p1; //参数1, 参interface
+	unsigned int p2; //参数2, 参interface
+	unsigned char payloadLength; //额外数据长度（仅有几个事件需要）, 大多数时候为0, 之后为负载内容
+};
+
+//网络端控制包定义
+struct ControlPacket
+{
+	unsigned char reserved; //0xFF
+	unsigned char packetLength; //真正的包长度, 不包括上面一个字节, 包括下面一个字节
+	unsigned int crc; //校验和, 把该成员之后的每一个字节从(unsigned int)0开始相加
+	unsigned char type; //控制包类型, 0 = 重发数据包, 1 = 状态通告
+	unsigned int param1; //type = 1时, 为需要重发的数据包的id；type = 2时, p1 = 1 无数据包可重发, p1 = 2, 意外错误、请求重新同步状态
+};
+
+namespace ai
+{
+
+	//事件枚举类型
+	enum
+	{
+		init = 0,
+		deinit,
+		start,
+		initalizeTehai,
+		newDora,
+		newUra,
+		othersTurn,
+		othersTurnFinished,
+		yourTurn,
+		yourTurnSpecial,
+		minDone,
+		minChance,
+		finish,
+		finishNaga,
+		finishNagaSpecial,
+		scoreChange,
+		finishAbnormal,
+		communicationAbnormal,
+		negotiate,
+		sessionInitialize,
+		sessionCreated,
+		sessionRestoration, //未实现
+		wait,
+		gameFinish,
+		othersTepai
+	};
+
+	//鸣牌枚举类型
+	namespace min {
+		enum
+		{
+			chi = 1, //吃
+			pon, //碰
+			kang, //大明杠
+			kangj, //加杠
+			kangs, //暗杠
+			riichi //立直
+		};
+	}
+
+	//Payload : 和牌
+	struct AKARI
+	{
+		unsigned int from; //哪家点的，参考 ai::start 中的相对位置
+		unsigned int to; //哪家和的，参考 ai::start 中的相对位置
+		unsigned char pai; //和的牌id
+						   /*from==to 时为自摸*/
+		int huu; //符数
+		int fan; //番数
+		int pt; //和了点数（自摸时为基本点）
+		int reserved;
+		int yakucnt;
+		unsigned char yaku_id[16]; //和了役id，具体id参考mahjong目录内的 役种id.txt
+		unsigned char yaku_fan[16]; //对应的役的翻数
+									/*上述两个成员均为数组类型，下标为0到fan-1*/
+	};
+
+	//Payload : 当前状态
+	struct CURRENT //未实现
+	{
+		/*unsigned char pos; //Client 的位置
+		unsigned char base; //0~7 东1~4 南1~4 以此类推
+		unsigned char richii_bang; */
+	};
+
+	//Payload : 流局状态
+	struct TENPAI
+	{
+		unsigned char p[4]; // 0未听牌，此时对应的tepai(cnt)无意义 1听牌 2流满
+		int tepaicnt[4];
+		pai tepai0[13];
+		pai tepai1[13];
+		pai tepai2[13];
+		pai tepai3[13];
+	};
+}
+
+// EventBus 请求
+struct ebRequest
+{
+	int id;
+	unsigned char msgType;
+	unsigned int par1;
+	unsigned int par2;
+	void* payload;
+	int lpayload;
+};
+
+// EventBus 客户
+struct client
+{
+	int clientType;
+	int clientHandle;
+};
+
+// EventBus 事件
+struct ebEvent
+{
+	int id;
+	unsigned int response;
+};
+
+namespace ct {
+	enum
+	{
+		undefined = 0,
+		local_ai,
+		local_user,
+		local_extended,
+		remote
+	};
+}
+
+typedef void(__stdcall *aiFunc)(unsigned char, int, int);
+typedef void(__stdcall *evtDealer)(int, unsigned int);
+
+const char ji[4] = { 'D','N','X','B' };
+
 // 函数定义
 
 // 比较两张牌相同/不同

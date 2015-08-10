@@ -45,6 +45,24 @@
     <ClInclude Include="SyanTen.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SLWNetwork.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ModernMemoryAllocator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SimpleAI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Matching.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="EventBus.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +90,24 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SyanTen.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CQueue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SLWNetwork.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="EventBus.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ModernMemoryAllocator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleAI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Matching.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

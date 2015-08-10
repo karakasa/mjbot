@@ -7,6 +7,40 @@
 class taj
 {
 	private:
+
+		bool akari_status;
+
+		yaku_table* current = NULL;
+		yaku_table* maxresult = NULL;
+
+		const int yaotrans[13] = { 1,9,10,18,19,27,28,29,30,31,32,33,34 };
+		int effeci_cnt = 0;
+		int tepos;
+		bool hule = false;
+		int tenpai_mianshu = 0;
+		bool sresult[34];
+		bool calculate_yaku = true;
+		bool targetcalculate = false;
+		int paicount;
+		mentsutable mentsutachi;
+		bool fulu_status;
+		pai janto_now[2];
+		pai* tepai;
+		judgeResult* resx;
+		bool yakuman = false;
+
+		//still used in Main.cpp
+		int paicnt[34];
+
+		bool norelease = false;
+		bool riichi = false, ihatsu = false, wriichii = false, haidei = false, houdei = false, rinnsyo = false, tyankan = false;
+		char jyouhuun = 'N', jihuun = 'N';
+		bool chiitoitsu = false, pure_chiitoitsu = false;
+		bool kyuurenboudo = false, pure_kyuurenboudo = false;
+		bool danyo = false, muuji = false, isou = false, laotou = false, jiisou = false;
+		int dora = 0, beidora = 0;
+		bool ignore_tsumo_huu = false;
+
 		bool is_annkez(const mentsu* mc);
 
 		void free_yaku(yaku* first);

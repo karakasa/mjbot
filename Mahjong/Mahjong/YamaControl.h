@@ -7,9 +7,15 @@
 class Yama
 {
 	private:
+		std::default_random_engine* e1;
+		const int kanpos[4] = { 128,126,124,122 };
 		void initalize_internal_func(int paiCnt);
 
 	public:
+		pai* yama;
+		int yamacnt, cpos, kancount;
+
+		Yama();
 
 		// 获得山的指针。如无特殊需要，请不要直接修改。第一张岭上牌为 [135]
 		// 返回值 : 为一 pai 的数组。
@@ -52,5 +58,5 @@ class Yama
 		// receive : 获得岭上牌
 		// kandora : 可选，获得新的杠宝牌
 		// 返回值 : 已经四杠后则返回 false
-		bool kang(pai* receive, pai* kandora);
+		bool kang(pai* receive, pai* kandora = NULL);
 };

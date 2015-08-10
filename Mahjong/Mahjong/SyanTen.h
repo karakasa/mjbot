@@ -8,6 +8,9 @@
 class Syanten
 {
 	private:
+		pai tpai2st1[20];
+		pai tpai2st2[20];
+		const int SyantenMaxRecur = 5;
 		int calculateKokushiSyanten(const pai* tpai, const int paicnt);
 		int calculateChiitoitsu(const pai* tpai, const int paicnt);
 		int normalCalculate3(pai* tpai, const int paicnt, int currentMenchi);

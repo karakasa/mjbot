@@ -2,6 +2,7 @@
 
 #include "PublicFunction.h"
 #include "Kokushimusou.h"
+#include "SyanTen.h"
 
 #define MAX_SYANTEN 99
 #define ERR_SYANTEN_INTERNAL -2
@@ -9,13 +10,7 @@
 #define min(a,b) ((a)<(b)?(a):(b))
 #endif
 
-class Syanten
-{
-private:
-	pai tpai2st1[20];
-	pai tpai2st2[20];
-	int SyantenMaxRecur = 5;
-	int calculateKokushiSyanten(const pai* tpai, const int paicnt)
+	int Syanten::calculateKokushiSyanten(const pai* tpai, const int paicnt)
 	{
 		if (paicnt != 13)
 			return MAX_SYANTEN;
@@ -34,7 +29,7 @@ private:
 			return 12 - typecnt;
 		return 13 - typecnt;
 	}
-	int calculateChiitoitsu(const pai* tpai, const int paicnt)
+	int Syanten::calculateChiitoitsu(const pai* tpai, const int paicnt)
 	{
 		if (paicnt != 13)
 			return MAX_SYANTEN;
@@ -50,7 +45,7 @@ private:
 		}
 		return 6 - daiji;
 	}
-	int normalCalculate3(pai* tpai, const int paicnt, int currentMenchi)
+	int Syanten::normalCalculate3(pai* tpai, const int paicnt, int currentMenchi)
 	{
 		if (paicnt < 0)
 			throw ERR_SYANTEN_INTERNAL;
@@ -122,7 +117,7 @@ private:
 		} while (shunzAvail);
 		return cSyanTen + 2 * remainingMenchi;
 	}
-	int normalCalculate2(const pai* tpai, const int paicnt, int currentMenchi)
+	int Syanten::normalCalculate2(const pai* tpai, const int paicnt, int currentMenchi)
 	{
 		//assert(false);
 		if (paicnt < 0)
@@ -315,7 +310,7 @@ private:
 							}
 		return syanTen;
 	}
-	int normalCalculate(const pai* tpai, const int paicnt)
+	int Syanten::normalCalculate(const pai* tpai, const int paicnt)
 	{
 		if (paicnt < 0)
 			throw ERR_SYANTEN_INTERNAL;
@@ -349,8 +344,7 @@ private:
 		return syanten;
 	}
 
-	public:
-	int calculateSyanten(const pai* tpai, const int paicnt, bool normalonly = false) //参数本身已经是有序的了
+	int Syanten::calculateSyanten(const pai* tpai, const int paicnt, bool normalonly) //参数本身已经是有序的了
 	{
 		int kokushi, chiitoi;
 		if (!normalonly)
@@ -366,4 +360,3 @@ private:
 		}
 		return normalCalculate(tpai, paicnt) - 1;
 	}
-};

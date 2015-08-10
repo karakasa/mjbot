@@ -128,6 +128,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SetChecksum>true</SetChecksum>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,6 +145,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -151,9 +153,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chiitoitsu.h" />
+    <ClInclude Include="CQueue.h" />
+    <ClInclude Include="EventBus.h" />
     <ClInclude Include="Kokushimusou.h" />
+    <ClInclude Include="Matching.h" />
     <ClInclude Include="MemoryLeakMonitor.h" />
+    <ClInclude Include="ModernMemoryAllocator.h" />
     <ClInclude Include="PublicFunction.h" />
+    <ClInclude Include="SimpleAI.h" />
+    <ClInclude Include="SLWNetwork.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SyanTen.h" />
     <ClInclude Include="targetver.h" />
@@ -162,10 +170,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chiitoitsu.cpp" />
+    <ClCompile Include="CQueue.cpp" />
+    <ClCompile Include="EventBus.cpp" />
     <ClCompile Include="Kokushimusou.cpp" />
     <ClCompile Include="Mahjong.cpp" />
+    <ClCompile Include="Matching.cpp" />
     <ClCompile Include="MemoryLeakMonitor.cpp" />
+    <ClCompile Include="ModernMemoryAllocator.cpp" />
     <ClCompile Include="PublicFunction.cpp" />
+    <ClCompile Include="SimpleAI.cpp" />
+    <ClCompile Include="SLWNetwork.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

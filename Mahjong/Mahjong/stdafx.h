@@ -6,6 +6,7 @@
 #pragma once
 
 #include "targetver.h"
+#include "Winsock2.h"
 
 #include <stdio.h>
 #include <tchar.h>
@@ -18,5 +19,6 @@
 #include <map>
 #include <random>
 #include <chrono>
+#include <queue>
 
 // TODO:  在此处引用程序需要的其他头文件

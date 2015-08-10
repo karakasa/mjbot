@@ -4,6 +4,7 @@
 #include "MemoryLeakMonitor.h"
 #include "Chiitoitsu.h"
 #include "Kokushimusou.h"
+#include "TenpaiAkariJudge.h"
 
 #define bit(x,y) (((x)&(y))==(y))
 #define notji(x) ((x).type=='M' || (x).type=='S' || (x).type=='P')
@@ -18,44 +19,7 @@
 #define SAFE_MODE true
 #endif
 
-class taj
-{
-private:
-	bool akari_status;
-
-	yaku_table* current = NULL;
-	yaku_table* maxresult = NULL;
-
-	pai* yama = NULL;
-	const int yaotrans[13] = { 1,9,10,18,19,27,28,29,30,31,32,33,34 };
-	int effeci_cnt = 0;
-	int tepos;
-	bool hule = false;
-	int tenpai_mianshu = 0;
-	bool sresult[34];
-	bool calculate_yaku = true;
-	bool targetcalculate = false;
-	int paicount;
-	mentsutable mentsutachi;
-	bool fulu_status;
-	pai janto_now[2];
-	pai* tepai;
-	judgeResult* resx;
-	bool yakuman = false;
-
-	//still used in Main.cpp
-	int paicnt[34];
-
-	bool norelease = false;
-	bool riichi = false, ihatsu = false, wriichii = false, haidei = false, houdei = false, rinnsyo = false, tyankan = false;
-	char jyouhuun = 'N', jihuun = 'N';
-	bool chiitoitsu = false, pure_chiitoitsu = false;
-	bool kyuurenboudo = false, pure_kyuurenboudo = false;
-	bool danyo = false, muuji = false, isou = false, laotou = false, jiisou = false;
-	int dora = 0, beidora = 0;
-	bool ignore_tsumo_huu = false;
-
-	bool is_annkez(const mentsu* mc)
+	bool taj::is_annkez(const mentsu* mc)
 	{
 		switch (mc->type)
 		{
@@ -69,7 +33,7 @@ private:
 		return false;
 	}
 
-	void free_yaku(yaku* first)
+	void taj::free_yaku(yaku* first)
 	{
 		if (first == NULL) return;
 		yaku* cpos = first, *tpos;
@@ -87,13 +51,13 @@ private:
 		MemoryLeakMonitor::removeMonitor(first);
 		delete first;
 	}
-	void free_yaku_table(yaku_table* first)
+	void taj::free_yaku_table(yaku_table* first)
 	{
 		free_yaku(first->first);
 		MemoryLeakMonitor::removeMonitor(first);
 		delete first;
 	}
-	void start()
+	void taj::start()
 	{
 		if (current != NULL)
 			free_yaku_table(current);
@@ -107,7 +71,7 @@ private:
 		current->tail = NULL;
 		current->first = NULL;
 	}
-	void reset()
+	void taj::reset()
 	{
 		if (current != NULL)
 			free_yaku_table(current);
@@ -116,7 +80,7 @@ private:
 			free_yaku_table(maxresult);
 		maxresult = NULL;
 	}
-	void finish()
+	void taj::finish()
 	{
 		if (maxresult == NULL)
 		{
@@ -142,7 +106,7 @@ private:
 		free_yaku_table(current);
 		current = NULL;
 	}
-	void add_yaku(int yaku_id, int yaku_point)
+	void taj::add_yaku(int yaku_id, int yaku_point)
 	{
 		if (yaku_point <= 0)
 			return;
@@ -174,7 +138,7 @@ private:
 		}
 		current->yakutotal += yaku_point;
 	}
-	void calculate_huu()
+	void taj::calculate_huu()
 	{
 		if (current->huutotal == 0)
 		{
@@ -253,7 +217,7 @@ private:
 				current->huutotal = 10 * (1 + (current->huutotal) / 10);
 		}
 	}
-	void calculate_basicpoint()
+	void taj::calculate_basicpoint()
 	{
 		if (HUU_DETAIL && current->yakutotal != 0)
 			calculate_huu();
@@ -297,7 +261,7 @@ private:
 			break;
 		}
 	}
-	bool judge_ruiisou(const mentsu* mc)
+	bool taj::judge_ruiisou(const mentsu* mc)
 	{
 		if (mc->start.type == 'F')
 			return true;
@@ -331,11 +295,11 @@ private:
 		}
 		return false;
 	}
-	bool is_daiyaojiu(const mentsu* mc)
+	bool taj::is_daiyaojiu(const mentsu* mc)
 	{
 		return (mc->start.fig == 1) || (mc->last.fig == 9);
 	}
-	int is_sansya(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3) //返回0则不是，返回1则为三色通顺，返回2则为三色同刻
+	int taj::is_sansya(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3) //返回0则不是，返回1则为三色通顺，返回2则为三色同刻
 	{
 		bool sansya = false;
 		if (mc1->start.type == 'M' && mc2->start.type == 'S' && mc3->start.type == 'P') sansya = true;
@@ -350,7 +314,7 @@ private:
 		if (!isKez(mc1) && !isKez(mc2) && !isKez(mc3)) return 1;
 		return 0;
 	}
-	bool is_iitsu(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3)
+	bool taj::is_iitsu(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3)
 	{
 		if (mc1->type == mc2->type && mc1->type == mc3->type && mc2->type == mc3->type)
 			if (!isKez(mc1) && !isKez(mc2) && !isKez(mc3))
@@ -358,7 +322,7 @@ private:
 					return true;
 		return false;
 	}
-	void calculate()
+	void taj::calculate()
 	{
 
 		//尚未处理输入的面子数不足四个的情况
@@ -743,7 +707,7 @@ private:
 			add_yaku(62, beidora);
 		calculate_basicpoint();
 	}
-	bool show_result(judgeResult* res)
+	bool taj::show_result(judgeResult* res)
 	{
 		if (maxresult != NULL)
 		{
@@ -776,7 +740,7 @@ private:
 
 
 
-	bool specialized_tenpai_detect(judgeRequest* rpai, judgeResult* resultEx)
+	bool taj::specialized_tenpai_detect(judgeRequest* rpai, judgeResult* resultEx)
 	{
 		if (rpai->paicnt == 13 && rpai->mode == 0)
 		{
@@ -917,7 +881,7 @@ private:
 		}
 		return 0;
 	}
-	void output_tenpai(pai machi)
+	void taj::output_tenpai(pai machi)
 	{
 		int pid = retrieveID(machi);
 		bool allowcalc = paicnt[pid] <= 4;
@@ -943,7 +907,7 @@ private:
 			sresult[pid] = true;
 		}
 	}
-	void tenpai_detect_recur_2(pai* cpai, int cpcount)
+	void taj::tenpai_detect_recur_2(pai* cpai, int cpcount)
 	{
 		if (cpcount == 0)
 		{
@@ -1061,7 +1025,7 @@ private:
 				return;
 		}
 	}
-	void tenpai_detect_recur(const pai* opai, int cpcount)
+	void taj::tenpai_detect_recur(const pai* opai, int cpcount)
 	{
 		pure_chiitoitsu = false;
 		chiitoitsu = false;
@@ -1275,7 +1239,7 @@ private:
 		MemoryLeakMonitor::removeMonitor(cpai);
 		delete[] cpai;
 	}
-	int tenpai_detect_internal(judgeRequest* rpai, judgeResult* resultEx)
+	int taj::tenpai_detect_internal(judgeRequest* rpai, judgeResult* resultEx)
 	{
 		pai paiff;
 		effeci_cnt = 0;
@@ -1416,8 +1380,7 @@ private:
 		return 0;
 	}
 
-	public:
-	int tenpai_detect(const judgeRequest* rpai, judgeResult* resultEx)
+	int taj::tenpai_detect(const judgeRequest* rpai, judgeResult* resultEx)
 	{
 		judgeRequest rpai2;
 		rpai2.paicnt = rpai->paicnt;
@@ -1442,5 +1405,3 @@ private:
 		int result = tenpai_detect_internal(&rpai2, resultEx);
 		return result;
 	}
-
-};

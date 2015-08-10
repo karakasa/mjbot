@@ -19,7 +19,7 @@ DWORD WINAPI workingThread(LPVOID param);
 			{
 				ebEvent eEvt = evtQueue.front();
 				evtQueue.pop();
-				evtFunc(eEvt.id, eEvt.response);
+				evtFunc(evtParam, eEvt.id, eEvt.response);
 				while (!msgQueue.empty())
 				{
 					ebRequest eq;
@@ -172,7 +172,7 @@ DWORD WINAPI workingThread(LPVOID param);
 		LeaveCriticalSection(&evt);
 		ReleaseSemaphore(sema, 1, NULL);
 	}
-	void eb::completeRequest(const ebRequest rq)
+	void eb::completeRequest(const ebRequest& rq)
 	{
 		queueDepth--;
 		if (rq.id == -1)
@@ -208,11 +208,21 @@ DWORD WINAPI workingThread(LPVOID param);
 			}
 			break;
 		case ct::remote:
-			if (rq.payload == NULL)
-				net.server_send(clientHandle[rq.id], rq.msgType, rq.par1, rq.par2);
-			else
-				net.server_send(clientHandle[rq.id], rq.msgType, rq.par1, (int)(rq.payload));
-			break;
+			if(customRemoteFuncEnabled)
+			{
+				if (rq.payload == NULL)
+					customRemoteFunc(crfParam, clientHandle[rq.id], rq.msgType, rq.par1, rq.par2, 0);
+				else
+					customRemoteFunc(crfParam, clientHandle[rq.id], rq.msgType, rq.par1, (int)rq.payload, rq.lpayload);
+				break;
+			}
+			else {
+				if (rq.payload == NULL)
+					net.server_send(clientHandle[rq.id], rq.msgType, rq.par1, rq.par2);
+				else
+					net.server_send(clientHandle[rq.id], rq.msgType, rq.par1, 0, rq.payload, rq.lpayload);
+				break;
+			}
 		case ct::local_user:
 			if (rq.payload == NULL)
 				((aiFunc)clientHandle[rq.id])(rq.msgType, rq.par1, rq.par2);
@@ -260,16 +270,21 @@ DWORD WINAPI workingThread(LPVOID param);
 	void eb::startMultiPlayer(void* uiFunc, int* playerSocket, int playerCount)
 	{
 		working = true;
-		int index = 1;
-		clientType[0] = ct::local_user;
-		clientHandle[0] = (int)uiFunc;
+		int index;
+		if (uiFunc == NULL)
+			index = 0;
+		else {
+			index = 1;
+			clientType[0] = ct::local_user;
+			clientHandle[0] = (int)uiFunc;
+		}
 		for (int i = 0; i<playerCount; i++)
 		{
 			clientType[index] = ct::remote;
 			clientHandle[index] = (int)playerSocket[i];
 			index++;
 		}
-		for (int i = 0; i<3 - playerCount; i++)
+		for (int i = 0; i<3 - playerCount + ((uiFunc == NULL)?1:0); i++)
 		{
 			clientType[index] = ct::local_ai;
 			clientHandle[index] = i;
@@ -278,10 +293,11 @@ DWORD WINAPI workingThread(LPVOID param);
 		shuffle_internal();
 	}
 
-	bool eb::run(void* evtFoo)
+	bool eb::run(void* evtFoo, LPVOID evtP)
 	{
 		working = true;
 		evtFunc = (evtDealer)evtFoo;
+		evtParam = evtP;
 		HANDLE hThread = CreateThread(NULL, 0, &workingThread, this, 0, &threadId);
 		if (hThread == 0)
 			return false;
@@ -289,10 +305,11 @@ DWORD WINAPI workingThread(LPVOID param);
 		return true;
 	}
 
-	void eb::runAwait(void* evtFoo)
+	void eb::runAwait(void* evtFoo, LPVOID evtP)
 	{
 		working = true;
 		evtFunc = (evtDealer)evtFoo;
+		evtParam = evtP;
 		workingThreadInternal();
 	}
 
@@ -308,6 +325,20 @@ DWORD WINAPI workingThread(LPVOID param);
 		}
 		CloseHandle(hThread);
 		return true;
+	}
+
+	void eb::setCustomRemoteFunc(void* scrf, LPVOID param)
+	{
+		crfParam = param;
+		if(scrf == NULL)
+		{
+			customRemoteFuncEnabled = false;
+			customRemoteFunc = NULL;
+		}
+		else {
+			customRemoteFuncEnabled = true;
+			customRemoteFunc = (crf)scrf;
+		}
 	}
 
 DWORD WINAPI workingThread(LPVOID param)

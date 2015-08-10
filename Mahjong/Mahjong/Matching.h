@@ -1,5 +1,7 @@
 #pragma once
 
+// 赛程控制，具体的使用方法请参考例程。
+
 #include "PublicFunction.h"
 #include "EventBus.h"
 #include "YamaControl.h"
@@ -45,10 +47,6 @@ private:
 
 	int waitCnt = 0;
 
-	Yama yama;
-	Syanten st;
-	taj tajcore;
-	eb evcore;
 
 
 public:
@@ -66,4 +64,9 @@ public:
 	void startMatchMid2();
 	void startMatch();
 	void __stdcall receiveEvent(int clientId, unsigned int response);
+
+	Yama yama;
+	Syanten st;
+	taj tajcore;
+	eb evcore;
 };

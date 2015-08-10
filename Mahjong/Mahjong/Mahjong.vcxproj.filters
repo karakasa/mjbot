@@ -30,12 +30,6 @@
     <ClInclude Include="MemoryLeakMonitor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Kokushimusou.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Chiitoitsu.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="TenpaiAkariJudge.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -78,12 +72,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TenpaiAkariJudge.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Kokushimusou.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Chiitoitsu.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="YamaControl.cpp">

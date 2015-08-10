@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "PublicFunction.h"
-#include "Kokushimusou.h"
 #include "SyanTen.h"
 
 #define MAX_SYANTEN 99

@@ -13,6 +13,9 @@
 #define Daichikurin 2
 #define Daisuurin 3
 
+#define KOKUSHIMUSOU 1
+#define KOKUSHIMUSOU_JUUSANMENMACHI 2
+
 
 const char yakuname[64][20] = { "立直","一发","门前自摸","断幺","平和","一杯口","役牌/白","役牌/发","役牌/中","役牌/场风东","役牌/场风南",
 "役牌/场风西","役牌/场风北","役牌/自风东","役牌/自风南","役牌/自风西","役牌/自风北","役牌/连风东",
@@ -264,7 +267,8 @@ namespace ct {
 }
 
 typedef void(__stdcall *aiFunc)(unsigned char, int, int);
-typedef void(__stdcall *evtDealer)(int, unsigned int);
+typedef void(__stdcall *evtDealer)(LPVOID, int, unsigned int);
+typedef void(__stdcall *crf)(LPVOID, unsigned int, unsigned char, int, int, int);
 
 const char ji[4] = { 'D','N','X','B' };
 
@@ -341,3 +345,13 @@ bool isKangz(const mentsu* mc);
 // other : 他家位置
 // 返回值 : 0下家 1对家 2上家 -1错误 
 int getRelativePosition(int self, int other);
+
+// 获得幺九ID
+// pai : 牌
+// 返回值 : ID，19M19S19P东南西北白发中分别是 0-12，其他均为 13
+int get_yaotyuu_id(const pai& wpai);
+
+// 获得面子的类型，可以是无序的
+// a,b,c : 牌的 ID，与 retrieveID3 相同
+// 返回值 : 1为刻子，2为顺子，-1为不是面子
+int getMentsuType(int a, int b, int c);

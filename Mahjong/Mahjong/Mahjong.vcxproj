@@ -152,10 +152,8 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Chiitoitsu.h" />
     <ClInclude Include="CQueue.h" />
     <ClInclude Include="EventBus.h" />
-    <ClInclude Include="Kokushimusou.h" />
     <ClInclude Include="Matching.h" />
     <ClInclude Include="MemoryLeakMonitor.h" />
     <ClInclude Include="ModernMemoryAllocator.h" />
@@ -169,10 +167,8 @@
     <ClInclude Include="YamaControl.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Chiitoitsu.cpp" />
     <ClCompile Include="CQueue.cpp" />
     <ClCompile Include="EventBus.cpp" />
-    <ClCompile Include="Kokushimusou.cpp" />
     <ClCompile Include="Mahjong.cpp" />
     <ClCompile Include="Matching.cpp" />
     <ClCompile Include="MemoryLeakMonitor.cpp" />

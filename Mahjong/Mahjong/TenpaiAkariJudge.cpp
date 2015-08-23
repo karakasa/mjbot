@@ -877,8 +877,9 @@
 				return true;
 			}
 		}
-		return 0;
+		return false;
 	}
+
 	void taj::output_tenpai(pai machi)
 	{
 		int pid = retrieveID(machi);
@@ -934,27 +935,47 @@
 					}
 				}
 				KezAvail = true;
-				pai* tepai3 = new pai[cpcount - 3];
-				MemoryLeakMonitor::addMonitor(tepai3, (cpcount - 3)*sizeof(pai), "TEPAI3 1");
-				for (int i = 3; i<cpcount; i++)
-					tepai3[i - 3] = cpai[i];
-				mentsu* tmentsu = new mentsu;
-				MemoryLeakMonitor::addMonitor(tmentsu, sizeof(mentsu), "TENPAI RECUR 2 1");
-				tmentsu->next = NULL;
-				tmentsu->prev = mentsutachi.tail;
-				tmentsu->type = mentsu_KEZ;
-				tmentsu->start = cpai[0];
-				tmentsu->middle = cpai[1];
-				tmentsu->last = cpai[2];
-				(mentsutachi.tail)->next = tmentsu;
-				mentsutachi.tail = tmentsu;
-				tenpai_detect_recur_2(tepai3, cpcount - 3);
-				mentsutachi.tail = tmentsu->prev;
-				(mentsutachi.tail)->next = NULL;
-				MemoryLeakMonitor::removeMonitor(tmentsu);
-				delete tmentsu;
-				MemoryLeakMonitor::removeMonitor(tepai3);
-				delete[] tepai3;
+				if(cpcount == 3)
+				{
+					mentsu* tmentsu = new mentsu;
+					MemoryLeakMonitor::addMonitor(tmentsu, sizeof(mentsu), "TENPAI RECUR 2 1");
+					tmentsu->next = NULL;
+					tmentsu->prev = mentsutachi.tail;
+					tmentsu->type = mentsu_KEZ;
+					tmentsu->start = cpai[0];
+					tmentsu->middle = cpai[1];
+					tmentsu->last = cpai[2];
+					(mentsutachi.tail)->next = tmentsu;
+					mentsutachi.tail = tmentsu;
+					tenpai_detect_recur_2(NULL, cpcount - 3);
+					mentsutachi.tail = tmentsu->prev;
+					(mentsutachi.tail)->next = NULL;
+					MemoryLeakMonitor::removeMonitor(tmentsu);
+					delete tmentsu;
+				}
+				else {
+					pai* tepai3 = new pai[cpcount - 3];
+					MemoryLeakMonitor::addMonitor(tepai3, (cpcount - 3)*sizeof(pai), "TEPAI3 1");
+					for (int i = 3; i < cpcount; i++)
+						tepai3[i - 3] = cpai[i];
+					mentsu* tmentsu = new mentsu;
+					MemoryLeakMonitor::addMonitor(tmentsu, sizeof(mentsu), "TENPAI RECUR 2 1");
+					tmentsu->next = NULL;
+					tmentsu->prev = mentsutachi.tail;
+					tmentsu->type = mentsu_KEZ;
+					tmentsu->start = cpai[0];
+					tmentsu->middle = cpai[1];
+					tmentsu->last = cpai[2];
+					(mentsutachi.tail)->next = tmentsu;
+					mentsutachi.tail = tmentsu;
+					tenpai_detect_recur_2(tepai3, cpcount - 3);
+					mentsutachi.tail = tmentsu->prev;
+					(mentsutachi.tail)->next = NULL;
+					MemoryLeakMonitor::removeMonitor(tmentsu);
+					delete tmentsu;
+					MemoryLeakMonitor::removeMonitor(tepai3);
+					delete[] tepai3;
+				}
 			}
 		if (KezAvail && !SAFE_MODE)
 			return;
@@ -976,42 +997,63 @@
 									if (!compare_pai_thesame(lastpai2, cpai[p]))
 									{
 										lastpai2 = cpai[p];
-										pai* tepai3 = new pai[cpcount - 3];
-										MemoryLeakMonitor::addMonitor(tepai3, (cpcount - 3)*sizeof(pai), "TEPAI3 2");
-										pai* tepai2 = cpai;
-										int tpos = 0;
-										for (int j = 1; j<i; j++)
+										if(cpcount == 3)
 										{
-											tepai3[tpos] = tepai2[j];
-											tpos++;
+											mentsu* tmentsu = new mentsu;
+											MemoryLeakMonitor::addMonitor(tmentsu, sizeof(mentsu), "TEPAI2 MENTSU");
+											tmentsu->next = NULL;
+											tmentsu->prev = mentsutachi.tail;
+											tmentsu->type = mentsu_SHUNZ;
+											tmentsu->start = cpai[0];
+											tmentsu->middle = cpai[i];
+											tmentsu->last = cpai[p];
+											(mentsutachi.tail)->next = tmentsu;
+											mentsutachi.tail = tmentsu;
+											tenpai_detect_recur_2(NULL, cpcount - 3);
+											mentsutachi.tail = tmentsu->prev;
+											(mentsutachi.tail)->next = NULL;
+											MemoryLeakMonitor::removeMonitor(tmentsu);
+											delete tmentsu;
 										}
-										for (int j = i + 1; j<p; j++)
+										else
 										{
-											tepai3[tpos] = tepai2[j];
-											tpos++;
+											pai* tepai3 = new pai[cpcount - 3];
+											MemoryLeakMonitor::addMonitor(tepai3, (cpcount - 3)*sizeof(pai), "TEPAI3 2");
+											pai* tepai2 = cpai;
+											int tpos = 0;
+											for (int j = 1; j < i; j++)
+											{
+												tepai3[tpos] = tepai2[j];
+												tpos++;
+											}
+											for (int j = i + 1; j < p; j++)
+											{
+												tepai3[tpos] = tepai2[j];
+												tpos++;
+											}
+											for (int j = p + 1; j < cpcount; j++)
+											{
+												tepai3[tpos] = tepai2[j];
+												tpos++;
+											}
+											mentsu* tmentsu = new mentsu;
+											MemoryLeakMonitor::addMonitor(tmentsu, sizeof(mentsu), "TENPAI RECUR 2 2");
+											tmentsu->next = NULL;
+											tmentsu->prev = mentsutachi.tail;
+											tmentsu->type = mentsu_SHUNZ;
+											tmentsu->start = cpai[0];
+											tmentsu->middle = cpai[i];
+											tmentsu->last = cpai[p];
+											(mentsutachi.tail)->next = tmentsu;
+											mentsutachi.tail = tmentsu;
+											tenpai_detect_recur_2(tepai3, cpcount - 3);
+											mentsutachi.tail = tmentsu->prev;
+											(mentsutachi.tail)->next = NULL;
+											MemoryLeakMonitor::removeMonitor(tmentsu);
+											delete tmentsu;
+											MemoryLeakMonitor::removeMonitor(tepai3);
+											delete[] tepai3;
 										}
-										for (int j = p + 1; j<cpcount; j++)
-										{
-											tepai3[tpos] = tepai2[j];
-											tpos++;
-										}
-										mentsu* tmentsu = new mentsu;
-										MemoryLeakMonitor::addMonitor(tmentsu, sizeof(mentsu), "TENPAI RECUR 2 2");
-										tmentsu->next = NULL;
-										tmentsu->prev = mentsutachi.tail;
-										tmentsu->type = mentsu_SHUNZ;
-										tmentsu->start = cpai[0];
-										tmentsu->middle = cpai[i];
-										tmentsu->last = cpai[p];
-										(mentsutachi.tail)->next = tmentsu;
-										mentsutachi.tail = tmentsu;
-										tenpai_detect_recur_2(tepai3, cpcount - 3);
-										mentsutachi.tail = tmentsu->prev;
-										(mentsutachi.tail)->next = NULL;
-										MemoryLeakMonitor::removeMonitor(tmentsu);
-										delete tmentsu;
-										MemoryLeakMonitor::removeMonitor(tepai3);
-										delete[] tepai3;
 									}
 								}
 							if (cpai[p].type != cpai[0].type)
@@ -1318,8 +1360,8 @@
 			paiff = tepai[tepos];
 			tenpai_detect_recur(tepai, paicount);
 			//if(!::show_result() && calculate_yaku)
-			if (false)
-				(resultEx->t)[(resultEx->cnt)++] = paiff;
+			//if (false)
+				//(resultEx->t)[(resultEx->cnt)++] = paiff;
 		}
 		tepai[tepos].type = 'S';
 		for (int i = 1; i <= 9; i++)
@@ -1331,8 +1373,8 @@
 			paiff = tepai[tepos];
 			tenpai_detect_recur(tepai, paicount);
 			//if(!::show_result() && calculate_yaku)
-			if (false)
-				(resultEx->t)[(resultEx->cnt)++] = paiff;
+			//if (false)
+				//(resultEx->t)[(resultEx->cnt)++] = paiff;
 		}
 		tepai[tepos].type = 'P';
 		for (int i = 1; i <= 9; i++)
@@ -1345,9 +1387,9 @@
 			tenpai_detect_recur(tepai, paicount);
 			//if(!::show_result() && calculate_yaku)
 			//if(hule)
-			;//cout<<"形式听牌（无役）。"<<endl;
-			if (false)
-				(resultEx->t)[(resultEx->cnt)++] = paiff;
+			//cout<<"形式听牌（无役）。"<<endl;
+			//if (false)
+				//(resultEx->t)[(resultEx->cnt)++] = paiff;
 		}
 		tepai[tepos].fig = 1;
 		for (int i = 0; i<7; i++)
@@ -1361,8 +1403,8 @@
 			//if(!::show_result() && calculate_yaku)
 			//if(hule)
 			;//cout<<"形式听牌（无役）。"<<endl;
-			if (false)
-				(resultEx->t)[(resultEx->cnt)++] = paiff;
+			//if (false)
+				//(resultEx->t)[(resultEx->cnt)++] = paiff;
 		}
 		reset();
 		if (tenpai_mianshu == 0)
@@ -1375,7 +1417,7 @@
 			delete tmentsu;
 			tmentsu = tmentsu2;
 		}
-		return 0;
+		return 1;
 	}
 
 	int taj::tenpai_detect(const judgeRequest* rpai, judgeResult* resultEx)

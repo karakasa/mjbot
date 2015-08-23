@@ -36,9 +36,7 @@ private:
 
 	void shuffle_internal();
 	void roll_internal();
-	void roll();
 	void shuffle();
-	void finish();
 
 public:
 	// 初始化 EventBus
@@ -116,4 +114,7 @@ public:
 
 	// 内部工作线程，不要直接调用。
 	DWORD WINAPI workingThreadInternal();
+
+	void roll();
+	void finish();
 };

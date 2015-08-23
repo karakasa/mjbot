@@ -16,6 +16,7 @@ class Syanten
 		int normalCalculate3(pai* tpai, const int paicnt, int currentMenchi);
 		int normalCalculate2(const pai* tpai, const int paicnt, int currentMenchi);
 		int normalCalculate(const pai* tpai, const int paicnt);
+		bool specialized_tenpai_detect(pai* pais, int paicnt, judgeResult* resultEx);
 
 	public:
 
@@ -25,4 +26,12 @@ class Syanten
 		// normalonly : 仅计算标准型（不计算七对子和国士）
 		// 返回值 : (最小)向听数，0 即为听牌，-1 即为和牌。
 		int calculateSyanten(const pai* tpai, const int paicnt, bool normalonly = false);
+
+		// 计算有效进张。本过程也可以计算听牌种类，不过效率低于 taj.tenpai_detect()
+		// tpai : 手牌数组。不需要有序，paicnt : 数组长度。
+		// 或者 judgeRequest : 形同 tenpai_detect 的调用，mode 成员必须为 0，否则函数将失败。
+		// jres : cnt 与 t 成员分别存放了有效进张的种类数，和具体有效进张
+		// 返回值 : 成功与否
+		bool kouritsuDetect(pai* tpai, const int paicnt, judgeResult* jres);
+		bool kouritsuDetect(judgeRequest* jreq, judgeResult* jres);
 };

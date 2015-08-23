@@ -16,6 +16,7 @@
 #define KOKUSHIMUSOU 1
 #define KOKUSHIMUSOU_JUUSANMENMACHI 2
 
+const int yaotrans[13] = { 1,9,10,18,19,27,28,29,30,31,32,33,34 };
 
 const char yakuname[64][20] = { "立直","一发","门前自摸","断幺","平和","一杯口","役牌/白","役牌/发","役牌/中","役牌/场风东","役牌/场风南",
 "役牌/场风西","役牌/场风北","役牌/自风东","役牌/自风南","役牌/自风西","役牌/自风北","役牌/连风东",
@@ -32,7 +33,7 @@ const char yakuname[64][20] = { "立直","一发","门前自摸","断幺","平和","一杯口",
 const int paiorder[30] = { 0,7,0,4,0,9,0,0,0,0,0,0,1,5,0,3,0,0,2,0,0,0,8,6,0,10,0,0,0,0 };
 //                   B   D   F             M N   P     S       W X   Z
 
-const int funpai[7] = { 'D','N','X','B','Z','W','F' };
+const int funpai[7] = { 'D','N','X','B','W','F','Z' };
 
 // 牌的特征
 #define TRAIT_AKA 1
@@ -99,30 +100,30 @@ struct yaku_table {
 struct judgeRequest
 {
 	int paicnt; //手牌数量，必须为 3n+1
-	pai pais[13]; //手牌，必须是从小到大有序的
-	int fulucnt; //副露数量 0 or 1 or 2 or 3 or 4
-	mentsu fulus[4]; //副露 mentsu[0~fulucnt] 该结构中的 prev / next 值没有意义
+	pai pais[13]; //手牌，在判定役时，应是由 paiSort 排序过的有序数组
 	int mode; //检测模式 0为听牌种类检测 1为和了役检测，为0时，后面的参数无意义
+	int fulucnt = 0; //副露数量 0 or 1 or 2 or 3 or 4
+	mentsu fulus[4]; //副露 mentsu[0~fulucnt] 该结构中的 prev / next 值没有意义
 	pai tgtpai; //和了役检测时 和了的那张牌
 	bool akari_status; //胡了种类 自摸/荣和  TSUMO or RON
-	bool norelease; //天地人和可以成立（这人还没打过牌，之前无鸣牌）
-	char jyouhuun; //场风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
-	char jihuun; //自风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
-	int flags; //一组逻辑值，flags&1 立直 flags&2 W立直 flags&4 一发 flags&8 海底 flags&16 河底 flags&32 岭上 flags&64 抢杠
-	int doracnt; //几张DORA
+	bool norelease = false; //天地人和可以成立（这人还没打过牌，之前无鸣牌）
+	char jyouhuun = '\0'; //场风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
+	char jihuun = '\0'; //自风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
+	int flags = 0; //一组逻辑值，flags&1 立直 flags&2 W立直 flags&4 一发 flags&8 海底 flags&16 河底 flags&32 岭上 flags&64 抢杠
+	int doracnt = 0; //几张DORA
 };
 
 //TenpaiAkariJudge 模块传递回的结构
 struct judgeResult
 {
-	int cnt; //听牌种类判断模式下，为听的牌的种类数量
+	int cnt = 0; //听牌种类判断模式下，为听的牌的种类数量
 	pai t[20]; //pai[cnt]，听的牌
-	int yakucnt; //和了役判断吗模式下，役的数量
-	int yakutotal; //总翻数
-	int huutotal; //符数
-	int basicpt; //基本点
-	int yakuid[16]; //役的ID
-	int pt[16]; //对应役的翻数
+	int yakucnt = 0; //和了役判断吗模式下，役的数量
+	int yakutotal = 0; //总翻数
+	int huutotal = 0; //符数
+	int basicpt = 0; //基本点
+	int yakuid[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //役的ID
+	int pt[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //对应役的翻数
 };
 
 //网络端数据包定义
@@ -355,3 +356,16 @@ int get_yaotyuu_id(const pai& wpai);
 // a,b,c : 牌的 ID，与 retrieveID3 相同
 // 返回值 : 1为刻子，2为顺子，-1为不是面子
 int getMentsuType(int a, int b, int c);
+
+// 将天凤手牌字符串转换为牌数组。保持输入顺序。
+// pstring : 手牌，字母必须为小写字母。1-9m 1-9s 1-9p 1-7z 0m0s0p
+// parr : 接收的数组
+// *buffersize : 接收数组的最大长度，本参数也会用来接收错误信息。
+// 返回值 : 成功与否。如果返回值为否，有这样几种情况。
+// buffersize 为 0 : 缓冲区长度不足，-1 / -2 : 格式出错
+bool convertPaiString(std::string& pstring, pai* parr, int* buffersize);
+
+// 统计一个天凤手牌字符串中的牌的数量，为 convertPaiString 函数做准备
+// pstring : 手牌，字母必须为小写字母。1-9m 1-9s 1-9p 1-7z 0m0s0p
+// 返回值 : 数量。如果为负数，则为失败。对于空字符串返回 0。
+int convertPaiStringPrepare(std::string& pstring);

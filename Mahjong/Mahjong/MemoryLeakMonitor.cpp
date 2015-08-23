@@ -13,7 +13,7 @@ namespace MemoryLeakMonitor
 	void addMonitor(void* pointer, int size, const char* desc)
 	{
 		if (size == 0)
-			std::cerr<<"SIZE 0 ALLOCATION."<<std::endl;
+			std::cerr<<"SIZE 0 ALLOCATION on "<<desc<<std::endl;
 		std::string ntp(desc);
 		addrs[(int)pointer] = std::make_pair(size, ntp);
 		//std::cerr<<"ALLOC ID: "<<allocCnt<<" "<<std::hex<<(int)pointer<<std::dec<<", Size: "<<size<<std::endl;
@@ -40,9 +40,13 @@ namespace MemoryLeakMonitor
 	int gc()
 	{
 		if (currentMemAreaCnt != 0)
+		{
 			for (std::map<int, std::pair<int, std::string> >::iterator pos = addrs.begin(); pos != addrs.end(); pos++)
 				std::cerr << std::hex << pos->first << std::dec << " " << pos->second.first << " " << pos->second.second << std::endl;
-		std::cerr << "Memory Leaked: " << byteInTotal << std::endl << "Leak Count: " << currentMemAreaCnt << std::endl << "Maximium Memory In Use: " << byteMax << std::endl << "Allocation Count: " << allocCnt << std::endl << std::endl;
+			std::cerr << "Memory Leaked: " << byteInTotal << std::endl << "Leak Count: " << currentMemAreaCnt << std::endl << "Maximium Memory In Use: " << byteMax << std::endl << "Allocation Count: " << allocCnt << std::endl << std::endl;
+			int wi;
+			std::cin >> wi;
+		}
 		return currentMemAreaCnt != 0;
 	}
 }

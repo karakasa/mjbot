@@ -353,9 +353,122 @@
 			if (kokushi == 0 || chiitoi == 0)
 				return 0;
 			if (kokushi == 1 || chiitoi == 1) //不可能介于0和1向听之间
-				return 1;
+					return 1;
 			int pshi = normalCalculate(tpai, paicnt) - 1;
 			return min(min(kokushi, chiitoi), pshi);
-		}
+			}
 		return normalCalculate(tpai, paicnt) - 1;
+	}
+
+	bool Syanten::specialized_tenpai_detect(pai* pais, int paicnt, judgeResult* resultEx)
+	{
+			int ycnt[14];
+			memset(ycnt, 0, sizeof(ycnt));
+			for (int i = 0; i<13; i++)
+				ycnt[get_yaotyuu_id((pais)[i])]++;
+			if (ycnt[0] == 1 && ycnt[1] == 1 && ycnt[2] == 1 && ycnt[3] == 1 && ycnt[4] == 1 && ycnt[5] == 1 && ycnt[6] == 1 && ycnt[7] == 1 && ycnt[8] == 1 && ycnt[9] == 1 && ycnt[10] == 1 && ycnt[11] == 1 && ycnt[12] == 1)
+			{
+				resultEx->cnt = 13;
+				retrievePai3(&((resultEx->t)[0]), 1);
+				retrievePai3(&((resultEx->t)[1]), 9);
+				retrievePai3(&((resultEx->t)[2]), 10);
+				retrievePai3(&((resultEx->t)[3]), 18);
+				retrievePai3(&((resultEx->t)[4]), 19);
+				retrievePai3(&((resultEx->t)[5]), 27);
+				retrievePai3(&((resultEx->t)[6]), 28);
+				retrievePai3(&((resultEx->t)[7]), 29);
+				retrievePai3(&((resultEx->t)[8]), 30);
+				retrievePai3(&((resultEx->t)[9]), 31);
+				retrievePai3(&((resultEx->t)[10]), 32);
+				retrievePai3(&((resultEx->t)[11]), 33);
+				retrievePai3(&((resultEx->t)[12]), 34);
+				return true;
+			}
+			int y0 = 0, y1 = 0, y2 = 0, yid = 0;
+			for (int i = 0; i<13; i++)
+				switch (ycnt[i])
+				{
+				case 0:
+					y0++;
+					yid = i;
+					break;
+				case 1:
+					y1++;
+					break;
+				case 2:
+					y2++;
+					break;
+				default:
+					return false;
+				}
+			if (y0 == 1 && y2 == 1 && y1 == 11)
+			{
+				resultEx->cnt = 1;
+				retrievePai3(&((resultEx->t)[0]), yaotrans[yid]);
+				return true;
+			}
+			return false;
+	}
+
+	bool Syanten::kouritsuDetect(pai* tpai, const int paicnt, judgeResult* jres)
+	{
+		if (paicnt == 13)
+		{
+			if (Syanten::specialized_tenpai_detect(tpai, 13, jres))
+				return true;
+		}
+		jres->cnt = 0;
+		int cst = Syanten::calculateSyanten(tpai, paicnt);
+		pai* tpai2 = new pai[paicnt+1];
+		pai nt;
+		nt.trait = 0;
+		nt.type = 'M';
+		for (int i = 1; i <= 9; i++)
+		{
+			nt.fig = i;
+			std::copy(tpai, tpai + paicnt, tpai2);
+			tpai2[paicnt] = nt;
+			std::sort(tpai2, tpai2 + paicnt + 1, paiSort);
+			if (Syanten::calculateSyanten(tpai2, paicnt + 1) < cst)
+				jres->t[(jres->cnt)++] = nt;
+		}
+		nt.type = 'S';
+		for (int i = 1; i <= 9; i++)
+		{
+			nt.fig = i;
+			std::copy(tpai, tpai + paicnt, tpai2);
+			tpai2[paicnt] = nt;
+			std::sort(tpai2, tpai2 + paicnt + 1, paiSort);
+			if (Syanten::calculateSyanten(tpai2, paicnt + 1) < cst)
+				jres->t[(jres->cnt)++] = nt;
+		}
+		nt.type = 'P';
+		for (int i = 1; i <= 9; i++)
+		{
+			nt.fig = i;
+			std::copy(tpai, tpai + paicnt, tpai2);
+			tpai2[paicnt] = nt;
+			std::sort(tpai2, tpai2 + paicnt + 1, paiSort);
+			if (Syanten::calculateSyanten(tpai2, paicnt + 1) < cst)
+				jres->t[(jres->cnt)++] = nt;
+		}
+		nt.fig = 1;
+		for (int i = 0; i <= 6; i++)
+		{
+			nt.type = funpai[i];
+			std::copy(tpai, tpai + paicnt, tpai2);
+			tpai2[paicnt] = nt;
+			std::sort(tpai2, tpai2 + paicnt + 1, paiSort);
+			if (Syanten::calculateSyanten(tpai2, paicnt + 1) < cst)
+				jres->t[(jres->cnt)++] = nt;
+		}
+		delete[] tpai2;
+		return true;
+	}
+
+	bool Syanten::kouritsuDetect(judgeRequest* jreq, judgeResult* jres)
+	{
+		if (jreq->mode != 0)
+			return false;
+		return Syanten::kouritsuDetect(jreq->pais, jreq->paicnt, jres);
 	}

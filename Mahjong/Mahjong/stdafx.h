@@ -5,6 +5,14 @@
 
 #pragma once
 
+#if defined(_MSC_VER)
+#   if _MSC_VER >= 1900 
+#       define C11
+#   endif
+#elif __cplusplus > 199711L
+#   define C11
+#endif
+
 #include "targetver.h"
 #include "Winsock2.h"
 

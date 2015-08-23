@@ -13,7 +13,6 @@ class taj
 		yaku_table* current = NULL;
 		yaku_table* maxresult = NULL;
 
-		const int yaotrans[13] = { 1,9,10,18,19,27,28,29,30,31,32,33,34 };
 		int effeci_cnt = 0;
 		int tepos;
 		bool hule = false;

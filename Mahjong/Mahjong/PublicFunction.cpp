@@ -355,3 +355,129 @@ int getMentsuType(int a, int b, int c) //返回1为刻子，2为顺子，-1为不是面子
 	}
 	return -1;
 }
+
+bool convertPaiString(std::string& pstring, pai* parr, int* buffersize)
+{
+	for (unsigned int i = 0; i < pstring.length(); i++)
+	{
+		if(!(pstring[i] >= '0' && pstring[i] <= '9'))
+			if (pstring[i] != 'm')
+			if (pstring[i] != 's')
+			if (pstring[i] != 'p')
+				if (pstring[i] != 'z')
+				{
+					*buffersize = -1;
+					return false;
+				}
+	}
+	unsigned int cpos = 0, fpos = 0, cnt = 0;
+	while (cpos < pstring.length())
+	{
+		fpos = -1;
+		for (unsigned int i = cpos; i<pstring.length() ; i++)
+		{
+			if (pstring[i] == 'm' || pstring[i] == 's' || pstring[i] == 'p' || pstring[i] == 'z')
+			{
+				fpos = i;
+				if (fpos == cpos) 
+				{
+					*buffersize = -1;
+					return false;
+				}
+				break;
+			}	
+		}
+		if (fpos == -1)
+		{
+			*buffersize = -1;
+			return false;
+		}
+		for (unsigned int i = cpos; i < fpos; i++)
+		{
+			if((signed int)cnt + 1 > *buffersize)
+			{
+				*buffersize = 0;
+				return false;
+			}
+
+			if (pstring[fpos] == 'z')
+			{
+				if (pstring[i] > '0' && pstring[i] < '8')
+				{
+					parr[cnt].trait = 0;
+					parr[cnt].type = funpai[pstring[i] - '1'];
+					parr[cnt].fig = 1;
+				}
+				else {
+					*buffersize = -1;
+					return false;
+				}
+			}
+			else {
+				if (pstring[i] == '0')
+				{
+					parr[cnt].fig = 5;
+					parr[cnt].trait = TRAIT_AKA;
+				}
+				else {
+					parr[cnt].fig = pstring[i] - '0';
+					parr[cnt].trait = 0;
+				}
+				parr[cnt].type = pstring[fpos] + 'A' - 'a';
+			}
+
+			cnt++;
+		}
+
+		cpos = fpos + 1;
+	}
+	*buffersize = cpos;
+	return true;
+}
+
+int convertPaiStringPrepare(std::string& pstring)
+{
+	if (pstring.length() == 0)
+		return 0;
+	for (unsigned int i = 0; i < pstring.length(); i++)
+	{
+		if (!(pstring[i] >= '0' && pstring[i] <= '9'))
+			if (pstring[i] != 'm')
+				if (pstring[i] != 's')
+					if (pstring[i] != 'p')
+						if (pstring[i] != 'z')
+						{
+							return -2;
+						}
+	}
+	unsigned int cpos = 0, fpos = 0, cnt = 0;
+	while (cpos < pstring.length())
+	{
+		fpos = -1;
+		for (unsigned int i = cpos; i<pstring.length(); i++)
+		{
+			if (pstring[i] == 'm' || pstring[i] == 's' || pstring[i] == 'p' || pstring[i] == 'z')
+			{
+				fpos = i;
+				if (fpos == cpos)
+				{
+					return -2;
+				}
+				break;
+			}
+		}
+		if (fpos == -1)
+		{
+			return -2;
+		}
+		for (unsigned int i = cpos; i < fpos; i++)
+		{
+			if (pstring[fpos] == 'z')
+				if (pstring[i] <= '0' || pstring[i] >= '8')
+					return -1;
+			cnt++;
+		}
+		cpos = fpos + 1;
+	}
+	return (signed int)cnt;
+}

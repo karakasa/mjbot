@@ -18,7 +18,7 @@
 
 const int yaotrans[13] = { 1,9,10,18,19,27,28,29,30,31,32,33,34 };
 
-const char yakuname[64][20] = { "立直","一发","门前自摸","断幺","平和","一杯口","役牌/白","役牌/发","役牌/中","役牌/场风东","役牌/场风南",
+const char yakuname[65][20] = { "\0", "立直","一发","门前自摸","断幺","平和","一杯口","役牌/白","役牌/发","役牌/中","役牌/场风东","役牌/场风南",
 "役牌/场风西","役牌/场风北","役牌/自风东","役牌/自风南","役牌/自风西","役牌/自风北","役牌/连风东",
 "役牌/连风南","役牌/连风西","役牌/连风北","岭上","抢杠","海底","河底","三色同顺","一气","混全带幺九",
 "七对子","对对","三暗","三杠子","三色同刻","混老头","小三元","W立直","混一","纯全带幺九","二杯口",
@@ -47,22 +47,6 @@ struct pai {
 	int trait;
 };
 
-//面子数据结构，包括一个双向链表；在大多数场合下，调用者不需要维护链表结构，链表指针是在内部起到提高效率的作用的。
-struct mentsu {
-	char type;
-	pai start;
-	pai middle;
-	pai last;
-	mentsu* prev;
-	mentsu* next;
-};
-
-//面子表，内部数据结构。
-struct mentsutable {
-	mentsu* first;
-	mentsu* tail;
-};
-
 //面子类型
 enum mentsu_TYPE {
 	mentsu_SHUNZ, //顺子面子
@@ -77,6 +61,22 @@ enum mentsu_TYPE {
 	mentsu_KEZ_KANG_B, //杠子面子，杠对家
 	mentsu_KEZ_KANG_C, //杠子面子，杠下家
 	mentsu_KEZ_KANG_S, //杠子面子，暗杠
+};
+
+//面子数据结构，包括一个双向链表；在大多数场合下，调用者不需要维护链表结构，链表指针是在内部起到提高效率的作用的。
+struct mentsu {
+	char type; //面子类型，为 mentsu_TYPE 枚举类型
+	pai start; //刻子的开始一张牌
+	pai middle; //刻子的中间一张牌
+	pai last; //刻子的最后一张牌
+	mentsu* prev; //内部实用，置零即可
+	mentsu* next; //内部实用，置零即可
+};
+
+//面子表，内部数据结构。
+struct mentsutable {
+	mentsu* first;
+	mentsu* tail;
 };
 
 //役数据结构，内部数据类型
@@ -122,7 +122,7 @@ struct judgeResult
 	int yakutotal = 0; //总翻数
 	int huutotal = 0; //符数
 	int basicpt = 0; //基本点
-	int yakuid[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //役的ID
+	int yakuid[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }; //役的ID，和 yakuname 数组相对应
 	int pt[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}; //对应役的翻数
 };
 

@@ -10,6 +10,73 @@
 
 #define make_p1_start(x,y,z) (x)&((y)<<8)&((z)<<16)
 
+
+void match::stTenpaiStatus(int pos)
+{
+	std::sort(tepai[pos] + 0, tepai[pos] + tepaicnt[pos], paiSort);
+	clientSyanTen[pos] = st.calculateSyanten(tepai[pos], tepaicnt[pos]);
+	if (clientSyanTen[pos] == 0)
+	{
+		judgeRequest jr;
+		judgeResult jres;
+
+		jr.mode = 0;
+		jr.paicnt = tepaicnt[pos];
+		std::copy(tepai[pos], tepai[pos] + tepaicnt[pos], jr.pais);
+
+		tajcore.tenpaiDetect(&jr, &jres);
+
+		clientTenpaiCnt[pos] = jres.cnt;
+		std::copy(jres.t + 0, jres.t + jres.cnt, clientTenpai[pos] + 0);
+	}
+}
+
+void match::pushbackKawa(int pos, pai& paiout)
+{
+	if (!clientRiichi[pos])
+		furiten[pos] = false;
+	paiKawa[pos][paiKawaCnt[pos]++] = paiout;
+	if (clientSyanTen[pos] == 0)
+	{
+		bool loopFlag = false;
+
+		for (int i = 0; i < clientTenpaiCnt[pos]; i++)
+		{
+			for (int j = 0; j < paiKawaCnt[pos] - 1; j++)
+				if (compare_pai(paiKawa[pos][j], clientTenpai[cpos][i]))
+				{
+					loopFlag = true;
+					break;
+				}
+			if (loopFlag)
+				break;
+		}
+
+		if (loopFlag)
+			furiten[pos] = true;
+	}
+
+	for (int i = 0; i < 4;i++)
+		if (i != pos)
+		{
+			if(clientSyanTen[i] == 0)
+			{
+				bool fnd = false;
+				for (int j = 0; j < clientTenpaiCnt[i]; j++)
+					if (compare_pai(paiKawa[pos][j], clientTenpai[i][j]))
+					{
+						fnd = true;
+						break;
+					}
+				if (fnd)
+				{
+					furiten[i] = true;
+					continue;
+				}
+			}	
+		}
+}
+
 	int match::roundPoint(int rp)
 	{
 		if (rp % 100 == 0)
@@ -44,11 +111,11 @@
 			for (int i = paiIndex + 1; i<tepaicnt[cpos]; i++)
 				tepai[cpos][i - 1] = tepai[cpos][i];
 			tepaicnt[cpos] --;
-			std::sort(tepai[cpos] + 0, tepai[cpos] + tepaicnt[cpos], paiSort);
-			clientSyanTen[cpos] = st.calculateSyanten(tepai[cpos], tepaicnt[cpos]);
+			stTenpaiStatus(cpos);
 			for (int i = 0; i<4; i++)
 				if (cpos != i)
 					evcore.send(i, ai::othersTurnFinished, response, 1);
+			pushbackKawa(cpos, paiout);
 		}
 		//printf("SPECIAL 3 %d:", cpos);
 		//outputPais(tepai[cpos], tepaicnt[cpos]);
@@ -474,6 +541,11 @@
 					for (int m = 0; m<4; m++)
 						if (ncpos != m)
 							evcore.send(m, ai::othersTurn, ncpos, 2);
+					if (!clientRiichi[ncpos])
+						furiten[ncpos] = false;
+
+					stTenpaiStatus(cpos);
+
 					status = 4;
 					happened = true;
 					cpos = ncpos;
@@ -512,7 +584,8 @@
 						int m = k;
 						k = j;
 						j = m;
-					}clientSyanTen[cpos] = st.calculateSyanten(tepai[cpos], tepaicnt[cpos]);
+					}
+										
 					fulu[i][fulucnt[i]].type = mentsu_KEZ_KANG_A + getRelativePosition(i, cpos);
 					fulu[i][fulucnt[i]].start = tepai[i][j];
 					fulu[i][fulucnt[i]].middle = tepai[i][k];
@@ -526,6 +599,9 @@
 					for (int m = j + 1; m<tepaicnt[i]; m++)
 						tepai[i][m - 1] = tepai[i][m];
 					tepaicnt[i]--;
+
+					stTenpaiStatus(cpos);
+
 					for (int m = 0; m<4; m++)
 						evcore.send(m, ai::minDone, i | (cpos << 2) | (ai::min::kang << 4) | (retrieveID2(paiout) << 8), retrieveID2(fulu[i][fulucnt[i]].start) | (retrieveID2(fulu[i][fulucnt[i]].middle) << 8) | (retrieveID2(fulu[i][fulucnt[i]].last) << 16) | (retrieveID2(fulu[i][fulucnt[i]].last) << 24));
 					fulucnt[i]++;
@@ -533,6 +609,8 @@
 					for (int m = 0; m<4; m++)
 						if (ncpos != m)
 							evcore.send(m, ai::othersTurn, ncpos, 1);
+					if (!clientRiichi[ncpos])
+						furiten[ncpos] = false;
 					status = 1;
 					happened = true;
 					yama.kang(&current);
@@ -590,6 +668,9 @@
 					for (int m = j + 1; m<tepaicnt[i]; m++)
 						tepai[i][m - 1] = tepai[i][m];
 					tepaicnt[i]--;
+
+					stTenpaiStatus(cpos);
+
 					for (int m = 0; m<4; m++)
 						evcore.send(m, ai::minDone, i | (cpos << 2) | (ai::min::pon << 4) | (retrieveID2(paiout) << 8), retrieveID2(fulu[i][fulucnt[i]].start) | (retrieveID2(fulu[i][fulucnt[i]].middle) << 8) | (retrieveID2(fulu[i][fulucnt[i]].last) << 16));
 					fulucnt[i]++;
@@ -597,6 +678,8 @@
 					for (int m = 0; m<4; m++)
 						if (ncpos != m)
 							evcore.send(m, ai::othersTurn, ncpos, 2);
+					if (!clientRiichi[ncpos])
+						furiten[ncpos] = false;
 					status = 4;
 					happened = true;
 					cpos = ncpos;
@@ -636,6 +719,8 @@
 								evcore.send(j, ai::minDone, (ai::min::kangj << 4) | cpos | (waitingPai << 8), waitingPai | (waitingPai << 8) | (waitingPai << 16) | (waitingPai << 24));
 								evcore.send(j, ai::othersTurn, cpos, 1);
 							}
+						if (!clientRiichi[cpos])
+							furiten[cpos] = false;
 						yama.kang(&current);
 						status = 1;
 						evcore.send(cpos, ai::yourTurn, retrieveID2(current));
@@ -684,10 +769,11 @@
 		case 0xFFFFFFFF://模切
 			paiout = current;
 			//printf("%d\n",retrieveID2(paiout));
+			stTenpaiStatus(cpos);
 			for (int i = 0; i<4; i++)
 				if (cpos != i)
 					evcore.send(i, ai::othersTurnFinished, retrieveID2(current), 0);
-			clientSyanTen[cpos] = st.calculateSyanten(tepai[cpos], tepaicnt[cpos]);
+			pushbackKawa(cpos, paiout);
 			break;
 		case 0xFE000000://自摸
 			if (clientSyanTen[cpos] == 0)
@@ -846,6 +932,8 @@
 												evcore.send(j, ai::minDone, (ai::min::kangs << 4) | cpos | (paiid << 8), paiid | (paiid << 8) | (paiid << 16) | (paiid << 24));
 												evcore.send(j, ai::othersTurn, cpos, 1);
 											}
+										if (!clientRiichi[cpos])
+											furiten[cpos] = false;
 										yama.kang(&current);
 										status = 1;
 										clientRinsyou = true;
@@ -873,14 +961,16 @@
 											tepaicnt[cpos] -= 4;
 											tepai[cpos][tepaicnt[cpos]] = current;
 											tepaicnt[cpos]++;
-											std::sort(tepai[cpos] + 0, tepai[cpos] + tepaicnt[cpos], paiSort);
-											clientSyanTen[cpos] = st.calculateSyanten(tepai[cpos], tepaicnt[cpos]);
+											stTenpaiStatus(cpos);
+
 											for (int j = 0; j<4; j++)
 												if (j != cpos)
 												{
 													evcore.send(j, ai::minDone, (ai::min::kangs << 4) | cpos | (paiid << 8), paiid | (paiid << 8) | (paiid << 16) | (paiid << 24));
 													evcore.send(j, ai::othersTurn, cpos, 1);
 												}
+											if (!clientRiichi[cpos])
+												furiten[cpos] = false;
 											yama.kang(&current);
 											status = 1;
 											clientRinsyou = true;
@@ -910,8 +1000,9 @@
 							{
 								paiout = tepai[cpos][i];
 								tepai[cpos][i] = current;
-								std::sort(tepai[cpos] + 0, tepai[cpos] + tepaicnt[cpos], paiSort);
-								clientSyanTen[cpos] = st.calculateSyanten(tepai[cpos], tepaicnt[cpos]);
+
+								stTenpaiStatus(cpos);
+
 								flag = true;
 								clientTyankan = true;
 								for (int i = 0; i<4; i++)
@@ -941,11 +1032,12 @@
 						}
 					if (flag)
 					{
-						std::sort(tepai[cpos] + 0, tepai[cpos] + tepaicnt[cpos], paiSort);
-						clientSyanTen[cpos] = st.calculateSyanten(tepai[cpos], tepaicnt[cpos]);
+						stTenpaiStatus(cpos);
+
 						for (int i = 0; i<4; i++)
 							if (cpos != i)
 								evcore.send(i, ai::othersTurnFinished, paiid, 3);
+						pushbackKawa(cpos, paiout);
 					}
 					break;
 				case 3://模切立直
@@ -957,6 +1049,7 @@
 					for (int i = 0; i<4; i++)
 						if (cpos != i)
 							evcore.send(i, ai::othersTurnFinished, paiid, 2);
+					pushbackKawa(cpos, paiout);
 					break;
 				}
 			}
@@ -973,11 +1066,12 @@
 					}
 				if (flag)
 				{
-					std::sort(tepai[cpos] + 0, tepai[cpos] + tepaicnt[cpos], paiSort);
-					clientSyanTen[cpos] = st.calculateSyanten(tepai[cpos], tepaicnt[cpos]);
+					stTenpaiStatus(cpos);
+
 					for (int i = 0; i<4; i++)
 						if (cpos != i)
 							evcore.send(i, ai::othersTurnFinished, response, 1);
+					pushbackKawa(cpos, paiout);
 				}
 			}
 		}
@@ -987,6 +1081,7 @@
 			for (int i = 0; i<4; i++)
 				if (cpos != i)
 					evcore.send(i, ai::othersTurnFinished, retrieveID2(current), 0);
+			pushbackKawa(cpos, paiout);
 		}
 		norelease[cpos] = 0;
 		int minRequest[4] = { 0,0,0,0 };
@@ -1145,6 +1240,8 @@
 							evcore.send(j, ai::minDone, (ai::min::kangj << 4) | cpos | (waitingPai << 8), waitingPai | (waitingPai << 8) | (waitingPai << 16) | (waitingPai << 24));
 							evcore.send(j, ai::othersTurn, cpos, 1);
 						}
+					if (!clientRiichi[cpos])
+						furiten[cpos] = false;
 					yama.kang(&current);
 					status = 1;
 					evcore.send(cpos, ai::yourTurn, retrieveID2(current));
@@ -1182,6 +1279,8 @@
 				evcore.send(i, ai::othersTurn, cpos, 0);
 		yama.next(&current);
 		status = 1;
+		if (!clientRiichi[cpos])
+			furiten[cpos] = false;
 		evcore.send(cpos, ai::yourTurn, retrieveID2(current));
 	}
 	void match::nextMatch()
@@ -1215,8 +1314,9 @@
 		for (int i = 0; i<4; i++)
 		{
 			yama.next(&(tepai[i][12]));
-			std::sort(tepai[i] + 0, tepai[i] + 13, paiSort);
-			clientSyanTen[i] = st.calculateSyanten(tepai[i], 13);
+
+			stTenpaiStatus(i);
+
 			for (int j = 0; j<13; j++)
 				paidata[j] = retrieveID2(tepai[i][j]);
 			evcore.send(i, ai::initalizeTehai, 13, paidata, sizeof(char) * 13);
@@ -1285,6 +1385,14 @@
 		clientIhatsu[1] = false;
 		clientIhatsu[2] = false;
 		clientIhatsu[3] = false;
+		paiKawaCnt[0] = 0;
+		paiKawaCnt[1] = 0;
+		paiKawaCnt[2] = 0;
+		paiKawaCnt[3] = 0;
+		clientTenpaiCnt[0] = 0;
+		clientTenpaiCnt[1] = 0;
+		clientTenpaiCnt[2] = 0;
+		clientTenpaiCnt[3] = 0;
 		nextMatch();
 	}
 	void match::startMatch()

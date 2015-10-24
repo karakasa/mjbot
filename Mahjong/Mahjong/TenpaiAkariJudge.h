@@ -28,7 +28,6 @@ class taj
 		judgeResult* resx;
 		bool yakuman = false;
 
-		//still used in Main.cpp
 		int paicnt[34];
 
 		bool norelease = false;
@@ -40,44 +39,65 @@ class taj
 		int dora = 0, beidora = 0;
 		bool ignore_tsumo_huu = false;
 
+		// 是否为暗刻，包括暗杠
 		bool is_annkez(const mentsu* mc);
 
+		// 释放某一种面子拆分情况下的 yaku 链表
 		void free_yaku(yaku* first);
 
+		// 释放全部面子拆分情况下的　yaku_table 链表
 		void free_yaku_table(yaku_table* first);
 
+		// 开始某种情况的计算（为了高点法而设）
 		void start();
 	
+		// 重置模块
 		void reset();
 	
+		// 结束某种情况的计算
 		void finish();
 	
+		// 添加役，在已经役满或役满与一般役的情况下会有单独处理，不需要上层程序处理
 		void add_yaku(int yaku_id, int yaku_point);
 	
+		// 计算符
 		void calculate_huu();
 	
+		// 计算基本点（已经升到整百）
 		void calculate_basicpoint();
 	
+		// 判断是否为绿一色面子
 		bool judge_ruiisou(const mentsu* mc);
 	
+		// 判断是否为带幺九面子
 		bool is_daiyaojiu(const mentsu* mc);
 	
-		int is_sansya(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3); //返回0则不是，返回1则为三色通顺，返回2则为三色同刻
+		// 判断三个面子是否构成三色同顺/同刻，三个面子顺序无所谓
+		// 返回0则不是，返回1则为三色通顺，返回2则为三色同刻
+		int is_sansya(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3); 
 	
+		// 判断是否为一通的三个面子，顺序必须从小到大
 		bool is_iitsu(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3);
 	
+		// 主计算过程
 		void calculate();
 	
+		//　统计最大结果，在全部 finish 后
 		bool show_result(judgeResult* res);
 
+		// 判断国士听牌/役，替代了 Syanten 类下的同名函数
 		bool specialized_tenpai_detect(judgeRequest* rpai, judgeResult* resultEx);
 
+		// 加入听牌情况
 		void output_tenpai(pai machi);
 	
+		// 消面子
 		void tenpai_detect_recur_2(pai* cpai, int cpcount);
 	
+		// 消雀头
 		void tenpai_detect_recur(const pai* opai, int cpcount);
 	
+		// 主处理入口
 		int tenpai_detect_internal(judgeRequest* rpai, judgeResult* resultEx);
 	
 	public:
@@ -86,7 +106,9 @@ class taj
 		// rpai : 请求
 		// resultEx : 结果
 		// 返回值 : 0 为检测成功完成。
+		// tenpaiDetect 为别名
 		int tenpai_detect(const judgeRequest* rpai, judgeResult* resultEx);
+		int tenpaiDetect(const judgeRequest* rpai, judgeResult* resultEx);
 	
 };
 
@@ -94,7 +116,7 @@ class taj
 // 判断七对子。
 // ppai : 长度为 14 的排序后的 pai 数组
 // nostrict : 可选，接收参数。不管是不是龙七对，只要满足有 7 组一样的两张牌，本参数即为 true。
-// 返回值 : 是或否。
+// 返回值 : 是或否，该是和否为严格值。如果　nostrict 为 true，返回值为 false，则是龙七对的情况。
 bool JudgeChiitoitsu(const pai* ppai, bool* nostrict = NULL);
 
 

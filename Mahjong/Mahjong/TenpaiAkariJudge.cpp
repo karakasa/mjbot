@@ -1420,6 +1420,11 @@
 		return 1;
 	}
 
+	int taj::tenpaiDetect(const judgeRequest* rpai, judgeResult* resultEx)
+	{
+		return tenpai_detect(rpai, resultEx);
+	}
+
 	int taj::tenpai_detect(const judgeRequest* rpai, judgeResult* resultEx)
 	{
 		judgeRequest rpai2;

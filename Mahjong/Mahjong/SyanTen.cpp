@@ -32,16 +32,25 @@
 	{
 		if (paicnt != 13)
 			return MAX_SYANTEN;
-		int daiji = 0, j;
+		int daiji = 0, j, k, sange = 0, sige = 0;
 		for (int i = 0; i<paicnt - 1; i++)
 		{
 			if (compare_pai(tpai[i], tpai[i + 1]))
 			{
 				daiji++;
+				k = i;
 				for (j = i++; i<paicnt - 1 && compare_pai(tpai[j], tpai[i]); i++);
+				if (i - k == 3)
+					sange++;
+				if (i - k == 4)
+					sige++;
 				i--;
 			}
 		}
+		int freepai = paicnt - 2 * (daiji - sange - sige) - 3 * sange - 4 * sige; // 自由牌（单张牌的数量）
+		int freepaiNeed = sange + sige * 2;                                       // 为了消解龙七对，所需的自由牌的数量
+		if (freepaiNeed > freepai)
+			return 6 - daiji + freepaiNeed - freepai;
 		return 6 - daiji;
 	}
 	int Syanten::normalCalculate3(pai* tpai, const int paicnt, int currentMenchi)

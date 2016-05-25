@@ -17,6 +17,6 @@ namespace mma
 	}
 	bool free(void* ptr)
 	{
-		return HeapFree(heap, 0, ptr) != 0;
+		return (bool)HeapFree(heap, 0, ptr);
 	}
 }

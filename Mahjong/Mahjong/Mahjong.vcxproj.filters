@@ -60,21 +60,6 @@
     <ClInclude Include="PlatformAdapter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="GacUIReflection.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GacUIWindows.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Vlpp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="VlppWorkflow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="GacUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

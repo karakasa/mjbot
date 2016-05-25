@@ -22,26 +22,26 @@ void MemoryPool::free(void* memblock)
 	HeapFree(handle, 0, memblock);
 }
 
-void CriticalSection2::create()
+void CriticalSection::create()
 {
 	token = new CRITICAL_SECTION;
 	InitializeCriticalSection((CRITICAL_SECTION*)token);
 }
-void CriticalSection2::release()
+void CriticalSection::release()
 {
 	CRITICAL_SECTION* iToken = (CRITICAL_SECTION*)token;
 	DeleteCriticalSection(iToken);
 	delete iToken;
 }
-void CriticalSection2::enter()
+void CriticalSection::enter()
 {
 	EnterCriticalSection((CRITICAL_SECTION*)token);
 }
-void CriticalSection2::leave()
+void CriticalSection::leave()
 {
 	LeaveCriticalSection((CRITICAL_SECTION*)token);
 }
-void CriticalSection2::waitForComplete()
+void CriticalSection::waitForComplete()
 {
 	enter();
 	leave();

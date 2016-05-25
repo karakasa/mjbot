@@ -13,7 +13,7 @@ public:
 	void free(void* memblock);
 };
 
-class CriticalSection2
+class CriticalSection
 {
 private:
 public:

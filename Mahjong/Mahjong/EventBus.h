@@ -21,7 +21,7 @@ private:
 	std::queue<ebEvent> evtQueue;
 
 	bool working = true;
-	CriticalSection evt;
+	CriticalSection2 evt;
 	
 	HANDLE sema;
 

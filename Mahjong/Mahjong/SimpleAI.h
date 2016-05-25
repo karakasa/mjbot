@@ -5,12 +5,12 @@
 #include "SyanTen.h"
 #include "PublicFunction.h"
 
-class SimpleAI
+class SimpleAI : public EventBusUser
 {
 	public:
 		// 消息处理过程
 		// 参考 EventBus 中的调用接口规范
-		int aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn);
+		int aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn, void* payload);
 
 	private:
 		int cid;

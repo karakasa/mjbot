@@ -5,7 +5,6 @@
 #include "YamaControl.h"
 #include "SyanTen.h"
 #include "TenpaiAkariJudge.h"
-
 #include "Matching.h"
 
 #define make_p1_start(x,y,z) (x)&((y)<<8)&((z)<<16)
@@ -89,7 +88,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 		waitPending--;
 		if (waitPending == 0)
 		{
-			//printf("WAIT: %d\n", ++waitCnt);
 			startMatchMid2();
 		}
 
@@ -117,8 +115,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 					evcore.send(i, ai::othersTurnFinished, response, 1);
 			pushbackKawa(cpos, paiout);
 		}
-		//printf("SPECIAL 3 %d:", cpos);
-		//outputPais(tepai[cpos], tepaicnt[cpos]);
 		norelease[cpos] = false;
 		if (true)
 		{
@@ -768,7 +764,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 		{
 		case 0xFFFFFFFF://模切
 			paiout = current;
-			//printf("%d\n",retrieveID2(paiout));
 			stTenpaiStatus(cpos);
 			for (int i = 0; i<4; i++)
 				if (cpos != i)
@@ -1055,7 +1050,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 			}
 			else {
 				//正常打牌
-				//printf("%d\n",(int)response);
 				for (int i = 0; i<tepaicnt[cpos]; i++)
 					if (retrieveID2(tepai[cpos][i]) == (unsigned char)response)
 					{
@@ -1091,7 +1085,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 			//荣和、吃、碰、大明杠判定
 			//因为minChance可能发生多线程调用，所以利用CriticalSection进行互斥，在可靠的网络条件下 可以采用等待所有minChance返回，也可以先到先得
 			int nxtpos = (cpos + 1) % 4;
-			if (!(waitForIncomingEvent && waitingType == 2))
+			if (!(waitForIncomingEvent && waitingType == 2))	
 			{
 				if (paiout.type == 'M' || paiout.type == 'S' || paiout.type == 'P')
 				{
@@ -1409,7 +1403,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 		evcore.broadcast(ai::init);
 		startMatchMid2();
 	}
-	void __stdcall match::receiveEvent(int clientId, unsigned int response)
+	void match::receiveEvent(int clientId, unsigned int response)
 	{
 		if (clientId == -1)
 		{
@@ -1446,3 +1440,14 @@ void match::pushbackKawa(int pos, pai& paiout)
 			break;
 		}
 	}
+
+match::match()
+{
+	this->core->init();
+	this->core->setMatching(this);
+}
+
+match::~match()
+{
+	this->core->deinit();
+}

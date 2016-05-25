@@ -4,22 +4,27 @@
 #include "SimpleAI.h"
 #include "MemoryLeakMonitor.h"
 #include "ModernMemoryAllocator.h"
-
 #include "EventBus.h"
 
-DWORD WINAPI workingThread(LPVOID param);
+DWORD __stdcall workingThread(LPVOID param);
 
-	DWORD WINAPI eb::workingThreadInternal()
+void eb::assignClient(int id, EventBusUser* client)
+{
+	clientType[id] = ct::local_user;
+	clientHandle[id] = client;
+}
+
+DWORD eb::workingThreadInternal()
 	{
 		while (working)
 		{
 			WaitForSingleObject(sema, INFINITE);
-			EnterCriticalSection(&evt);
+			evt.enter();
 			while (!evtQueue.empty())
 			{
 				ebEvent eEvt = evtQueue.front();
 				evtQueue.pop();
-				evtFunc(evtParam, eEvt.id, eEvt.response);
+				currentMatch -> receiveEvent(eEvt.id, eEvt.response);
 				while (!msgQueue.empty())
 				{
 					ebRequest eq;
@@ -30,7 +35,7 @@ DWORD WINAPI workingThread(LPVOID param);
 				}
 				//Sleep(30);
 			}
-			LeaveCriticalSection(&evt);
+			evt.leave();
 		}
 		//TerminateProcess((HANDLE)-1, 0);
 		return 0;
@@ -99,7 +104,8 @@ DWORD WINAPI workingThread(LPVOID param);
 	}
 	void eb::roll_internal()
 	{
-		int m = clientType[0], n = clientHandle[0];
+		int m = clientType[0];
+		EventBusUser* n = clientHandle[0];
 		clientType[0] = clientType[1];
 		clientType[1] = clientType[2];
 		clientType[2] = clientType[3];
@@ -134,33 +140,32 @@ DWORD WINAPI workingThread(LPVOID param);
 	}
 	void eb::clear()
 	{
-		EnterCriticalSection(&evt);
+		evt.enter();
 		evtQueue = {};
 		msgQueue = {};
-		LeaveCriticalSection(&evt);
+		evt.leave();
 	}
 	void eb::init()
 	{
 		e1 = new std::default_random_engine((unsigned int)(std::chrono::system_clock::now().time_since_epoch().count()));
 		mma::init();
 		working = true;
-		InitializeCriticalSection(&evt);
+		evt.create();
 		sema = CreateSemaphore(NULL, 0, 64, NULL);
 		memset(clientType, 0, sizeof clientType);
 		memset(clientHandle, 0, sizeof clientHandle);
 	}
 	void eb::deinit()
 	{
-		EnterCriticalSection(&evt);
-		LeaveCriticalSection(&evt); //空的一对许可区请求，完成当前许可区操作
-		DeleteCriticalSection(&evt);
+		evt.waitForComplete();
+		evt.release();
 		CloseHandle(sema);
 		delete e1;
 		mma::deinit();
 	}
-	void eb::receiveEvent(int hClient, int response)
+	void eb::receiveEvent(EventBusUser* hClient, int response)
 	{
-		EnterCriticalSection(&evt);
+		evt.enter();
 		int cId = -1;
 		for (int i = 0; i<4; i++)
 			if (hClient == clientHandle[i])
@@ -169,7 +174,7 @@ DWORD WINAPI workingThread(LPVOID param);
 		eEvt.id = cId;
 		eEvt.response = response;
 		evtQueue.push(eEvt);
-		LeaveCriticalSection(&evt);
+		evt.leave();
 		ReleaseSemaphore(sema, 1, NULL);
 	}
 	void eb::completeRequest(const ebRequest& rq)
@@ -195,10 +200,8 @@ DWORD WINAPI workingThread(LPVOID param);
 		switch (clientType[rq.id])
 		{
 		case ct::local_ai:
-			if (rq.payload == NULL)
-				result = ai[clientHandle[rq.id]].aiMessage(rq.msgType, rq.par1, rq.par2, &hasReturn);
-			else
-				result = ai[clientHandle[rq.id]].aiMessage(rq.msgType, rq.par1, (int)(rq.payload), &hasReturn);
+		case ct::local_user:
+			result = clientHandle[rq.id]->aiMessage(rq.msgType, rq.par1, rq.par2, &hasReturn, rq.payload);
 			if (hasReturn)
 			{
 				ebEvent eEvt;
@@ -206,28 +209,6 @@ DWORD WINAPI workingThread(LPVOID param);
 				eEvt.response = result;
 				evtQueue.push(eEvt);
 			}
-			break;
-		case ct::remote:
-			if(customRemoteFuncEnabled)
-			{
-				if (rq.payload == NULL)
-					customRemoteFunc(crfParam, clientHandle[rq.id], rq.msgType, rq.par1, rq.par2, 0);
-				else
-					customRemoteFunc(crfParam, clientHandle[rq.id], rq.msgType, rq.par1, (int)rq.payload, rq.lpayload);
-				break;
-			}
-			else {
-				if (rq.payload == NULL)
-					net.server_send(clientHandle[rq.id], rq.msgType, rq.par1, rq.par2);
-				else
-					net.server_send(clientHandle[rq.id], rq.msgType, rq.par1, 0, rq.payload, rq.lpayload);
-				break;
-			}
-		case ct::local_user:
-			if (rq.payload == NULL)
-				((aiFunc)clientHandle[rq.id])(rq.msgType, rq.par1, rq.par2);
-			else
-				((aiFunc)clientHandle[rq.id])(rq.msgType, rq.par1, (int)rq.payload);
 			break;
 		}
 		if (rq.payload != NULL)
@@ -243,74 +224,15 @@ DWORD WINAPI workingThread(LPVOID param);
 		send(-1, 3);
 	}
 	
-	void eb::debug()
-	{
-		clientType[0] = ct::local_ai;
-		clientType[1] = ct::local_ai;
-		clientType[2] = ct::local_ai;
-		clientType[3] = ct::local_ai;
-		clientHandle[0] = 0;
-		clientHandle[1] = 1;
-		clientHandle[2] = 2;
-		clientHandle[3] = 3;
-	}
-	void eb::startSinglePlayer(aiFunc uiFunc)
+	bool eb::run()
 	{
 		working = true;
-		clientType[0] = ct::local_ai;
-		clientType[1] = ct::local_ai;
-		clientType[2] = ct::local_ai;
-		clientType[3] = ct::local_user;
-		clientHandle[0] = 0;
-		clientHandle[1] = 1;
-		clientHandle[2] = 2;
-		clientHandle[3] = (int)uiFunc;
 		shuffle_internal();
-	}
-	void eb::startMultiPlayer(void* uiFunc, int* playerSocket, int playerCount)
-	{
-		working = true;
-		int index;
-		if (uiFunc == NULL)
-			index = 0;
-		else {
-			index = 1;
-			clientType[0] = ct::local_user;
-			clientHandle[0] = (int)uiFunc;
-		}
-		for (int i = 0; i<playerCount; i++)
-		{
-			clientType[index] = ct::remote;
-			clientHandle[index] = (int)playerSocket[i];
-			index++;
-		}
-		for (int i = 0; i<3 - playerCount + ((uiFunc == NULL)?1:0); i++)
-		{
-			clientType[index] = ct::local_ai;
-			clientHandle[index] = i;
-			index++;
-		}
-		shuffle_internal();
-	}
-
-	bool eb::run(void* evtFoo, LPVOID evtP)
-	{
-		working = true;
-		evtFunc = (evtDealer)evtFoo;
-		evtParam = evtP;
 		HANDLE hThread = CreateThread(NULL, 0, &workingThread, this, 0, &threadId);
 		if (hThread == 0)
 			return false;
 		CloseHandle(hThread);
 		return true;
-	}
-
-	void eb::runAwait(void* evtFoo, LPVOID evtP)
-	{
-		working = true;
-		evtFunc = (evtDealer)evtFoo;
-		evtParam = evtP;
-		workingThreadInternal();
 	}
 
 	bool eb::waitUntilEnd()
@@ -327,21 +249,12 @@ DWORD WINAPI workingThread(LPVOID param);
 		return true;
 	}
 
-	void eb::setCustomRemoteFunc(void* scrf, LPVOID param)
+	void eb::setMatching(MatchingUser* proceedMatch)
 	{
-		crfParam = param;
-		if(scrf == NULL)
-		{
-			customRemoteFuncEnabled = false;
-			customRemoteFunc = NULL;
-		}
-		else {
-			customRemoteFuncEnabled = true;
-			customRemoteFunc = (crf)scrf;
-		}
+		currentMatch = proceedMatch;
 	}
 
-DWORD WINAPI workingThread(LPVOID param)
+DWORD __stdcall workingThread(LPVOID param)
 {
 	return ((eb*)param)->workingThreadInternal();
 }

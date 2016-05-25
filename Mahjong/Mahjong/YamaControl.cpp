@@ -6,14 +6,14 @@
 
 Yama::Yama()
 {
-	e1 = NULL;
-	yama = NULL;
-	cpos = yamacnt = kancount = 0;
 }
 	void Yama::initalize_internal_func(int paiCnt)
 	{
 		if (e1 != NULL)
+		{
 			delete e1;
+			e1 = NULL;
+		}
 		if (yama != NULL)
 			finalize();
 		e1 = new std::default_random_engine((unsigned int)(std::chrono::system_clock::now().time_since_epoch().count()));

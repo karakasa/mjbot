@@ -40,6 +40,17 @@ const int funpai[7] = { 'D','N','X','B','W','F','Z' };
 #define TRAIT_AKARIPAI 2
 #define TRAIT_OPEN 4
 
+// 接口虚类定义
+class EventBusUser {
+public:
+	virtual int aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn, void* payload) = 0;
+};
+
+class MatchingUser {
+public:
+	virtual void receiveEvent(int clientId, unsigned int response) = 0;
+};
+
 //牌数据结构。type 为颜色，分'M','S','P','D','N','X','B','W','F','Z'，这几种；fig 为数字；trait 为特征（包括赤等）
 struct pai {
 	unsigned char type;
@@ -246,7 +257,7 @@ struct ebRequest
 struct client
 {
 	int clientType;
-	int clientHandle;
+	EventBusUser* clientHandle;
 };
 
 // EventBus 事件
@@ -266,10 +277,6 @@ namespace ct {
 		remote
 	};
 }
-
-typedef void(__stdcall *aiFunc)(unsigned char, int, int);
-typedef void(__stdcall *evtDealer)(LPVOID, int, unsigned int);
-typedef void(__stdcall *crf)(LPVOID, unsigned int, unsigned char, int, int, int);
 
 const char ji[4] = { 'D','N','X','B' };
 

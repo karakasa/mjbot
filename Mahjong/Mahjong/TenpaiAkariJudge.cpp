@@ -1407,8 +1407,6 @@
 				//(resultEx->t)[(resultEx->cnt)++] = paiff;
 		}
 		reset();
-		if (tenpai_mianshu == 0)
-			;
 		mentsu* tmentsu = mentsutachi.tail, *tmentsu2;
 		while (tmentsu != NULL)
 		{

@@ -7,6 +7,8 @@
 #include "TenpaiAkariJudge.h"
 #include "YamaControl.h"
 #include "MemoryLeakMonitor.h"
+#include "EventBus.h"
+#include "Matching.h"
 using namespace std;
 
 int main()
@@ -17,12 +19,19 @@ int main()
 	pai pais[20];
 	int paiSafeLen = 16;
 
+	bool simu = false;
+
 	while (true)
 	{
 		paiSafeLen = 18;
 		cin >> paiStr;
 		if (paiStr == "exit")
 			break;
+		if (paiStr == "simu")
+		{
+			simu = true;
+			break;
+		}
 		int paiLen = convertPaiStringPrepare(paiStr);
 		if(paiLen <= 0 || paiLen > 14)
 		{
@@ -126,6 +135,23 @@ int main()
 			}
 		}
 	}
+
+	if (simu)
+	{
+		int p = GetTickCount();
+		SimpleAI sai[4];
+		match* testRun = new match();
+		for (int i = 0; i < 4; i++)
+			testRun->core->assignClient(i, &(sai[i]));
+		testRun->core->run();
+		testRun->core->receiveEvent(NULL, 1);
+		testRun->core->waitUntilEnd();
+		delete testRun;
+		p = GetTickCount() - p;
+		cout << endl << p << endl;
+		cin >> paiSafeLen;
+	}
+
     return MemoryLeakMonitor::gc();
 }
 

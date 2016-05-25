@@ -49,7 +49,7 @@
 		}
 		int freepai = paicnt - 2 * (daiji - sange - sige) - 3 * sange - 4 * sige; // 自由牌（单张牌的数量）
 		int freepaiNeed = sange + sige * 2;                                       // 为了消解龙七对，所需的自由牌的数量
-		if (freepaiNeed > freepai)
+		if (freepaiNeed > freepai)                                                // 这个方法可能是对的
 			return 6 - daiji + freepaiNeed - freepai;
 		return 6 - daiji;
 	}

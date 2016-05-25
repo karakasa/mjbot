@@ -7,13 +7,13 @@
 class Yama
 {
 	private:
-		std::default_random_engine* e1;
+		std::default_random_engine* e1 = NULL;
 		const int kanpos[4] = { 128,126,124,122 };
 		void initalize_internal_func(int paiCnt);
 
 	public:
-		pai* yama;
-		int yamacnt, cpos, kancount;
+		pai* yama = NULL;
+		int yamacnt = 0, cpos = 0, kancount = 0;
 
 		Yama();
 

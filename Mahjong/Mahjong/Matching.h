@@ -10,7 +10,7 @@
 
 #define make_p1_start(x,y,z) (x)&((y)<<8)&((z)<<16)
 
-class match
+class match : public MatchingUser
 {
 private:
 	bool running = false;
@@ -99,10 +99,14 @@ private:
 public:
 	
 	// 从 EventBus 接收到消息，具体消息类型请参考源代码
-	void __stdcall receiveEvent(int clientId, unsigned int response);
+	void receiveEvent(int clientId, unsigned int response);
+
+	match();
+	~match();
 
 	Yama yama;
 	Syanten st;
 	taj tajcore;
 	eb evcore;
+	eb* core = &evcore;
 };

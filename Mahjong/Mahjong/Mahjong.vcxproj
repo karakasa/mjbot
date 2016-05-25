@@ -157,6 +157,7 @@
     <ClInclude Include="Matching.h" />
     <ClInclude Include="MemoryLeakMonitor.h" />
     <ClInclude Include="ModernMemoryAllocator.h" />
+    <ClInclude Include="PlatformAdapter.h" />
     <ClInclude Include="PublicFunction.h" />
     <ClInclude Include="SimpleAI.h" />
     <ClInclude Include="SLWNetwork.h" />
@@ -173,6 +174,7 @@
     <ClCompile Include="Matching.cpp" />
     <ClCompile Include="MemoryLeakMonitor.cpp" />
     <ClCompile Include="ModernMemoryAllocator.cpp" />
+    <ClCompile Include="PlatformAdapter.cpp" />
     <ClCompile Include="PublicFunction.cpp" />
     <ClCompile Include="SimpleAI.cpp" />
     <ClCompile Include="SLWNetwork.cpp" />

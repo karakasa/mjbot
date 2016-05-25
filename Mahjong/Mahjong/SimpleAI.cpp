@@ -66,9 +66,8 @@ int SimpleAI::toID3(int p)
 }
 
 
-int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn)
+int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn, void* payload)
 {
-	//printf("%d %d %d\n",msgType,par1,par2);
 	unsigned char* p;
 	int mSyanten = 9, paiId, paiIndex = 0;
 
@@ -91,7 +90,7 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 		memset(uCanSee, 0, sizeof(uCanSee));
 		break;
 	case ai::initalizeTehai:
-		p = (unsigned char*)par2;
+		p = (unsigned char*)payload;
 		for (int i = 0; i<13; i++)
 		{
 			retrievePai3(&tepai[i], p[i]);
@@ -182,7 +181,6 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 				int jinzhangId = -1;
 				for (int i = 0; i<pcnt; i++)
 				{
-					//outputDebug('b');
 					if (compare_pai(tepai[i], p))
 						continue;
 					for (int j = 0; j<i; j++)
@@ -207,12 +205,10 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 					tepai[jinzhangId] = p;
 					std::sort(tepai + 0, tepai + pcnt, paiSort);
 					*hasReturn = true;
-					//printf("evtDone\n");
 					return c;
 				}
 			}
 			*hasReturn = true;
-			//printf("evtDone\n");
 			return(0xFFFFFFFF);
 		}
 		else
@@ -225,11 +221,9 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 				printf("%d : %d: RIICHI!\n", ciid, cid);
 				riichi = true;
 				*hasReturn = true;
-				//printf("evtDone\n");
 				return 0xfd000200 | paiId;
 			}
 			*hasReturn = true;
-			//printf("evtDone\n");
 			return paiId;
 		}
 	}
@@ -258,8 +252,6 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 			tepai[i - 1] = tepai[i];
 		pcnt--;
 		*hasReturn = true;
-		//printf("SPECIAL 2 %d:", cid);
-		//outputPais(tepai, pcnt);
 		return paiId;
 	}
 	break;
@@ -300,8 +292,6 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 					pcnt -= 2;
 					break;
 				}
-			//printf("SPECIAL 1 %d:", cid);
-			//outputPais(tepai, pcnt);
 			return 0;
 		}
 		switch ((par1 & 0xf0) >> 4)
@@ -331,7 +321,7 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 		break;
 	case ai::finish:
 	{
-		ai::AKARI* hele = (ai::AKARI*)par2;
+		ai::AKARI* hele = (ai::AKARI*)payload;
 		for (int j = 0; j<par1; j++)
 		{
 			if (hele[j].to == (unsigned int)cid)
@@ -349,9 +339,9 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 				printf("\n");
 				for (int i = 0; i<hele[j].yakucnt; i++)
 				{
-					printf("%s %d\n", yakuname[hele[j].yaku_id[i] - 1], hele[j].yaku_fan[i]);
+					printf("%s %d\n", yakuname[hele[j].yaku_id[i]], hele[j].yaku_fan[i]);
 				}
-				printf("%d¡¤? %d¡¤? %d??\n", hele[j].fan, hele[j].huu, hele[j].pt);
+				printf("%d ·­ %d ·û %d µã\n", hele[j].fan, hele[j].huu, hele[j].pt);
 			}
 			if (hele[j].from == (unsigned int)cid && hele[j].from != hele[j].to)
 			{
@@ -376,7 +366,7 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 		break;
 	case ai::scoreChange:
 	{
-		int* sc = (int*)par2;
+		int* sc = (int*)payload;
 		printf("%d: new point: %d\n", cid, sc[cid]);
 	}
 	break;

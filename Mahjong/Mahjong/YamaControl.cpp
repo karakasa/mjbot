@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "PublicFunction.h"
 #include "MemoryLeakMonitor.h"
@@ -103,7 +103,7 @@ Yama::Yama()
 
 		std::random_shuffle(yama + 0, yama + yamacnt, [this](int i) {return (*e1)() % i;});
 
-		open_pai(130); //·­µÚÒ»ÕÅDORAÖ¸Ê¾ÅÆ
+		open_pai(130); //ç¿»ç¬¬ä¸€å¼ DORAæŒ‡ç¤ºç‰Œ
 	}
 	bool Yama::swap(int ID1, int ID2)
 	{

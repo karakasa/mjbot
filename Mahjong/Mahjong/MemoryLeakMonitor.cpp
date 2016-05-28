@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 #ifdef _DEBUG
 //Only valid when mode is 'Debug' not 'Release'

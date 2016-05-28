@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "PublicFunction.h"
 #include "SimpleAI.h"
@@ -66,7 +66,7 @@ int SimpleAI::toID3(int p)
 }
 
 
-int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn, void* payload)
+int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn, void* payload) 
 {
 	unsigned char* p;
 	int mSyanten = 9, paiId, paiIndex = 0;
@@ -341,7 +341,7 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 				{
 					printf("%s %d\n", yakuname[hele[j].yaku_id[i]], hele[j].yaku_fan[i]);
 				}
-				printf("%d ·­ %d ·û %d µã\n", hele[j].fan, hele[j].huu, hele[j].pt);
+				printf("%d ç¿» %d ç¬¦ %d ç‚¹\n", hele[j].fan, hele[j].huu, hele[j].pt);
 			}
 			if (hele[j].from == (unsigned int)cid && hele[j].from != hele[j].to)
 			{

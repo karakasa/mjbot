@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "PublicFunction.h"
 #include "SyanTen.h"
@@ -47,9 +47,9 @@
 				i--;
 			}
 		}
-		int freepai = paicnt - 2 * (daiji - sange - sige) - 3 * sange - 4 * sige; // ×ÔÓÉÅÆ£¨µ¥ÕÅÅÆµÄÊıÁ¿£©
-		int freepaiNeed = sange + sige * 2;                                       // ÎªÁËÏû½âÁúÆß¶Ô£¬ËùĞèµÄ×ÔÓÉÅÆµÄÊıÁ¿
-		if (freepaiNeed > freepai)                                                // Õâ¸ö·½·¨¿ÉÄÜÊÇ¶ÔµÄ
+		int freepai = paicnt - 2 * (daiji - sange - sige) - 3 * sange - 4 * sige; // è‡ªç”±ç‰Œï¼ˆå•å¼ ç‰Œçš„æ•°é‡ï¼‰
+		int freepaiNeed = sange + sige * 2;                                       // ä¸ºäº†æ¶ˆè§£é¾™ä¸ƒå¯¹ï¼Œæ‰€éœ€çš„è‡ªç”±ç‰Œçš„æ•°é‡
+		if (freepaiNeed > freepai)                                                // è¿™ä¸ªæ–¹æ³•å¯èƒ½æ˜¯å¯¹çš„
 			return 6 - daiji + freepaiNeed - freepai;
 		return 6 - daiji;
 	}
@@ -352,7 +352,7 @@
 		return syanten;
 	}
 
-	int Syanten::calculateSyanten(const pai* tpai, const int paicnt, bool normalonly) //²ÎÊı±¾ÉíÒÑ¾­ÊÇÓĞĞòµÄÁË
+	int Syanten::calculateSyanten(const pai* tpai, const int paicnt, bool normalonly) //å‚æ•°æœ¬èº«å·²ç»æ˜¯æœ‰åºçš„äº†
 	{
 		int kokushi, chiitoi;
 		if (!normalonly)
@@ -361,7 +361,7 @@
 			chiitoi = calculateChiitoitsu(tpai, paicnt);
 			if (kokushi == 0 || chiitoi == 0)
 				return 0;
-			if (kokushi == 1 || chiitoi == 1) //²»¿ÉÄÜ½éÓÚ0ºÍ1ÏòÌıÖ®¼ä
+			if (kokushi == 1 || chiitoi == 1) //ä¸å¯èƒ½ä»‹äº0å’Œ1å‘å¬ä¹‹é—´
 					return 1;
 			int pshi = normalCalculate(tpai, paicnt) - 1;
 			return min(min(kokushi, chiitoi), pshi);

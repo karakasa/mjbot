@@ -1,7 +1,7 @@
-#pragma once
+﻿#pragma once
 
-// �����м�㡣
-// ����ʵ�����������⣬��Ҫ��д��
+// 网络中间层。
+// 现在实现有若干问题，需要重写。
 
 #include "stdafx.h"
 class slw

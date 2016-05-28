@@ -1,16 +1,16 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "MemoryLeakMonitor.h"
 #include "CQueue.h"
 
 	template <typename T>
 	void CQueue<T>::init(int init, int start)
 	{
-		size = init; //³õÊ¼´óĞ¡
+		size = init; //åˆå§‹å¤§å°
 		base = new T[size];
 		if (!base) {
 			size = 0;
 			return;
-		};//´æ´¢·ÖÅäÊ§°Ü
+		};//å­˜å‚¨åˆ†é…å¤±è´¥
 		MemoryLeakMonitor::addMonitor(base, sizeof(T)*size, "CQUEUE_INIT");
 		pos = 0;
 		startId = start;

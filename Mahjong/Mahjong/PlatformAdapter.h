@@ -1,6 +1,6 @@
-#pragma once
+﻿#pragma once
 
-// ��������ƽ̨���죬����Ǩ�Ƶ���ͬƽ̨
+// 用于屏蔽平台差异，方便迁移到不同平台
 
 class MemoryPool
 {

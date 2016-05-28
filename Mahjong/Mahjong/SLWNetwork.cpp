@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "PublicFunction.h"
 #include "CQueue.h"
@@ -24,10 +24,10 @@ namespace slw
 	CRITICAL_SECTION clientEvent;
 	CRITICAL_SECTION serverEvent;
 
-	//²ÎÊı1: Ì×½Ó×Ö¾ä±ú£¬²ÎÊı2: ÏûÏ¢ÀàĞÍ£¬²ÎÊı3: ÏûÏ¢²ÎÊı1£¬²ÎÊı4: ÏûÏ¢²ÎÊı1£¬²ÎÊı5£¬Payload Ö¸Õë£¬²ÎÊı6£¬Payload ³¤¶È
+	//å‚æ•°1: å¥—æ¥å­—å¥æŸ„ï¼Œå‚æ•°2: æ¶ˆæ¯ç±»å‹ï¼Œå‚æ•°3: æ¶ˆæ¯å‚æ•°1ï¼Œå‚æ•°4: æ¶ˆæ¯å‚æ•°1ï¼Œå‚æ•°5ï¼ŒPayload æŒ‡é’ˆï¼Œå‚æ•°6ï¼ŒPayload é•¿åº¦
 	typedef bool(WINAPI *evtServer)(int, int, int, int, void*, int);
 
-	//²ÎÊı1: ÏûÏ¢ÀàĞÍ£¬²ÎÊı2: ÏûÏ¢²ÎÊı1£¬²ÎÊı3: ÏûÏ¢²ÎÊı1£¬²ÎÊı4£¬Payload Ö¸Õë£¬²ÎÊı5£¬Payload ³¤¶È
+	//å‚æ•°1: æ¶ˆæ¯ç±»å‹ï¼Œå‚æ•°2: æ¶ˆæ¯å‚æ•°1ï¼Œå‚æ•°3: æ¶ˆæ¯å‚æ•°1ï¼Œå‚æ•°4ï¼ŒPayload æŒ‡é’ˆï¼Œå‚æ•°5ï¼ŒPayload é•¿åº¦
 	typedef bool(WINAPI *evtClient)(int, int, int, void*, int);
 	evtServer serverFunc = NULL;
 	evtClient clientFunc = NULL;
@@ -75,7 +75,7 @@ namespace slw
 			EnterCriticalSection(&serverEvent);
 		//Deal with  Msg Here
 		if (serverFunc != NULL)
-			if (serverFunc((int)client, -2, 0, 0, NULL, 0) == false) //¿Í»§½øÈë
+			if (serverFunc((int)client, -2, 0, 0, NULL, 0) == false) //å®¢æˆ·è¿›å…¥
 			{
 				closesocket(client);
 				return 0;
@@ -211,7 +211,7 @@ namespace slw
 				EnterCriticalSection(&serverEvent);
 			//Deal with  Msg Here
 			if (serverFunc != NULL)
-				serverFunc((int)client, -1, 0, 0, NULL, 0); //¿Í»§Àë¿ª
+				serverFunc((int)client, -1, 0, 0, NULL, 0); //å®¢æˆ·ç¦»å¼€
 			if (managedLock)
 				LeaveCriticalSection(&serverEvent);
 		}

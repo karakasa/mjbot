@@ -1,4 +1,4 @@
-// Mahjong.cpp : ¶¨Òå¿ØÖÆÌ¨Ó¦ÓÃ³ÌĞòµÄÈë¿Úµã¡£
+ï»¿// Mahjong.cpp : å®šä¹‰æ§åˆ¶å°åº”ç”¨ç¨‹åºçš„å…¥å£ç‚¹ã€‚
 //
 
 #include "stdafx.h"
@@ -13,6 +13,8 @@ using namespace std;
 
 int main()
 {
+
+
 	Syanten engineSyanten;
 	taj engineTaj;
 	string paiStr;
@@ -35,7 +37,7 @@ int main()
 		int paiLen = convertPaiStringPrepare(paiStr);
 		if(paiLen <= 0 || paiLen > 14)
 		{
-			cerr << "·Ç·¨µÄÊäÈë¡£" << endl;
+			cerr << "éæ³•çš„è¾“å…¥ã€‚" << endl;
 		}
 		else {
 			switch (paiLen % 3)
@@ -47,10 +49,10 @@ int main()
 						int k = engineSyanten.calculateSyanten(pais, paiLen);
 						if (k > 0)
 						{
-							cout << k << " ÏòÌı¡£" << endl;
+							cout << k << " å‘å¬ã€‚" << endl;
 						}
 						else {
-							cout << "ÌıÅÆ£º";
+							cout << "å¬ç‰Œï¼š";
 							judgeRequest jrq;
 							judgeResult jrs;
 							jrq.paicnt = paiLen;
@@ -85,7 +87,7 @@ int main()
 						fuludCnt = convertPaiStringPrepare(fulud);
 						if (fuludCnt != 3 && fuludCnt != 4)
 						{
-							cout << "¸±Â¶ " << i << " ²»ºÏ·¨¡£" << endl;
+							cout << "å‰¯éœ² " << i << " ä¸åˆæ³•ã€‚" << endl;
 							failed = true;
 							break;
 						}
@@ -93,7 +95,7 @@ int main()
 						convertPaiString(fulud, fulu, &fuludCnt);
 						if (fuludCntReserved == 4)
 						{
-							cout << "°µ¸ÜÓë·ñ£¿(y/n)";
+							cout << "æš—æ ä¸å¦ï¼Ÿ(y/n)";
 							char p;
 							cin >> p;
 							jrq.fulus[i].type = (p == 'y') ? mentsu_KEZ_KANG_S : mentsu_KEZ_KANG_A;
@@ -118,19 +120,19 @@ int main()
 					{
 						break;
 					}
-					cout << "ÈÙºÍÓë·ñ£¿(y/n)";
+					cout << "è£å’Œä¸å¦ï¼Ÿ(y/n)";
 					char p;
 					cin >> p;
 					cout << endl;
 					jrq.akari_status = (p == 'y') ? RON : TSUMO;
 					engineTaj.tenpai_detect(&jrq, &jrs);
-					cout << jrs.yakutotal << " ·­ " << jrs.huutotal << " ·û " << jrs.basicpt << " »ù±¾µã" << endl;
+					cout << jrs.yakutotal << " ç¿» " << jrs.huutotal << " ç¬¦ " << jrs.basicpt << " åŸºæœ¬ç‚¹" << endl;
 					for (int i = 0; i < jrs.yakucnt; i++)
-						cout << yakuname[jrs.yakuid[i]] << " " << jrs.pt[i] << " ·­" << endl;
+						cout << yakuname[jrs.yakuid[i]] << " " << jrs.pt[i] << " ç¿»" << endl;
 					break;
 				}
 				default:
-					cerr << "·Ç·¨µÄÊäÈë¡£" << endl;
+					cerr << "éæ³•çš„è¾“å…¥ã€‚" << endl;
 					break;
 			}
 		}

@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-// ÊµÏÖÁËÊÂ¼şµ÷¶È
+// å®ç°äº†äº‹ä»¶è°ƒåº¦
 
 #include "SLWNetwork.h"
 #include "SimpleAI.h"
@@ -36,22 +36,22 @@ private:
 	void shuffle();
 
 public:
-	// ³õÊ¼»¯ EventBus
-	// ·µ»ØÖµ: ÎŞ
+	// åˆå§‹åŒ– EventBus
+	// è¿”å›å€¼: æ— 
 	void init();
 
-	// ÊÍ·Å EventBus
-	// ·µ»ØÖµ: ÎŞ
+	// é‡Šæ”¾ EventBus
+	// è¿”å›å€¼: æ— 
 	void deinit();
 
-	// Çå¿ÕÏûÏ¢¶ÓÁĞ£¨²»½¨ÒéÖ±½Óµ÷ÓÃ£©
-	// ·µ»ØÖµ: ÎŞ
+	// æ¸…ç©ºæ¶ˆæ¯é˜Ÿåˆ—ï¼ˆä¸å»ºè®®ç›´æ¥è°ƒç”¨ï¼‰
+	// è¿”å›å€¼: æ— 
 	void clear();
 
-	// ·¢ËÍ/¹ã²¥ÏûÏ¢£¨²»½¨ÒéÖ±½Óµ÷ÓÃ£©
-	// id : ¿Í»§ ID£¬´Ó 0 - 3
-	// ÆäËû²ÎÊı²Î¿¼ aiMessage ÖĞ½Ó¿Ú¶¨Òå
-	// ·µ»ØÖµ: ÎŞ
+	// å‘é€/å¹¿æ’­æ¶ˆæ¯ï¼ˆä¸å»ºè®®ç›´æ¥è°ƒç”¨ï¼‰
+	// id : å®¢æˆ· IDï¼Œä» 0 - 3
+	// å…¶ä»–å‚æ•°å‚è€ƒ aiMessage ä¸­æ¥å£å®šä¹‰
+	// è¿”å›å€¼: æ— 
 	void send(int id, unsigned char msgType, unsigned int par1, unsigned int par2);
 	void send(int id, unsigned char msgType, unsigned int par1);
 	void send(int id, unsigned char msgType);
@@ -61,36 +61,36 @@ public:
 	void broadcast(unsigned char msgType, unsigned int par1);
 	void broadcast(unsigned char msgType);
 
-	// ÊÕµ½Ô¶³Ì·µ»ØÖµ£¬²¢¼ÓÈë·µ»ØÖµ´¦Àí¶ÓÁĞ¡£ÓÉÍâ²¿µ÷ÓÃ¡£
-	// µäĞÍµÄÇé¿ö°üÀ¨£¬Ô¶³Ì·¢À´µÄÊı¾İ£¬½çÃæÊÂ¼şµÈ
-	// hClient : ¿Í»§¾ä±ú
-	// response : ·µ»ØÖµ
-	// ·µ»ØÖµ: ÎŞ
+	// æ”¶åˆ°è¿œç¨‹è¿”å›å€¼ï¼Œå¹¶åŠ å…¥è¿”å›å€¼å¤„ç†é˜Ÿåˆ—ã€‚ç”±å¤–éƒ¨è°ƒç”¨ã€‚
+	// å…¸å‹çš„æƒ…å†µåŒ…æ‹¬ï¼Œè¿œç¨‹å‘æ¥çš„æ•°æ®ï¼Œç•Œé¢äº‹ä»¶ç­‰
+	// hClient : å®¢æˆ·å¥æŸ„
+	// response : è¿”å›å€¼
+	// è¿”å›å€¼: æ— 
 	void receiveEvent(EventBusUser* hClient, int response);
 
-	// Ïò¿Í»§·¢ËÍÒ»ÌõÏûÏ¢£¨³ıÌØÊâÇé¿öÍâ£¬²»½¨ÒéÖ±½Óµ÷ÓÃ£©
-	// rq : ÏûÏ¢
-	// ·µ»ØÖµ: ÎŞ
+	// å‘å®¢æˆ·å‘é€ä¸€æ¡æ¶ˆæ¯ï¼ˆé™¤ç‰¹æ®Šæƒ…å†µå¤–ï¼Œä¸å»ºè®®ç›´æ¥è°ƒç”¨ï¼‰
+	// rq : æ¶ˆæ¯
+	// è¿”å›å€¼: æ— 
 	void completeRequest(const ebRequest& rq);
 
-	// ¿ªÊ¼ÓÎÏ·£¬ÉèÖÃÍêÓÎÏ·Ä£Ê½ºóÒª¿ªÊ¼²Å»á¿ªÊ¼¡£¸Ãº¯Êı»áÁ¢¼´·µ»Ø¡£
-	// ·µ»ØÖµ: ³É¹¦Óë·ñ
+	// å¼€å§‹æ¸¸æˆï¼Œè®¾ç½®å®Œæ¸¸æˆæ¨¡å¼åè¦å¼€å§‹æ‰ä¼šå¼€å§‹ã€‚è¯¥å‡½æ•°ä¼šç«‹å³è¿”å›ã€‚
+	// è¿”å›å€¼: æˆåŠŸä¸å¦
 	bool run();
 
-	// ÉèÖÃµ±Ç° EventBus ´¦ÀíµÄÈüÊÂ£¨ÄÚ²¿º¯Êı£©
-	// proceedMath : µ±Ç°µÄÈüÊÂ£¬ÊµÏÖÁË MatchingUser::receiveEvent º¯Êı£¬¾ßÌåÊµÏÖÇë²Î¿¼ match::receiveEvent
+	// è®¾ç½®å½“å‰ EventBus å¤„ç†çš„èµ›äº‹ï¼ˆå†…éƒ¨å‡½æ•°ï¼‰
+	// proceedMath : å½“å‰çš„èµ›äº‹ï¼Œå®ç°äº† MatchingUser::receiveEvent å‡½æ•°ï¼Œå…·ä½“å®ç°è¯·å‚è€ƒ match::receiveEvent
 	void setMatching(MatchingUser* proceedMatch);
 
-	// µÈ´ıµ±Ç°ÓÎÏ·½áÊøºó·µ»Ø¡£
-	// ·µ»ØÖµ : ÕæÎªÕı³£·µ»Ø£¬¼ÙÎªµ±Ç°Ã»ÓĞÓÎÏ·ÔÚ½øĞĞ¡£
+	// ç­‰å¾…å½“å‰æ¸¸æˆç»“æŸåè¿”å›ã€‚
+	// è¿”å›å€¼ : çœŸä¸ºæ­£å¸¸è¿”å›ï¼Œå‡ä¸ºå½“å‰æ²¡æœ‰æ¸¸æˆåœ¨è¿›è¡Œã€‚
 	bool waitUntilEnd();
 
-	// ÉèÖÃ×ª·¢/½ÓÊÕÊÂ¼şµÄ¿Í»§
-	// id : ¿Í»§ĞòºÅ
-	// client : ¶ÔÓ¦µÄÊµÏÖÁË EventBusUser ½Ó¿ÚµÄÀà
+	// è®¾ç½®è½¬å‘/æ¥æ”¶äº‹ä»¶çš„å®¢æˆ·
+	// id : å®¢æˆ·åºå·
+	// client : å¯¹åº”çš„å®ç°äº† EventBusUser æ¥å£çš„ç±»
 	void assignClient(int id, EventBusUser* client);
 
-	// ÄÚ²¿¹¤×÷Ïß³Ì£¬²»ÒªÖ±½Óµ÷ÓÃ¡£
+	// å†…éƒ¨å·¥ä½œçº¿ç¨‹ï¼Œä¸è¦ç›´æ¥è°ƒç”¨ã€‚
 	DWORD workingThreadInternal();
 
 	void roll();

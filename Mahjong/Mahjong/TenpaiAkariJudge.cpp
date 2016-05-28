@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "PublicFunction.h"
 #include "MemoryLeakMonitor.h"
@@ -115,7 +115,7 @@
 		if (yakuman && (yaku_id == 61 || yaku_id == 62) && !YAKU_DETAIL)
 			return;
 		if (current->yakutotal == 0)
-			if (yaku_id == 61 || yaku_id == 62) //DORA²»ËãÆğºÍ·­
+			if (yaku_id == 61 || yaku_id == 62) //DORAä¸ç®—èµ·å’Œç¿»
 				return;
 		yaku* yaku_tmp = new yaku;
 		MemoryLeakMonitor::addMonitor(yaku_tmp, sizeof(yaku), "YAKU_TMP CURRENT");
@@ -297,7 +297,7 @@
 	{
 		return (mc->start.fig == 1) || (mc->last.fig == 9);
 	}
-	int taj::is_sansya(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3) //·µ»Ø0Ôò²»ÊÇ£¬·µ»Ø1ÔòÎªÈıÉ«Í¨Ë³£¬·µ»Ø2ÔòÎªÈıÉ«Í¬¿Ì
+	int taj::is_sansya(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3) //è¿”å›0åˆ™ä¸æ˜¯ï¼Œè¿”å›1åˆ™ä¸ºä¸‰è‰²é€šé¡ºï¼Œè¿”å›2åˆ™ä¸ºä¸‰è‰²åŒåˆ»
 	{
 		bool sansya = false;
 		if (mc1->start.type == 'M' && mc2->start.type == 'S' && mc3->start.type == 'P') sansya = true;
@@ -323,23 +323,23 @@
 	void taj::calculate()
 	{
 
-		//ÉĞÎ´´¦ÀíÊäÈëµÄÃæ×ÓÊı²»×ãËÄ¸öµÄÇé¿ö
+		//å°šæœªå¤„ç†è¾“å…¥çš„é¢å­æ•°ä¸è¶³å››ä¸ªçš„æƒ…å†µ
 		mentsu *next1, *next2, *next3, *next4, *next;
 		int count_tmp = 0, sansyastatus = 0;
 		bool nipai;
 		bool yibeikou = false;
 
-		if (norelease && akari_status == TSUMO && jihuun == 'D') add_yaku(50, 13); //ÌìºÍ
-		if (norelease && akari_status == TSUMO && jihuun != 'D') add_yaku(51, 13); //µØºÍ
-		if (norelease && akari_status == RON) add_yaku(52, 13); //ÈËºÍ
+		if (norelease && akari_status == TSUMO && jihuun == 'D') add_yaku(50, 13); //å¤©å’Œ
+		if (norelease && akari_status == TSUMO && jihuun != 'D') add_yaku(51, 13); //åœ°å’Œ
+		if (norelease && akari_status == RON) add_yaku(52, 13); //äººå’Œ
 
 		if (jiisou)
-			add_yaku(45, 13);  //×ÖÒ»É«Çé¿ö Î¨Ò»Ò»¸ö¿ÉÒÔºÍÆß¶Ô×Ó¸´ºÏµÄÒÛÂú ËùÒÔÌáµ½Ç°ÃæÀ´
+			add_yaku(45, 13);  //å­—ä¸€è‰²æƒ…å†µ å”¯ä¸€ä¸€ä¸ªå¯ä»¥å’Œä¸ƒå¯¹å­å¤åˆçš„å½¹æ»¡ æ‰€ä»¥æåˆ°å‰é¢æ¥
 
 		next = (mentsutachi.first)->next;
 		if (pure_chiitoitsu && next == NULL)
 		{
-			add_yaku(29, 2);    //Æß¶Ô×Ó ÆäÓàÒÛ´ıÊµÏÖ
+			add_yaku(29, 2);    //ä¸ƒå¯¹å­ å…¶ä½™å½¹å¾…å®ç°
 			goto finish_stage;
 		}
 
@@ -350,24 +350,24 @@
 		if (next2 != NULL) next3 = next2->next; else goto finish_stage;
 		if (next3 != NULL) next4 = next3->next; else goto finish_stage;
 
-		//³£¹æÒÛÂúÅĞ¶¨
+		//å¸¸è§„å½¹æ»¡åˆ¤å®š
 		if (is_annkez(next1) && is_annkez(next2) && is_annkez(next3) && is_annkez(next4) && !fulu_status)
 		{
 			if ((taj::janto_now[0].trait&TRAIT_AKARIPAI) == TRAIT_AKARIPAI || (taj::janto_now[1].trait&TRAIT_AKARIPAI) == TRAIT_AKARIPAI)
-				add_yaku(55, 26); //ËÄ°µµ¥Æï
+				add_yaku(55, 26); //å››æš—å•éª‘
 			else if (akari_status == TSUMO)
-				add_yaku(42, 13); //ËÄ°µ
+				add_yaku(42, 13); //å››æš—
 		}
 		if (next->start.type == 'Z' || next2->start.type == 'Z' || next3->start.type == 'Z' || next4->start.type == 'Z')
 			if (next->start.type == 'W' || next2->start.type == 'W' || next3->start.type == 'W' || next4->start.type == 'W')
 				if (next->start.type == 'F' || next2->start.type == 'F' || next3->start.type == 'F' || next4->start.type == 'F')
-					add_yaku(43, 13); //´óÈıÔª
+					add_yaku(43, 13); //å¤§ä¸‰å…ƒ
 		if ((next->start.type == 'D' || next2->start.type == 'D' || next3->start.type == 'D' || next4->start.type == 'D') &&
 			(next->start.type == 'N' || next2->start.type == 'N' || next3->start.type == 'N' || next4->start.type == 'N') &&
 			(next->start.type == 'X' || next2->start.type == 'X' || next3->start.type == 'X' || next4->start.type == 'X') &&
 			(next->start.type == 'B' || next2->start.type == 'B' || next3->start.type == 'B' || next4->start.type == 'B'))
-			add_yaku(54, 26); //´óËÄÏ²
-							  //Ğ¡ËÄÏ²ÅĞ¶¨
+			add_yaku(54, 26); //å¤§å››å–œ
+							  //å°å››å–œåˆ¤å®š
 		if (taj::janto_now[0].type == 'D')
 			if (next->start.type == 'N' || next2->start.type == 'N' || next3->start.type == 'N' || next4->start.type == 'N')
 				if (next->start.type == 'X' || next2->start.type == 'X' || next3->start.type == 'X' || next4->start.type == 'X')
@@ -388,8 +388,8 @@
 				if (next->start.type == 'X' || next2->start.type == 'X' || next3->start.type == 'X' || next4->start.type == 'X')
 					if (next->start.type == 'D' || next2->start.type == 'D' || next3->start.type == 'D' || next4->start.type == 'D')
 						add_yaku(44, 13);
-		//Ğ¡ËÄÏ²ÅĞ¶¨½áÊø
-		//ÂÌÒ»É«ÅĞ¶¨¿ªÊ¼
+		//å°å››å–œåˆ¤å®šç»“æŸ
+		//ç»¿ä¸€è‰²åˆ¤å®šå¼€å§‹
 		switch (retrieveID(taj::janto_now[0]))
 		{
 		case 33:
@@ -398,7 +398,7 @@
 		case 12:
 		case 14:
 		case 16:
-			// È¸Í·ÊÇÂÌµÄ
+			// é›€å¤´æ˜¯ç»¿çš„
 			if (judge_ruiisou(next))
 				if (judge_ruiisou(next2))
 					if (judge_ruiisou(next3))
@@ -408,7 +408,7 @@
 		default:
 			break;
 		}
-		//ÂÌÒ»É«ÅĞ¶¨½áÊø
+		//ç»¿ä¸€è‰²åˆ¤å®šç»“æŸ
 		if (muuji)
 			if (isKez(next))
 				if (isKez(next2))
@@ -418,44 +418,44 @@
 								if (next2->start.fig == 1 || next2->start.fig == 9)
 									if (next3->start.fig == 1 || next3->start.fig == 9)
 										if (next4->start.fig == 1 || next4->start.fig == 9)
-											add_yaku(47, 13); //ÇåÀÏÍ·
+											add_yaku(47, 13); //æ¸…è€å¤´
 		if (pure_kyuurenboudo)
-			add_yaku(60, 26); //´¿Õı¾ÅÁ¬±¦µÆ
+			add_yaku(60, 26); //çº¯æ­£ä¹è¿å®ç¯
 		if (kyuurenboudo)
-			add_yaku(48, 13); //¾ÅÁ¬±¦µÆ
+			add_yaku(48, 13); //ä¹è¿å®ç¯
 		if (isKangz(next))
 			if (isKangz(next2))
 				if (isKangz(next3))
 					if (isKangz(next4))
-						add_yaku(49, 13); //ËÄ¸Ü×Ó
+						add_yaku(49, 13); //å››æ å­
 
 		if (yakuman && !YAKU_DETAIL)
 			goto finish_stage;
 
-		if (riichi && !wriichii) add_yaku(1, 1); //Á¢Ö±
-		if (wriichii) add_yaku(36, 2); //WÁ¢Ö±
-		if (ihatsu) add_yaku(2, 1); //Ò»·¢
-		if (akari_status == TSUMO && !fulu_status) add_yaku(3, 1); //ÃÅÇ°×ÔÃş
+		if (riichi && !wriichii) add_yaku(1, 1); //ç«‹ç›´
+		if (wriichii) add_yaku(36, 2); //Wç«‹ç›´
+		if (ihatsu) add_yaku(2, 1); //ä¸€å‘
+		if (akari_status == TSUMO && !fulu_status) add_yaku(3, 1); //é—¨å‰è‡ªæ‘¸
 		if (rinnsyo)
 		{
-			add_yaku(22, 1);    //ÁëÉÏ¿ª»¨
+			add_yaku(22, 1);    //å²­ä¸Šå¼€èŠ±
 			ignore_tsumo_huu = true;
 		}
-		if (tyankan) add_yaku(23, 1); //ÇÀ¸Ü
-		if (haidei) add_yaku(24, 1); //º£µ×
-		if (houdei) add_yaku(25, 1); //ºÓµ×
+		if (tyankan) add_yaku(23, 1); //æŠ¢æ 
+		if (haidei) add_yaku(24, 1); //æµ·åº•
+		if (houdei) add_yaku(25, 1); //æ²³åº•
 
 		if (danyo)
-			add_yaku(4, 1); //¶ÏçÛ
+			add_yaku(4, 1); //æ–­å¹º
 		if (isou && !jiisou)
 		{
 			if (muuji)
-				add_yaku(40, fulu_status ? 5 : 6); //ÇåÒ»É«
+				add_yaku(40, fulu_status ? 5 : 6); //æ¸…ä¸€è‰²
 			else
-				add_yaku(37, fulu_status ? 2 : 3); //»ìÒ»É«
+				add_yaku(37, fulu_status ? 2 : 3); //æ··ä¸€è‰²
 		}
 		if (laotou && !muuji && !jiisou)
-			add_yaku(34, 2); //»ìÀÏÍ·
+			add_yaku(34, 2); //æ··è€å¤´
 
 		count_tmp = 0;
 		if (isKangz(next1)) count_tmp++;
@@ -463,19 +463,19 @@
 		if (isKangz(next3)) count_tmp++;
 		if (isKangz(next4)) count_tmp++;
 		if (count_tmp == 3)
-			add_yaku(32, 2); //Èı¸Ü×Ó
+			add_yaku(32, 2); //ä¸‰æ å­
 		if (isKez(next1))
 			if (isKez(next2))
 				if (isKez(next3))
 					if (isKez(next4))
-						add_yaku(30, 2); //¶Ô¶Ô
+						add_yaku(30, 2); //å¯¹å¯¹
 		count_tmp = 0;
 		if (is_annkez(next1)) count_tmp++;
 		if (is_annkez(next2)) count_tmp++;
 		if (is_annkez(next3)) count_tmp++;
 		if (is_annkez(next4)) count_tmp++;
 		if (count_tmp == 3)
-			add_yaku(31, 2); //Èı°µ¿Ì
+			add_yaku(31, 2); //ä¸‰æš—åˆ»
 		if (!laotou)
 			if (is_daiyaojiu(next1))
 				if (is_daiyaojiu(next2))
@@ -484,11 +484,11 @@
 							if (taj::janto_now[0].fig == 1 || taj::janto_now[0].fig == 9)
 							{
 								if (muuji)
-									add_yaku(38, fulu_status ? 2 : 3); //´¿È«
+									add_yaku(38, fulu_status ? 2 : 3); //çº¯å…¨
 								else
-									add_yaku(28, fulu_status ? 1 : 2); //»ìÈ«
+									add_yaku(28, fulu_status ? 1 : 2); //æ··å…¨
 							}
-		// Ğ¡ÈıÔªÅĞ¶¨
+		// å°ä¸‰å…ƒåˆ¤å®š
 		if (taj::janto_now[0].type == 'Z')
 			if (next1->start.type == 'W' || next2->start.type == 'W' || next3->start.type == 'W' || next4->start.type == 'W')
 				if (next1->start.type == 'F' || next2->start.type == 'F' || next3->start.type == 'F' || next4->start.type == 'F')
@@ -501,8 +501,8 @@
 			if (next1->start.type == 'W' || next2->start.type == 'W' || next3->start.type == 'W' || next4->start.type == 'W')
 				if (next1->start.type == 'Z' || next2->start.type == 'Z' || next3->start.type == 'Z' || next4->start.type == 'Z')
 					add_yaku(35, 2);
-		// Ğ¡ÈıÔªÅĞ¶¨ÖÕÁË
-		// ÈıÉ«ÅĞ¶¨¿ªÊ¼
+		// å°ä¸‰å…ƒåˆ¤å®šç»ˆäº†
+		// ä¸‰è‰²åˆ¤å®šå¼€å§‹
 		sansyastatus = 0;
 		sansyastatus = is_sansya(next1, next2, next3);
 		if (sansyastatus != 0)
@@ -544,8 +544,8 @@
 					}
 				}
 			}
-		} //ÈıÉ«ÅĞ¶¨ÖÕÁË
-		  // Ò»ÆøÅĞ¶¨¿ªÊ¼
+		} //ä¸‰è‰²åˆ¤å®šç»ˆäº†
+		  // ä¸€æ°”åˆ¤å®šå¼€å§‹
 		if (is_iitsu(next1, next2, next3))
 			add_yaku(27, fulu_status ? 1 : 2);
 		else if (is_iitsu(next1, next2, next4))
@@ -554,28 +554,28 @@
 			add_yaku(27, fulu_status ? 1 : 2);
 		else if (is_iitsu(next2, next3, next4))
 			add_yaku(27, fulu_status ? 1 : 2);
-		// Ò»ÆøÅĞ¶¨ÖÕÁË
+		// ä¸€æ°”åˆ¤å®šç»ˆäº†
 		nipai = false;
 		if (chiitoitsu && !fulu_status)
 		{
-			//¶ş±­¿ÚÅĞ¶Ï
+			//äºŒæ¯å£åˆ¤æ–­
 			if (next->type == mentsu_SHUNZ && (next->next)->type == mentsu_SHUNZ && ((next->next)->next)->type == mentsu_SHUNZ && (((next->next)->next)->next)->type == mentsu_SHUNZ)
 			{
-				//ËÄ¸ö°µË³ÊÇ»ù´¡
+				//å››ä¸ªæš—é¡ºæ˜¯åŸºç¡€
 				if ((next->start).type == (next2->start).type)
 					if ((next3->start).type == (next4->start).type)
 						if ((next->start).fig == (next2->start).fig)
 							if ((next3->start).fig == (next4->start).fig)
 							{
-								//Àú¾¡Ç§ĞÁÍò¿à
-								add_yaku(39, 3); //¶ş±­¿Ú
+								//å†å°½åƒè¾›ä¸‡è‹¦
+								add_yaku(39, 3); //äºŒæ¯å£
 								nipai = true;
 							}
 			}
 		}
 		while (next != NULL)
 		{
-			if (!nipai) //Ò»±­¿ÚµÄÇ°Ìá:²»ÊÇ¶ş±­¿Ú
+			if (!nipai) //ä¸€æ¯å£çš„å‰æ:ä¸æ˜¯äºŒæ¯å£
 				if (next->next != NULL)
 					if (next->type == mentsu_SHUNZ)
 						if (next->next->type == mentsu_SHUNZ)
@@ -583,11 +583,11 @@
 								if ((next->next->start).fig == (next->start).fig)
 									if (!yibeikou)
 									{
-										add_yaku(6, 1); //Ò»±­¿Ú
+										add_yaku(6, 1); //ä¸€æ¯å£
 										yibeikou = true;
 									}
 
-			if (jyouhuun == (next->start).type && jihuun == (next->start).type) //ÒÛÅÆ
+			if (jyouhuun == (next->start).type && jihuun == (next->start).type) //å½¹ç‰Œ
 			{
 				switch (jyouhuun)
 				{
@@ -660,7 +660,7 @@
 
 			next = next->next;
 		}
-		//Æ½ºÍÅĞ¶¨¿ªÊ¼
+		//å¹³å’Œåˆ¤å®šå¼€å§‹
 		if (!fulu_status)
 			if (taj::janto_now[0].type != 'Z' && taj::janto_now[0].type != 'W' && taj::janto_now[0].type != 'F' && taj::janto_now[0].type != jyouhuun  && taj::janto_now[0].type != jihuun)
 				if (next1->type == mentsu_SHUNZ && next2->type == mentsu_SHUNZ && next3->type == mentsu_SHUNZ && next4->type == mentsu_SHUNZ)
@@ -692,11 +692,11 @@
 						pin = false;
 					if (pin)
 					{
-						add_yaku(5, 1); //Æ½ºÍ
-						ignore_tsumo_huu = true; //²»¼ÆËã×ÔÃşµÄ·û
+						add_yaku(5, 1); //å¹³å’Œ
+						ignore_tsumo_huu = true; //ä¸è®¡ç®—è‡ªæ‘¸çš„ç¬¦
 					}
 				}
-		//Æ½ºÍÅĞ¶¨½áÊø
+		//å¹³å’Œåˆ¤å®šç»“æŸ
 
 	finish_stage:
 		if (dora)
@@ -1149,8 +1149,8 @@
 			MemoryLeakMonitor::removeMonitor(cpai2);
 			delete[] cpai2;
 		}
-		//²åÈëÅĞ¶¨ÊÇ·ñÎª¾ÅÁ¬±¦µÆĞÎ×´£¬ÊÇÔòÖÃflag
-		//ÒòÎªÕâÀï»¹Ã»ÓĞÅÅĞò£¬Í¨¹ıÍ³¼ÆÅÆµÄÕÅÊıÀ´ÅĞ¶¨
+		//æ’å…¥åˆ¤å®šæ˜¯å¦ä¸ºä¹è¿å®ç¯å½¢çŠ¶ï¼Œæ˜¯åˆ™ç½®flag
+		//å› ä¸ºè¿™é‡Œè¿˜æ²¡æœ‰æ’åºï¼Œé€šè¿‡ç»Ÿè®¡ç‰Œçš„å¼ æ•°æ¥åˆ¤å®š
 		if (isou && cpcount == 14)
 		{
 			int num_cnt[10] = { 0,0,0,0,0,0,0,0,0,0 };
@@ -1194,7 +1194,7 @@
 				}
 			}
 		}
-		//¾ÅÁ¬±¦µÆÅĞ¶¨½áÊø
+		//ä¹è¿å®ç¯åˆ¤å®šç»“æŸ
 		if (count_m % 3 == 2)
 		{
 			if (janto_available)
@@ -1333,10 +1333,10 @@
 			if (!show_result(resultEx) && calculate_yaku)
 				if (hule)
 				{
-					result = -2; //ĞÎÊ½ÌıÅÆ£¨ÎŞÒÛ£©
+					result = -2; //å½¢å¼å¬ç‰Œï¼ˆæ— å½¹ï¼‰
 				}
 			if (!hule)
-				result = -1; //Î´×é³ÉºÍÅÆÅÆĞÍ
+				result = -1; //æœªç»„æˆå’Œç‰Œç‰Œå‹
 			reset();
 			mentsu* tmentsu = mentsutachi.tail, *tmentsu2;
 			while (tmentsu != NULL)
@@ -1387,7 +1387,7 @@
 			tenpai_detect_recur(tepai, paicount);
 			//if(!::show_result() && calculate_yaku)
 			//if(hule)
-			//cout<<"ĞÎÊ½ÌıÅÆ£¨ÎŞÒÛ£©¡£"<<endl;
+			//cout<<"å½¢å¼å¬ç‰Œï¼ˆæ— å½¹ï¼‰ã€‚"<<endl;
 			//if (false)
 				//(resultEx->t)[(resultEx->cnt)++] = paiff;
 		}
@@ -1402,7 +1402,7 @@
 			tenpai_detect_recur(tepai, paicount);
 			//if(!::show_result() && calculate_yaku)
 			//if(hule)
-			;//cout<<"ĞÎÊ½ÌıÅÆ£¨ÎŞÒÛ£©¡£"<<endl;
+			;//cout<<"å½¢å¼å¬ç‰Œï¼ˆæ— å½¹ï¼‰ã€‚"<<endl;
 			//if (false)
 				//(resultEx->t)[(resultEx->cnt)++] = paiff;
 		}

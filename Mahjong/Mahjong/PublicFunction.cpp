@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "PublicFunction.h"
 
 bool operator == (const pai& a, const pai& b)
@@ -257,7 +257,7 @@ bool isKangz(const mentsu* mc)
 	return false;
 }
 
-int getRelativePosition(int self, int other) //0ÏÂ¼Ò 1¶Ô¼Ò 2ÉÏ¼Ò -1´íÎó
+int getRelativePosition(int self, int other) //0ä¸‹å®¶ 1å¯¹å®¶ 2ä¸Šå®¶ -1é”™è¯¯
 {
 	switch (self)
 	{
@@ -329,7 +329,7 @@ int get_yaotyuu_id(const pai& wpai)
 	return 13;
 }
 
-int getMentsuType(int a, int b, int c) //·µ»Ø1Îª¿Ì×Ó£¬2ÎªË³×Ó£¬-1Îª²»ÊÇÃæ×Ó
+int getMentsuType(int a, int b, int c) //è¿”å›1ä¸ºåˆ»å­ï¼Œ2ä¸ºé¡ºå­ï¼Œ-1ä¸ºä¸æ˜¯é¢å­
 {
 	pai pa, pb, pc;
 	retrievePai3(&pa, a);

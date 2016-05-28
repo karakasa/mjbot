@@ -1,6 +1,6 @@
-ï»¿#pragma once
+#pragma once
 
-// å¬ç‰Œã€å½¹çš„åˆ¤å®šã€‚
+// ÌıÅÆ¡¢ÒÛµÄÅĞ¶¨¡£
 
 #include "PublicFunction.h"
 #include "YakuProvider.h"
@@ -40,88 +40,88 @@ class taj : public YakuProvider
 		int dora = 0, beidora = 0;
 		bool ignore_tsumo_huu = false;
 
-		// æ˜¯å¦ä¸ºæš—åˆ»ï¼ŒåŒ…æ‹¬æš—æ 
+		// ÊÇ·ñÎª°µ¿Ì£¬°üÀ¨°µ¸Ü
 		bool is_annkez(const mentsu* mc);
 
-		// é‡Šæ”¾æŸä¸€ç§é¢å­æ‹†åˆ†æƒ…å†µä¸‹çš„ yaku é“¾è¡¨
+		// ÊÍ·ÅÄ³Ò»ÖÖÃæ×Ó²ğ·ÖÇé¿öÏÂµÄ yaku Á´±í
 		void free_yaku(yaku* first);
 
-		// é‡Šæ”¾å…¨éƒ¨é¢å­æ‹†åˆ†æƒ…å†µä¸‹çš„ã€€yaku_table é“¾è¡¨
+		// ÊÍ·ÅÈ«²¿Ãæ×Ó²ğ·ÖÇé¿öÏÂµÄ¡¡yaku_table Á´±í
 		void free_yaku_table(yaku_table* first);
 
-		// å¼€å§‹æŸç§æƒ…å†µçš„è®¡ç®—ï¼ˆä¸ºäº†é«˜ç‚¹æ³•è€Œè®¾ï¼‰
+		// ¿ªÊ¼Ä³ÖÖÇé¿öµÄ¼ÆËã£¨ÎªÁË¸ßµã·¨¶øÉè£©
 		void start();
 	
-		// é‡ç½®æ¨¡å—
+		// ÖØÖÃÄ£¿é
 		void reset();
 	
-		// ç»“æŸæŸç§æƒ…å†µçš„è®¡ç®—
+		// ½áÊøÄ³ÖÖÇé¿öµÄ¼ÆËã
 		void finish();
 	
-		// æ·»åŠ å½¹ï¼Œåœ¨å·²ç»å½¹æ»¡æˆ–å½¹æ»¡ä¸ä¸€èˆ¬å½¹çš„æƒ…å†µä¸‹ä¼šæœ‰å•ç‹¬å¤„ç†ï¼Œä¸éœ€è¦ä¸Šå±‚ç¨‹åºå¤„ç†
+		// Ìí¼ÓÒÛ£¬ÔÚÒÑ¾­ÒÛÂú»òÒÛÂúÓëÒ»°ãÒÛµÄÇé¿öÏÂ»áÓĞµ¥¶À´¦Àí£¬²»ĞèÒªÉÏ²ã³ÌĞò´¦Àí
 		void add_yaku(int yaku_id, int yaku_point);
 	
-		// è®¡ç®—ç¬¦
+		// ¼ÆËã·û
 		void calculate_huu();
 	
-		// è®¡ç®—åŸºæœ¬ç‚¹ï¼ˆå·²ç»å‡åˆ°æ•´ç™¾ï¼‰
+		// ¼ÆËã»ù±¾µã£¨ÒÑ¾­Éıµ½Õû°Ù£©
 		void calculate_basicpoint();
 	
-		// åˆ¤æ–­æ˜¯å¦ä¸ºç»¿ä¸€è‰²é¢å­
+		// ÅĞ¶ÏÊÇ·ñÎªÂÌÒ»É«Ãæ×Ó
 		bool judge_ruiisou(const mentsu* mc);
 	
-		// åˆ¤æ–­æ˜¯å¦ä¸ºå¸¦å¹ºä¹é¢å­
+		// ÅĞ¶ÏÊÇ·ñÎª´øçÛ¾ÅÃæ×Ó
 		bool is_daiyaojiu(const mentsu* mc);
 	
-		// åˆ¤æ–­ä¸‰ä¸ªé¢å­æ˜¯å¦æ„æˆä¸‰è‰²åŒé¡º/åŒåˆ»ï¼Œä¸‰ä¸ªé¢å­é¡ºåºæ— æ‰€è°“
-		// è¿”å›0åˆ™ä¸æ˜¯ï¼Œè¿”å›1åˆ™ä¸ºä¸‰è‰²é€šé¡ºï¼Œè¿”å›2åˆ™ä¸ºä¸‰è‰²åŒåˆ»
+		// ÅĞ¶ÏÈı¸öÃæ×ÓÊÇ·ñ¹¹³ÉÈıÉ«Í¬Ë³/Í¬¿Ì£¬Èı¸öÃæ×ÓË³ĞòÎŞËùÎ½
+		// ·µ»Ø0Ôò²»ÊÇ£¬·µ»Ø1ÔòÎªÈıÉ«Í¨Ë³£¬·µ»Ø2ÔòÎªÈıÉ«Í¬¿Ì
 		int is_sansya(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3); 
 	
-		// åˆ¤æ–­æ˜¯å¦ä¸ºä¸€é€šçš„ä¸‰ä¸ªé¢å­ï¼Œé¡ºåºå¿…é¡»ä»å°åˆ°å¤§
+		// ÅĞ¶ÏÊÇ·ñÎªÒ»Í¨µÄÈı¸öÃæ×Ó£¬Ë³Ğò±ØĞë´ÓĞ¡µ½´ó
 		bool is_iitsu(const mentsu* mc1, const mentsu* mc2, const mentsu* mc3);
 	
-		// ä¸»è®¡ç®—è¿‡ç¨‹
+		// Ö÷¼ÆËã¹ı³Ì
 		void calculate();
 	
-		//ã€€ç»Ÿè®¡æœ€å¤§ç»“æœï¼Œåœ¨å…¨éƒ¨ finish å
+		//¡¡Í³¼Æ×î´ó½á¹û£¬ÔÚÈ«²¿ finish ºó
 		bool show_result(judgeResult* res);
 
-		// åˆ¤æ–­å›½å£«å¬ç‰Œ/å½¹ï¼Œæ›¿ä»£äº† Syanten ç±»ä¸‹çš„åŒåå‡½æ•°
+		// ÅĞ¶Ï¹úÊ¿ÌıÅÆ/ÒÛ£¬Ìæ´úÁË Syanten ÀàÏÂµÄÍ¬Ãûº¯Êı
 		bool specialized_tenpai_detect(judgeRequest* rpai, judgeResult* resultEx);
 
-		// åŠ å…¥å¬ç‰Œæƒ…å†µ
+		// ¼ÓÈëÌıÅÆÇé¿ö
 		void output_tenpai(pai machi);
 	
-		// æ¶ˆé¢å­
+		// ÏûÃæ×Ó
 		void tenpai_detect_recur_2(pai* cpai, int cpcount);
 	
-		// æ¶ˆé›€å¤´
+		// ÏûÈ¸Í·
 		void tenpai_detect_recur(const pai* opai, int cpcount);
 	
-		// ä¸»å¤„ç†å…¥å£
+		// Ö÷´¦ÀíÈë¿Ú
 		int tenpai_detect_internal(judgeRequest* rpai, judgeResult* resultEx);
 	
 	public:
 
-		// åˆ¤å®šå½¹ã€å¬ç‰Œç­‰ã€‚è°ƒç”¨è¯¦æƒ…è¯·å‚è€ƒ judgeRequest å’Œ judgeResult ä¸¤ä¸ªæ•°æ®ç±»å‹çš„è¯´æ˜ã€‚
-		// rpai : è¯·æ±‚
-		// resultEx : ç»“æœ
-		// è¿”å›å€¼ : 0 ä¸ºæ£€æµ‹æˆåŠŸå®Œæˆã€‚
-		// tenpaiDetect ä¸ºåˆ«å
+		// ÅĞ¶¨ÒÛ¡¢ÌıÅÆµÈ¡£µ÷ÓÃÏêÇéÇë²Î¿¼ judgeRequest ºÍ judgeResult Á½¸öÊı¾İÀàĞÍµÄËµÃ÷¡£
+		// rpai : ÇëÇó
+		// resultEx : ½á¹û
+		// ·µ»ØÖµ : 0 Îª¼ì²â³É¹¦Íê³É¡£
+		// tenpaiDetect Îª±ğÃû
 		int tenpai_detect(const judgeRequest* rpai, judgeResult* resultEx);
 		int tenpaiDetect(const judgeRequest* rpai, judgeResult* resultEx);
 	
 };
 
 
-// åˆ¤æ–­ä¸ƒå¯¹å­ã€‚
-// ppai : é•¿åº¦ä¸º 14 çš„æ’åºåçš„ pai æ•°ç»„
-// nostrict : å¯é€‰ï¼Œæ¥æ”¶å‚æ•°ã€‚ä¸ç®¡æ˜¯ä¸æ˜¯é¾™ä¸ƒå¯¹ï¼Œåªè¦æ»¡è¶³æœ‰ 7 ç»„ä¸€æ ·çš„ä¸¤å¼ ç‰Œï¼Œæœ¬å‚æ•°å³ä¸º trueã€‚
-// è¿”å›å€¼ : æ˜¯æˆ–å¦ï¼Œè¯¥æ˜¯å’Œå¦ä¸ºä¸¥æ ¼å€¼ã€‚å¦‚æœã€€nostrict ä¸º trueï¼Œè¿”å›å€¼ä¸º falseï¼Œåˆ™æ˜¯é¾™ä¸ƒå¯¹çš„æƒ…å†µã€‚
+// ÅĞ¶ÏÆß¶Ô×Ó¡£
+// ppai : ³¤¶ÈÎª 14 µÄÅÅĞòºóµÄ pai Êı×é
+// nostrict : ¿ÉÑ¡£¬½ÓÊÕ²ÎÊı¡£²»¹ÜÊÇ²»ÊÇÁúÆß¶Ô£¬Ö»ÒªÂú×ãÓĞ 7 ×éÒ»ÑùµÄÁ½ÕÅÅÆ£¬±¾²ÎÊı¼´Îª true¡£
+// ·µ»ØÖµ : ÊÇ»ò·ñ£¬¸ÃÊÇºÍ·ñÎªÑÏ¸ñÖµ¡£Èç¹û¡¡nostrict Îª true£¬·µ»ØÖµÎª false£¬ÔòÊÇÁúÆß¶ÔµÄÇé¿ö¡£
 bool JudgeChiitoitsu(const pai* ppai, bool* nostrict = NULL);
 
 
-// åˆ¤æ–­ç‰¹æ®Šå½¹æ»¡ã€‚
-// ppai : é•¿åº¦ä¸º 14 çš„æ’åºåçš„ pai æ•°ç»„
-// è¿”å›å€¼ : 0 ä¸ºå‡ä¸æ˜¯ï¼Œå¦åˆ™ä¸ºæœ¬æ–‡ä»¶å¤´éƒ¨å®šä¹‰çš„å®ã€‚
+// ÅĞ¶ÏÌØÊâÒÛÂú¡£
+// ppai : ³¤¶ÈÎª 14 µÄÅÅĞòºóµÄ pai Êı×é
+// ·µ»ØÖµ : 0 Îª¾ù²»ÊÇ£¬·ñÔòÎª±¾ÎÄ¼şÍ·²¿¶¨ÒåµÄºê¡£
 int JudgeDaisyarin(const pai* ppai);

@@ -129,6 +129,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <SetChecksum>true</SetChecksum>
       <AdditionalDependencies>ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -165,6 +166,7 @@
     <ClInclude Include="SyanTen.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TenpaiAkariJudge.h" />
+    <ClInclude Include="YakuProvider.h" />
     <ClInclude Include="YamaControl.h" />
   </ItemGroup>
   <ItemGroup>
@@ -186,6 +188,7 @@
     </ClCompile>
     <ClCompile Include="SyanTen.cpp" />
     <ClCompile Include="TenpaiAkariJudge.cpp" />
+    <ClCompile Include="YakuProvider.cpp" />
     <ClCompile Include="YamaControl.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

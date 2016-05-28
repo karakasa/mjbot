@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 
 namespace mma
 {
@@ -17,6 +17,6 @@ namespace mma
 	}
 	bool free(void* ptr)
 	{
-		return (bool)HeapFree(heap, 0, ptr);
+		return HeapFree(heap, 0, ptr) > 0;
 	}
 }

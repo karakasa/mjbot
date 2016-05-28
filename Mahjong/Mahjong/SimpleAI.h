@@ -1,6 +1,6 @@
-#pragma once
+ï»¿#pragma once
 
-// ÊµÏÖÁËÒ»¸ö¼òµ¥µÄ´¿ÅÆĞ§ AI
+// å®ç°äº†ä¸€ä¸ªç®€å•çš„çº¯ç‰Œæ•ˆ AI
 
 #include "SyanTen.h"
 #include "PublicFunction.h"
@@ -8,9 +8,9 @@
 class SimpleAI : public EventBusUser
 {
 	public:
-		// ÏûÏ¢´¦Àí¹ı³Ì
-		// ²Î¿¼ EventBus ÖĞµÄµ÷ÓÃ½Ó¿Ú¹æ·¶
-		int aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn, void* payload);
+		// æ¶ˆæ¯å¤„ç†è¿‡ç¨‹
+		// å‚è€ƒ EventBus ä¸­çš„è°ƒç”¨æ¥å£è§„èŒƒ
+		int aiMessage(unsigned char msgType, int par1, int par2, bool* hasReturn, void* payload) override;
 
 	private:
 		int cid;

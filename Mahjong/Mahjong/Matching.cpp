@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "PublicFunction.h"
 #include "EventBus.h"
@@ -118,9 +118,9 @@ void match::pushbackKawa(int pos, pai& paiout)
 		norelease[cpos] = false;
 		if (true)
 		{
-			//ÅĞ¶Ï¿É·ñ±»Ãù
-			//ÈÙºÍ¡¢³Ô¡¢Åö¡¢´óÃ÷¸ÜÅĞ¶¨
-			//ÒòÎªminChance¿ÉÄÜ·¢Éú¶àÏß³Ìµ÷ÓÃ£¬ËùÒÔÀûÓÃCriticalSection½øĞĞ»¥³â£¬ÔÚ¿É¿¿µÄÍøÂçÌõ¼şÏÂ ¿ÉÒÔ²ÉÓÃµÈ´ıËùÓĞminChance·µ»Ø£¬Ò²¿ÉÒÔÏÈµ½ÏÈµÃ
+			//åˆ¤æ–­å¯å¦è¢«é¸£
+			//è£å’Œã€åƒã€ç¢°ã€å¤§æ˜æ åˆ¤å®š
+			//å› ä¸ºminChanceå¯èƒ½å‘ç”Ÿå¤šçº¿ç¨‹è°ƒç”¨ï¼Œæ‰€ä»¥åˆ©ç”¨CriticalSectionè¿›è¡Œäº’æ–¥ï¼Œåœ¨å¯é çš„ç½‘ç»œæ¡ä»¶ä¸‹ å¯ä»¥é‡‡ç”¨ç­‰å¾…æ‰€æœ‰minChanceè¿”å›ï¼Œä¹Ÿå¯ä»¥å…ˆåˆ°å…ˆå¾—
 			int nxtpos = (cpos + 1) % 4;
 			int minRequest[4] = { 0,0,0,0 };
 			if (!(waitingType == 2 && waitForIncomingEvent))
@@ -232,7 +232,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.flags = clientRiichi[i] | (clientIhatsu[i] ? 4 : 0) | (clientHaidei ? 8 : 0) | (clientHoudei ? 16 : 0) | (clientRinsyou ? 32 : 0) | (clientTyankan ? 64 : 0);
 					jreq.jyouhuun = akarijyouhuun;
 					jreq.jihuun = akarijihuun[i];
-					//ÆäËû¹ı³Ì»¹Î´´¦Àínorelease ³¡·ç flags
+					//å…¶ä»–è¿‡ç¨‹è¿˜æœªå¤„ç†norelease åœºé£ flags
 
 					pai doras;
 					for (int p = 0; p < yama.kancount + 1; p++)
@@ -441,7 +441,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.flags = clientRiichi[i] | (clientIhatsu[i] ? 4 : 0) | (clientHaidei ? 8 : 0) | (clientHoudei ? 16 : 0) | (clientRinsyou ? 32 : 0) | (clientTyankan ? 64 : 0);
 					jreq.jyouhuun = akarijyouhuun;
 					jreq.jihuun = akarijihuun[i];
-					//ÆäËû¹ı³Ì»¹Î´´¦Àínorelease ³¡·ç flags
+					//å…¶ä»–è¿‡ç¨‹è¿˜æœªå¤„ç†norelease åœºé£ flags
 					
 					tajcore.tenpai_detect(&jreq, &jres);
 
@@ -460,7 +460,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					}
 					if (index == 0)
 					{
-						score[i] += roundPoint(jres.basicpt * ((i == 0) ? 6 : 4)) + changbang * 300 + 1000 * riichibang; //°ô×Ó¹éÇ×¿ªÊ¼µÄµÚÒ»¸öÈË
+						score[i] += roundPoint(jres.basicpt * ((i == 0) ? 6 : 4)) + changbang * 300 + 1000 * riichibang; //æ£’å­å½’äº²å¼€å§‹çš„ç¬¬ä¸€ä¸ªäºº
 						score[cpos] -= roundPoint((jres.basicpt * ((i == 0) ? 6 : 4)) + changbang * 300);
 						riichibang = 0;
 					}
@@ -503,7 +503,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 			for (int i = 0; i<4; i++)
 				if (clientResponse[i] >> 28 == 2)
 				{
-					//Åö³ÉÁ¢
+					//ç¢°æˆç«‹
 					int j = -1, k = -1;
 					for (j = 0; j<tepaicnt[i]; j++)
 						if ((unsigned int)retrieveID2(tepai[i][j]) == (clientResponse[i] & 0xFF))
@@ -558,7 +558,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 			for (int i = 0; i<4; i++)
 				if (clientResponse[i] >> 28 == 2)
 				{
-					//Åö³ÉÁ¢
+					//ç¢°æˆç«‹
 					int j = -1, k = -1, l = -1;
 					for (j = 0; j<tepaicnt[i]; j++)
 						if ((unsigned int)retrieveID2(tepai[i][j]) == (clientResponse[i] & 0xFF))
@@ -623,7 +623,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 			for (int i = 0; i<4; i++)
 				if (clientResponse[i] >> 28 == 2)
 				{
-					//³Ô³ÉÁ¢
+					//åƒæˆç«‹
 					int j = -1, k = -1;
 					for (j = 0; j<tepaicnt[i]; j++)
 						if ((unsigned int)retrieveID2(tepai[i][j]) == (clientResponse[i] & 0xFF))
@@ -692,7 +692,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 			waitForIncomingEvent = false;
 			switch (waitingType)
 			{
-			case 1: //Á¢Ö±
+			case 1: //ç«‹ç›´
 				if (happened)
 					clientIhatsu[cpos] = false;
 				for (int j = 0; j<4; j++)
@@ -703,7 +703,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 				scoreChange();
 				riichibang++;
 				break;
-			case 2: //¼Ó¸Ü
+			case 2: //åŠ æ 
 				for (int i = 0; i<fulucnt[cpos]; i++)
 				{
 					if (isKez(&(fulu[cpos][i])) && retrieveID3(fulu[cpos][i].start) == waitingPai)
@@ -762,7 +762,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 		paiout.type = 'L';
 		switch (response)
 		{
-		case 0xFFFFFFFF://Ä£ÇĞ
+		case 0xFFFFFFFF://æ¨¡åˆ‡
 			paiout = current;
 			stTenpaiStatus(cpos);
 			for (int i = 0; i<4; i++)
@@ -770,7 +770,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					evcore.send(i, ai::othersTurnFinished, retrieveID2(current), 0);
 			pushbackKawa(cpos, paiout);
 			break;
-		case 0xFE000000://×ÔÃş
+		case 0xFE000000://è‡ªæ‘¸
 			if (clientSyanTen[cpos] == 0)
 			{
 				if (cpos == 0)
@@ -835,7 +835,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 				jreq.flags = clientRiichi[cpos] | (clientIhatsu[cpos] ? 4 : 0) | (clientHaidei ? 8 : 0) | (clientHoudei ? 16 : 0) | (clientRinsyou ? 32 : 0) | (clientTyankan ? 64 : 0);
 				jreq.jyouhuun = akarijyouhuun;
 				jreq.jihuun = akarijihuun[cpos];
-				//ÆäËû¹ı³Ì»¹Î´´¦Àínorelease ³¡·ç flags
+				//å…¶ä»–è¿‡ç¨‹è¿˜æœªå¤„ç†norelease åœºé£ flags
 				tajcore.tenpai_detect(&jreq, &jres);
 				if (jres.yakucnt != 0)
 				{
@@ -893,9 +893,9 @@ void match::pushbackKawa(int pos, pai& paiout)
 			}
 
 			break;
-		case 0xFE010000://¾ÅÖÖ¾ÅÅÆ
+		case 0xFE010000://ä¹ç§ä¹ç‰Œ
 			break;
-		case 0xFE020000://°Î±±
+		case 0xFE020000://æ‹”åŒ—
 			break;
 		default:
 			if ((response & 0xFF000000) == 0xFD000000)
@@ -903,7 +903,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 				int paiid;
 				switch ((response & 0xFFFF00) >> 8)
 				{
-				case 0://°µ¸Ü
+				case 0://æš—æ 
 					paiid = response & 0xFF;
 					if (retrieveID3(current) == paiid)
 					{
@@ -975,7 +975,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 						}
 					}
 					break;
-				case 1://¼Ó¸Ü
+				case 1://åŠ æ 
 					paiid = response & 0xFF;
 					waitForIncomingEvent = true;
 					whoIsWaiting = cpos;
@@ -1012,7 +1012,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 						}
 					}
 					break;
-				case 2://ÊÖÇĞÁ¢Ö±
+				case 2://æ‰‹åˆ‡ç«‹ç›´
 					paiid = response & 0xFF;
 					waitForIncomingEvent = true;
 					whoIsWaiting = cpos;
@@ -1035,7 +1035,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 						pushbackKawa(cpos, paiout);
 					}
 					break;
-				case 3://Ä£ÇĞÁ¢Ö±
+				case 3://æ¨¡åˆ‡ç«‹ç›´
 					paiid = response & 0xFF;
 					waitForIncomingEvent = true;
 					whoIsWaiting = cpos;
@@ -1049,7 +1049,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 				}
 			}
 			else {
-				//Õı³£´òÅÆ
+				//æ­£å¸¸æ‰“ç‰Œ
 				for (int i = 0; i<tepaicnt[cpos]; i++)
 					if (retrieveID2(tepai[cpos][i]) == (unsigned char)response)
 					{
@@ -1081,9 +1081,9 @@ void match::pushbackKawa(int pos, pai& paiout)
 		int minRequest[4] = { 0,0,0,0 };
 		if (minJudge)
 		{
-			//ÅĞ¶Ï¿É·ñ±»Ãù
-			//ÈÙºÍ¡¢³Ô¡¢Åö¡¢´óÃ÷¸ÜÅĞ¶¨
-			//ÒòÎªminChance¿ÉÄÜ·¢Éú¶àÏß³Ìµ÷ÓÃ£¬ËùÒÔÀûÓÃCriticalSection½øĞĞ»¥³â£¬ÔÚ¿É¿¿µÄÍøÂçÌõ¼şÏÂ ¿ÉÒÔ²ÉÓÃµÈ´ıËùÓĞminChance·µ»Ø£¬Ò²¿ÉÒÔÏÈµ½ÏÈµÃ
+			//åˆ¤æ–­å¯å¦è¢«é¸£
+			//è£å’Œã€åƒã€ç¢°ã€å¤§æ˜æ åˆ¤å®š
+			//å› ä¸ºminChanceå¯èƒ½å‘ç”Ÿå¤šçº¿ç¨‹è°ƒç”¨ï¼Œæ‰€ä»¥åˆ©ç”¨CriticalSectionè¿›è¡Œäº’æ–¥ï¼Œåœ¨å¯é çš„ç½‘ç»œæ¡ä»¶ä¸‹ å¯ä»¥é‡‡ç”¨ç­‰å¾…æ‰€æœ‰minChanceè¿”å›ï¼Œä¹Ÿå¯ä»¥å…ˆåˆ°å…ˆå¾—
 			int nxtpos = (cpos + 1) % 4;
 			if (!(waitForIncomingEvent && waitingType == 2))	
 			{
@@ -1194,7 +1194,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.flags = clientRiichi[i] | (clientIhatsu[i] ? 4 : 0) | (clientHaidei ? 8 : 0) | (clientHoudei ? 16 : 0) | (clientRinsyou ? 32 : 0) | (clientTyankan ? 64 : 0);
 					jreq.jyouhuun = akarijyouhuun;
 					jreq.jihuun = akarijihuun[i];
-					//ÆäËû¹ı³Ì»¹Î´´¦Àínorelease ³¡·ç flags
+					//å…¶ä»–è¿‡ç¨‹è¿˜æœªå¤„ç†norelease åœºé£ flags
 					tajcore.tenpai_detect(&jreq, &jres);
 					if (jres.yakucnt != 0)
 						minRequest[i] |= 1;
@@ -1220,7 +1220,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 		}
 		if (waitForIncomingEvent && waitingType == 2 && !minRequest[0] && !minRequest[1] && !minRequest[2] && !minRequest[3])
 		{
-			//¼Ó¸ÜÊµÖÊÉÏÖ±½Ó³ÉÁ¢
+			//åŠ æ å®è´¨ä¸Šç›´æ¥æˆç«‹
 			waitForIncomingEvent = false;
 			waitingType = 0;
 			for (int i = 0; i<fulucnt[cpos]; i++)
@@ -1246,7 +1246,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 		}
 		if (waitForIncomingEvent && waitingType == 1 && !minRequest[0] && !minRequest[1] && !minRequest[2] && !minRequest[3])
 		{
-			//Á¢Ö±ÊµÖÊÉÏÖ±½Ó³ÉÁ¢
+			//ç«‹ç›´å®è´¨ä¸Šç›´æ¥æˆç«‹
 			waitForIncomingEvent = false;
 			waitingType = 0;
 			for (int j = 0; j<4; j++)
@@ -1409,7 +1409,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 		{
 			switch (response)
 			{
-			case 1: //Æô¶¯Ò»¾ÖÓÎÏ·
+			case 1: //å¯åŠ¨ä¸€å±€æ¸¸æˆ
 				running = true;
 				startMatch();
 				break;
@@ -1433,7 +1433,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 			waitEvent();
 			break;
 		case 8:
-			//ÓÎÏ·ÒÑ¾­½áÊø
+			//æ¸¸æˆå·²ç»ç»“æŸ
 			return;
 		default:
 			printf("UNDEFINED STATUS %d\n", status);

@@ -1,7 +1,7 @@
-#pragma once
+ï»¿#pragma once
 #include "stdafx.h"
 
-// ÏòÌı¼ÆËã
+// å‘å¬è®¡ç®—
 
 #include "PublicFunction.h"
 
@@ -12,39 +12,39 @@ class Syanten
 		pai tpai2st2[20];
 		const int SyantenMaxRecur = 5;
 
-		// ¼ÆËã¹úÊ¿ÏòÌı
+		// è®¡ç®—å›½å£«å‘å¬
 		int calculateKokushiSyanten(const pai* tpai, const int paicnt);
 
-		// ¼ÆËãÆß¶Ô×ÓÏòÌı
+		// è®¡ç®—ä¸ƒå¯¹å­å‘å¬
 		int calculateChiitoitsu(const pai* tpai, const int paicnt);
 
-		// ¼ÆËã´î×Ó
+		// è®¡ç®—æ­å­
 		int normalCalculate3(pai* tpai, const int paicnt, int currentMenchi);
 
-		// Ïû³ÉĞÎÃæ×Ó
+		// æ¶ˆæˆå½¢é¢å­
 		int normalCalculate2(const pai* tpai, const int paicnt, int currentMenchi);
 
-		// ÏûÈ¸Í·
+		// æ¶ˆé›€å¤´
 		int normalCalculate(const pai* tpai, const int paicnt);
 
-		// ¼ÆËã¹úÊ¿ÌıÅÆÄÚÈİ£¨±¾º¯ÊıÒÑ¾­·ÏÆú£¬½ö×ö¼æÈİĞÔÊ¹ÓÃ£¬ÒÑ¾­Í³Ò»µ½ taj::tenpaiDetect ÖĞ£©
+		// è®¡ç®—å›½å£«å¬ç‰Œå†…å®¹ï¼ˆæœ¬å‡½æ•°å·²ç»åºŸå¼ƒï¼Œä»…åšå…¼å®¹æ€§ä½¿ç”¨ï¼Œå·²ç»ç»Ÿä¸€åˆ° taj::tenpaiDetect ä¸­ï¼‰
 		bool specialized_tenpai_detect(pai* pais, int paicnt, judgeResult* resultEx);
 		
 
 	public:
 
-		// ¼ÆËãÏòÌı¡£¸Ã·½·¨±È TenpaiAkariJudge µÄÅĞ¶¨Òª¿ìµÃ¶à£¬ÔÚ½öĞèÒªÅĞ¶¨ºÍÅÆµÄĞÎ×´ºÍÌıÅÆµÄĞÎ×´Ê±ÍÆ¼öÊ¹ÓÃ±¾ÃüÁî¡£
-		// tpai : ĞèÒªÓĞĞòµÄÊÖÅÆÊı×é¡£¸ÃÊı×é¿ÉÒÔÎªÈÎÒâ³¤¶È¡£3n + 1 Ê±¼ÆËãµÄÊÇµ±Ç°ÏòÌı£¬3n + 2 Ê±¼ÆËãµÄÊÇ´òµôÄ³ÕÅÅÆºóµÄ×îĞ¡ÏòÌı£¬3n Ê±½á¹ûÎŞÒâÒå¡£
-		// paicnt : Êı×é³¤¶È	
-		// normalonly : ½ö¼ÆËã±ê×¼ĞÍ£¨²»¼ÆËãÆß¶Ô×ÓºÍ¹úÊ¿£©
-		// ·µ»ØÖµ : (×îĞ¡)ÏòÌıÊı£¬0 ¼´ÎªÌıÅÆ£¬-1 ¼´ÎªºÍÅÆ¡£
+		// è®¡ç®—å‘å¬ã€‚è¯¥æ–¹æ³•æ¯” TenpaiAkariJudge çš„åˆ¤å®šè¦å¿«å¾—å¤šï¼Œåœ¨ä»…éœ€è¦åˆ¤å®šå’Œç‰Œçš„å½¢çŠ¶å’Œå¬ç‰Œçš„å½¢çŠ¶æ—¶æ¨èä½¿ç”¨æœ¬å‘½ä»¤ã€‚
+		// tpai : éœ€è¦æœ‰åºçš„æ‰‹ç‰Œæ•°ç»„ã€‚è¯¥æ•°ç»„å¯ä»¥ä¸ºä»»æ„é•¿åº¦ã€‚3n + 1 æ—¶è®¡ç®—çš„æ˜¯å½“å‰å‘å¬ï¼Œ3n + 2 æ—¶è®¡ç®—çš„æ˜¯æ‰“æ‰æŸå¼ ç‰Œåçš„æœ€å°å‘å¬ï¼Œ3n æ—¶ç»“æœæ— æ„ä¹‰ã€‚
+		// paicnt : æ•°ç»„é•¿åº¦	
+		// normalonly : ä»…è®¡ç®—æ ‡å‡†å‹ï¼ˆä¸è®¡ç®—ä¸ƒå¯¹å­å’Œå›½å£«ï¼‰
+		// è¿”å›å€¼ : (æœ€å°)å‘å¬æ•°ï¼Œ0 å³ä¸ºå¬ç‰Œï¼Œ-1 å³ä¸ºå’Œç‰Œã€‚
 		int calculateSyanten(const pai* tpai, const int paicnt, bool normalonly = false);
 
-		// ¼ÆËãÓĞĞ§½øÕÅ¡£±¾¹ı³ÌÒ²¿ÉÒÔ¼ÆËãÌıÅÆÖÖÀà£¬²»¹ıĞ§ÂÊµÍÓÚ taj.tenpai_detect()
-		// tpai : ÊÖÅÆÊı×é¡£²»ĞèÒªÓĞĞò£¬paicnt : Êı×é³¤¶È¡£
-		// »òÕß judgeRequest : ĞÎÍ¬ tenpai_detect µÄµ÷ÓÃ£¬mode ³ÉÔ±±ØĞëÎª 0£¬·ñÔòº¯Êı½«Ê§°Ü¡£
-		// jres : cnt Óë t ³ÉÔ±·Ö±ğ´æ·ÅÁËÓĞĞ§½øÕÅµÄÖÖÀàÊı£¬ºÍ¾ßÌåÓĞĞ§½øÕÅ
-		// ·µ»ØÖµ : ³É¹¦Óë·ñ
+		// è®¡ç®—æœ‰æ•ˆè¿›å¼ ã€‚æœ¬è¿‡ç¨‹ä¹Ÿå¯ä»¥è®¡ç®—å¬ç‰Œç§ç±»ï¼Œä¸è¿‡æ•ˆç‡ä½äº taj.tenpai_detect()
+		// tpai : æ‰‹ç‰Œæ•°ç»„ã€‚ä¸éœ€è¦æœ‰åºï¼Œpaicnt : æ•°ç»„é•¿åº¦ã€‚
+		// æˆ–è€… judgeRequest : å½¢åŒ tenpai_detect çš„è°ƒç”¨ï¼Œmode æˆå‘˜å¿…é¡»ä¸º 0ï¼Œå¦åˆ™å‡½æ•°å°†å¤±è´¥ã€‚
+		// jres : cnt ä¸ t æˆå‘˜åˆ†åˆ«å­˜æ”¾äº†æœ‰æ•ˆè¿›å¼ çš„ç§ç±»æ•°ï¼Œå’Œå…·ä½“æœ‰æ•ˆè¿›å¼ 
+		// è¿”å›å€¼ : æˆåŠŸä¸å¦
 		bool kouritsuDetect(pai* tpai, const int paicnt, judgeResult* jres);
 		bool kouritsuDetect(judgeRequest* jreq, judgeResult* jres);
 };

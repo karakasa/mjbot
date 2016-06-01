@@ -1,6 +1,30 @@
 ﻿#include "stdafx.h"
 #include "PublicFunction.h"
 
+pai& mentsu::operator[] (const size_t index)
+{
+	switch (index)
+	{
+	case 0:
+		return this->start;
+		break;
+	case 1:
+		return this->middle;
+		break;
+	case 2:
+	case 3:
+		return this->last;
+		break;
+	}
+	pai s;
+	return std::move(s);
+}
+
+bool operator == (const mentsu& a, const mentsu& b)
+{
+	return a.type == b.type && a.start == b.start;
+}
+
 bool operator == (const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig);
@@ -16,11 +40,11 @@ bool compare_pai (const pai& a, const pai& b)
 	return (a.type == b.type) && (a.fig == b.fig);
 }
 
-bool compare_pai_aka(const pai& a, const pai& b)
+bool comparePaiAka(const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig) && ((a.trait & TRAIT_AKA) == (b.trait & TRAIT_AKA));
 }
-bool compare_pai_same(const pai& a, const pai& b)
+bool comparePaiSame(const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig) && (a.trait == b.trait);
 }
@@ -223,6 +247,19 @@ bool paiSort(const pai& a, const pai& b)
 	return (a.type == b.type) ? (a.fig<b.fig) : (paiorder[a.type - 'A']<paiorder[b.type - 'A']);
 }
 
+bool isShunz2(const mentsu& mc)
+{
+	switch (mc.type)
+	{
+	case mentsu_SHUNZ:
+	case mentsu_SHUNZ_CHI_A:
+		return true;
+	default:
+		break;
+	}
+	return false;
+}
+
 bool isKez(const mentsu* mc)
 {
 	switch (mc->type)
@@ -242,9 +279,43 @@ bool isKez(const mentsu* mc)
 	return false;
 }
 
+bool isKez2(const mentsu& mc)
+{
+	switch (mc.type)
+	{
+	case mentsu_KEZ:
+	case mentsu_KEZ_KANG_A:
+	case mentsu_KEZ_KANG_B:
+	case mentsu_KEZ_KANG_C:
+	case mentsu_KEZ_KANG_S:
+	case mentsu_KEZ_PON_A:
+	case mentsu_KEZ_PON_B:
+	case mentsu_KEZ_PON_C:
+		return true;
+	default:
+		break;
+	}
+	return false;
+}
+
 bool isKangz(const mentsu* mc)
 {
 	switch (mc->type)
+	{
+	case mentsu_KEZ_KANG_A:
+	case mentsu_KEZ_KANG_B:
+	case mentsu_KEZ_KANG_C:
+	case mentsu_KEZ_KANG_S:
+		return true;
+	default:
+		break;
+	}
+	return false;
+}
+
+bool isKangz2(const mentsu& mc)
+{
+	switch (mc.type)
 	{
 	case mentsu_KEZ_KANG_A:
 	case mentsu_KEZ_KANG_B:
@@ -278,6 +349,11 @@ int getRelativePosition(int self, int other) //0下家 1对家 2上家 -1错误
 }
 
 int get_yaotyuu_id(const pai& wpai)
+{
+	return getYaotyuuId(wpai);
+}
+
+int getYaotyuuId(const pai& wpai)
 {
 	switch (wpai.type)
 	{
@@ -480,4 +556,26 @@ int convertPaiStringPrepare(std::string& pstring)
 		cpos = fpos + 1;
 	}
 	return (signed int)cnt;
+}
+
+bool isMenzenMentsu(const mentsu& mentsuJudgable)
+{
+	return mentsuJudgable.type == mentsu_TYPE::mentsu_KEZ || \
+		   mentsuJudgable.type == mentsu_TYPE::mentsu_KEZ_KANG_S || \
+		   mentsuJudgable.type == mentsu_TYPE::mentsu_SHUNZ;
+}
+
+bool isYaotyuu(const pai& pai)
+{
+	return pai.fig == 1 || pai.fig == 9;
+}
+
+bool isYaotyuu2(const pai& pai)
+{
+	return (pai.fig == 1 || pai.fig == 9) && (pai.type == 'M' || pai.type == 'S' || pai.type == 'P');
+}
+
+bool isJi(const pai& pai)
+{
+	return pai.type != 'M' && pai.type != 'S' && pai.type != 'P';
 }

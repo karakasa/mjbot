@@ -5,14 +5,14 @@
 #include "PublicFunction.h"
 #include "YakuProvider.h"
 
-class taj : public YakuProvider
+class taj
 {
 	private:
 
 		bool akari_status;
 
-		yaku_table* current = NULL;
-		yaku_table* maxresult = NULL;
+		yakuTable* current = NULL;
+		yakuTable* maxresult = NULL;
 
 		int effeci_cnt = 0;
 		int tepos;
@@ -46,8 +46,8 @@ class taj : public YakuProvider
 		// 释放某一种面子拆分情况下的 yaku 链表
 		void free_yaku(yaku* first);
 
-		// 释放全部面子拆分情况下的　yaku_table 链表
-		void free_yaku_table(yaku_table* first);
+		// 释放全部面子拆分情况下的　yakuTable 链表
+		void free_yaku_table(yakuTable* first);
 
 		// 开始某种情况的计算（为了高点法而设）
 		void start();
@@ -103,6 +103,10 @@ class taj : public YakuProvider
 	
 	public:
 
+		static YakuProvider systemProvider;
+
+		YakuProvider* currentProvider = &systemProvider;
+
 		// 判定役、听牌等。调用详情请参考 judgeRequest 和 judgeResult 两个数据类型的说明。
 		// rpai : 请求
 		// resultEx : 结果
@@ -112,16 +116,3 @@ class taj : public YakuProvider
 		int tenpaiDetect(const judgeRequest* rpai, judgeResult* resultEx);
 	
 };
-
-
-// 判断七对子。
-// ppai : 长度为 14 的排序后的 pai 数组
-// nostrict : 可选，接收参数。不管是不是龙七对，只要满足有 7 组一样的两张牌，本参数即为 true。
-// 返回值 : 是或否，该是和否为严格值。如果　nostrict 为 true，返回值为 false，则是龙七对的情况。
-bool JudgeChiitoitsu(const pai* ppai, bool* nostrict = NULL);
-
-
-// 判断特殊役满。
-// ppai : 长度为 14 的排序后的 pai 数组
-// 返回值 : 0 为均不是，否则为本文件头部定义的宏。
-int JudgeDaisyarin(const pai* ppai);

@@ -254,7 +254,7 @@ DWORD eb::workingThreadInternal()
 		currentMatch = proceedMatch;
 	}
 
-DWORD __stdcall workingThread(LPVOID param)
+DWORD WINAPI workingThread(LPVOID param)
 {
 	return ((eb*)param)->workingThreadInternal();
 }

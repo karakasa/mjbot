@@ -9,12 +9,14 @@
 #include "MemoryLeakMonitor.h"
 #include "EventBus.h"
 #include "Matching.h"
+
+// Unit Test
+#include "YPBasicToolBox.h"
+
 using namespace std;
 
 int main()
 {
-
-
 	Syanten engineSyanten;
 	taj engineTaj;
 	string paiStr;
@@ -22,6 +24,8 @@ int main()
 	int paiSafeLen = 16;
 
 	bool simu = false;
+
+	utility::prepareSystemYakuProvider();
 
 	while (true)
 	{
@@ -124,7 +128,7 @@ int main()
 					char p;
 					cin >> p;
 					cout << endl;
-					jrq.akari_status = (p == 'y') ? RON : TSUMO;
+					jrq.akariStatus = (p == 'y') ? RON : TSUMO;
 					engineTaj.tenpai_detect(&jrq, &jrs);
 					cout << jrs.yakutotal << " 翻 " << jrs.huutotal << " 符 " << jrs.basicpt << " 基本点" << endl;
 					for (int i = 0; i < jrs.yakucnt; i++)

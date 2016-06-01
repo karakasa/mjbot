@@ -224,7 +224,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.fulucnt = fulucnt[i];
 					for (int j = 0; j<jreq.fulucnt; j++)
 						jreq.fulus[j] = fulu[i][j];
-					jreq.akari_status = RON;
+					jreq.akariStatus = RON;
 					jreq.doracnt = 0;
 					jreq.norelease = norelease[i];
 					clientHoudei = yama.get_remaining() == 0;
@@ -397,7 +397,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.fulucnt = fulucnt[i];
 					for (int j = 0; j<jreq.fulucnt; j++)
 						jreq.fulus[j] = fulu[i][j];
-					jreq.akari_status = RON;
+					jreq.akariStatus = RON;
 					jreq.doracnt = 0;
 
 					pai doras;
@@ -790,7 +790,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 				jreq.fulucnt = fulucnt[cpos];
 				for (int j = 0; j<jreq.fulucnt; j++)
 					jreq.fulus[j] = fulu[cpos][j];
-				jreq.akari_status = TSUMO;
+				jreq.akariStatus = TSUMO;
 
 				//dora issue
 
@@ -1186,7 +1186,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.fulucnt = fulucnt[i];
 					for (int j = 0; j<jreq.fulucnt; j++)
 						jreq.fulus[j] = fulu[i][j];
-					jreq.akari_status = RON;
+					jreq.akariStatus = RON;
 					jreq.doracnt = 0;
 					jreq.norelease = norelease[i];
 					clientHoudei = yama.get_remaining() == 0;

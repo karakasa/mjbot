@@ -63,6 +63,12 @@
     <ClInclude Include="YakuProvider.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="YPBasic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="YPBasicToolbox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -108,6 +114,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="YakuProvider.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="YPBasic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="YPBasicToolbox.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿
+#pragma once
 
 // 主要定义了一些公用过程与数据类型。
 
@@ -8,7 +9,7 @@
 #define TSUMO true
 #define is_akari(x) (((x).trait&TRAIT_AKARIPAI)==TRAIT_AKARIPAI)
 #define is_aka(x) (((x).trait&TRAIT_AKA)==TRAIT_AKA)
-#define compare_pai_thesame compare_pai_same
+#define compare_pai_thesame comparePaiSame
 
 #define _char char
 
@@ -18,6 +19,10 @@
 
 #define KOKUSHIMUSOU 1
 #define KOKUSHIMUSOU_JUUSANMENMACHI 2
+
+#define isSanyuan(x) (((x).type == 'W') || ((x).type == 'F') || ((x).type == 'Z'))
+#define isFeng(x) (((x).type == 'D') || ((x).type == 'N') || ((x).type == 'X') || ((x).type == 'B'))
+#define isSameType(a, b) ((isShunz2((a)) && isShunz2((b))) || (isKez2((a)) && isKez2((b))))
 
 const int yaotrans[13] = { 1,9,10,18,19,27,28,29,30,31,32,33,34 };
 
@@ -87,7 +92,9 @@ struct mentsu {
 	pai middle; //刻子的中间一张牌
 	pai last; //刻子的最后一张牌
 	mentsu* prev; //内部实用，置零即可
-	mentsu* next; //内部实用，置零即可
+	mentsu* next; //内部实用，
+				  // 获取面子的牌
+	pai& operator[] (const size_t index);
 };
 
 //面子表，内部数据结构。
@@ -105,8 +112,16 @@ struct yaku {
 	yaku* next;
 };
 
+//役数据结构，内部数据类型
+struct yaku2 {
+	int yakuid;
+	int yakusubid;
+	int pt;
+	int extended = 0;
+};
+
 //役表数据结构，内部数据类型
-struct yaku_table {
+struct yakuTable {
 	bool yakuman = false;
 	yaku* first = NULL;
 	yaku* tail = NULL;
@@ -115,16 +130,10 @@ struct yaku_table {
 	int basicpt = 0;
 };
 
-//传递给 TenpaiAkariJudge 的主要请求
-struct judgeRequest
+//简化的请求，用于描述玩家状态
+struct judgeRequestSimple
 {
-	int paicnt; //手牌数量，必须为 3n+1
-	pai pais[13]; //手牌，在判定役时，应是由 paiSort 排序过的有序数组
-	int mode; //检测模式 0为听牌种类检测 1为和了役检测，为0时，后面的参数无意义
-	int fulucnt = 0; //副露数量 0 or 1 or 2 or 3 or 4
-	mentsu fulus[4]; //副露 mentsu[0~fulucnt] 该结构中的 prev / next 值没有意义
-	pai tgtpai; //和了役检测时 和了的那张牌
-	bool akari_status; //胡了种类 自摸/荣和  TSUMO or RON
+	bool akariStatus; //胡了种类 自摸/荣和  TSUMO or RON
 	bool norelease = false; //天地人和可以成立（这人还没打过牌，之前无鸣牌）
 	char jyouhuun = '\0'; //场风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
 	char jihuun = '\0'; //自风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
@@ -132,14 +141,15 @@ struct judgeRequest
 	int doracnt = 0; //几张DORA
 };
 
-//简化的请求，用于描述玩家状态
-struct judgeRequestSimple
+//传递给 TenpaiAkariJudge 的主要请求
+struct judgeRequest : public judgeRequestSimple
 {
-	bool akari_status; //胡了种类 自摸/荣和  TSUMO or RON
-	bool norelease = false; //天地人和可以成立（这人还没打过牌，之前无鸣牌）
-	char jyouhuun = '\0'; //场风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
-	char jihuun = '\0'; //自风 'D' or 'N' or 'X' or 'B'，设置为 '\0' 即不判断
-	int flags = 0; //一组逻辑值，flags&1 立直 flags&2 W立直 flags&4 一发 flags&8 海底 flags&16 河底 flags&32 岭上 flags&64 抢杠
+	int paicnt; //手牌数量，必须为 3n+1
+	pai pais[13]; //手牌，在判定役时，应是由 paiSort 排序过的有序数组
+	int mode; //检测模式 0为听牌种类检测 1为和了役检测，为0时，后面的参数无意义
+	int fulucnt = 0; //副露数量 0 or 1 or 2 or 3 or 4
+	mentsu fulus[4]; //副露 mentsu[0~fulucnt] 该结构中的 prev / next 值没有意义
+	pai tgtpai; //和了役检测时 和了的那张牌
 };
 
 //TenpaiAkariJudge 模块传递回的结构
@@ -306,13 +316,15 @@ bool operator == (const pai& a, const pai& b);
 bool operator != (const pai& a, const pai& b);
 bool compare_pai (const pai& a, const pai& b);
 
+bool operator == (const mentsu& a, const mentsu& b);
+
 // 比较两张牌相同/不同 (含赤)
 // 本比较比较花色和数字，并比较赤的情况是否相同
-bool compare_pai_aka(const pai& a, const pai& b);
+bool comparePaiAka(const pai& a, const pai& b);
 
 // 比较两张牌相同/不同 (全同)
 // 本比较要求两张牌全等，除花色和数字外，trait 也要一样
-bool compare_pai_same(const pai& a, const pai& b);
+bool comparePaiSame(const pai& a, const pai& b);
 
 // 获得牌的序号。1M-9M：0-8，1S-9S：9-17，1P-9P：18-26，之后依次为东南西北白发中：27-33。
 // 本函数不考虑是否为赤宝牌。
@@ -356,15 +368,19 @@ void doraNext(const pai& show, pai* result);
 // 返回值 : 小于等于为真，大于为假
 bool paiSort(const pai& a, const pai& b);
 
+bool isShunz2(const mentsu& mc);
+
 // 判断一个面子是不是刻子（包括杠）
 // mc : 面子的指针
 // 返回值 : 真或假
 bool isKez(const mentsu* mc);
+bool isKez2(const mentsu& mc);
 
 // 判断一个面子是不是杠（包括暗杠）
 // mc : 面子的指针
 // 返回值 : 真或假
 bool isKangz(const mentsu* mc);
+bool isKangz2(const mentsu& mc);
 
 // 获得其他家的相对位置，输入参数为逆时针 0-4
 // self : 自家位置
@@ -375,7 +391,20 @@ int getRelativePosition(int self, int other);
 // 获得幺九ID
 // pai : 牌
 // 返回值 : ID，19M19S19P东南西北白发中分别是 0-12，其他均为 13
+[[deprecated]]
 int get_yaotyuu_id(const pai& wpai);
+int getYaotyuuId(const pai& wpai);
+
+// 判断是否为幺九，(isYaotyuu 2，不含字牌)
+// pai : 牌
+// 返回值 : 真或假
+bool isYaotyuu(const pai& pai);
+bool isYaotyuu2(const pai& pai);
+
+// 判断是否为字
+// pai : 牌
+// 返回值 : 真或假
+bool isJi(const pai& pai);
 
 // 获得面子的类型，可以是无序的
 // a,b,c : 牌的 ID，与 retrieveID3 相同
@@ -395,67 +424,5 @@ bool convertPaiString(std::string& pstring, pai* parr, int* buffersize);
 // 返回值 : 数量。如果为负数，则为失败。对于空字符串返回 0。
 int convertPaiStringPrepare(std::string& pstring);
 
-// 役的特性，描述见下图
-// 相对的特殊情况：
-// (1) 当起和役包含 yakumanLike 时，仅 doraLike 的役不会出现，而具有 doraLike & yakumanLike 的会出现
-// (2) doraLike & yakumanLike 的役并不会抑制非 yakumanLike 的其他役
-enum yakuTrait
-{
-	doraLike = 1, // 需要其他起胡役
-	yakumanLike = 2, // 是最高级别的役，会无视其他非 yakumanLike 役
-	specialJudge = 4, // 特殊判定（役除了和牌之外，还和玩家的状态有关），当为真时，在 judgeYaku 前，会额外调用 setSpecialJudge 来设定判定信息。
-	default = 0
-};
-
-// 役判断的基本接口
-class YakuProviderBase
-{
-public:
-	// 取得一个役的名字
-	// buffer : 名字缓冲区
-	// bufferSize : 名字缓冲区的尺寸
-	// outBufferSize : 返回尺寸，注意，这个值可能为 NULL；当名字缓冲区不够时且该值不为 NULL 时，该值为需要的尺寸。
-	// subid : 子役 ID
-	// 返回值 : bool，是否成功写入了缓冲区
-	virtual bool queryName(_char* buffer, const int bufferSize, int* outBufferSize, int subid) = 0;
-
-	// 设置役的特性，出于性能考虑，该函数可能只会在 register 时调用一次
-	// 为 enum yakuTrait 的或值
-	virtual int getTraits() = 0;
-
-	// 设定判定信息，不需要 specialJudge 的役需直接设定为空函数。
-	// jreq : 存储了玩家状态。出于性能考虑，直接传递指针，但*不应该*修改本参数的值。
-	virtual void setSpecialJudge(judgeRequestSimple* jreq) = 0;
-
-	// 获得役的种类
-	// 返回值 : 0 为面子类（继承自 YakuProviderM），1 为颜色类（继承自 YakuProviderC）
-	virtual int getType() = 0;
-};
-
-// 颜色类役的判断接口
-class YakuProviderC : public YakuProviderBase
-{
-public:
-	// 判断一个役的存在
-	// pais : 手牌数组
-	// paicnt : 手牌数量
-	// fulu : 副露数组
-	// fulucnt : 副露数量
-	// subid : 子役 ID（对于一对一接口的情况，可以忽视，或者置 0）
-	// yaku : 翻数，可以为 0，甚至是负数
-	// 返回值 : bool，有没有该翻
-	virtual bool judgeYaku(const pai* pais, int paicnt, const mentsu* fulu, int fulucnt, int* subid, int* yaku) = 0;
-};
-
-// 面子类役的判断接口
-class YakuProviderM : public YakuProviderBase
-{
-public:
-	// 判断一个役的存在
-	// mentsu : 面子数组（包括手牌和副露）
-	// mentsucnt : 面子数量
-	// subid : 子役 ID（对于一对一接口的情况，可以忽视，或者置 0）
-	// yaku : 翻数，可以为 0，甚至是负数
-	// 返回值 : bool，有没有该翻
-	virtual bool judgeYaku(const mentsu* mentsu, int mentsucnt, int* subid, int* yaku) = 0;
-};
+// 返回一个面子是否为手牌内的面子（非副露）
+bool isMenzenMentsu(const mentsu& mentsuJudgable);

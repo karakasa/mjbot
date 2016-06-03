@@ -57,16 +57,10 @@ int main()
 						}
 						else {
 							cout << "听牌：";
-							judgeRequest jrq;
-							judgeResult jrs;
-							jrq.paicnt = paiLen;
-							copy(pais, pais + paiLen, jrq.pais);
-							jrq.mode = 0;
-							engineTaj.tenpai_detect(&jrq, &jrs);
-							for (int i = 0; i < jrs.cnt; i++)
-							{
-								cout << (int)jrs.t[i].fig << jrs.t[i].type << " ";
-							}
+							unordered_set<pai> jrs;
+							jrs = std::move(engineTaj.tenpaiDetect(pais, paiLen));
+							for (auto& p : jrs)
+								cout << (int)(p.fig) << p.type << " ";
 							cout << endl;
 						}
 					}
@@ -129,10 +123,15 @@ int main()
 					cin >> p;
 					cout << endl;
 					jrq.akariStatus = (p == 'y') ? RON : TSUMO;
-					engineTaj.tenpai_detect(&jrq, &jrs);
-					cout << jrs.yakutotal << " 翻 " << jrs.huutotal << " 符 " << jrs.basicpt << " 基本点" << endl;
-					for (int i = 0; i < jrs.yakucnt; i++)
-						cout << yakuname[jrs.yakuid[i]] << " " << jrs.pt[i] << " 翻" << endl;
+					yakuTable yt = engineTaj.yakuDetect(jrq);
+					cout << yt.yakutotal << " 翻 " << yt.huutotal << " 符 " << yt.basicpt << " 基本点" << endl;
+					char w[255];
+					memset(w, 0, sizeof(w));
+					for (auto& yk : yt.yakus)
+					{
+						engineTaj.currentProvider->queryName(yk.yakuid, yk.yakusubid, w, 250);
+						cout << w << " " << yk.pt << " 翻" << endl;
+					}
 					break;
 				}
 				default:

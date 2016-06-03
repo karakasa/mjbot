@@ -23,6 +23,9 @@
 #define isSanyuan(x) (((x).type == 'W') || ((x).type == 'F') || ((x).type == 'Z'))
 #define isFeng(x) (((x).type == 'D') || ((x).type == 'N') || ((x).type == 'X') || ((x).type == 'B'))
 #define isSameType(a, b) ((isShunz2((a)) && isShunz2((b))) || (isKez2((a)) && isKez2((b))))
+#define makeReadonly(x) (x) // not working now
+
+#define resetYakuTable2(x) {(x).yakus.clear(); (x).yakutotal = (x).huutotal = (x).basicpt = 0;}
 
 const int yaotrans[13] = { 1,9,10,18,19,27,28,29,30,31,32,33,34 };
 
@@ -91,25 +94,6 @@ struct mentsu {
 	pai start; //刻子的开始一张牌
 	pai middle; //刻子的中间一张牌
 	pai last; //刻子的最后一张牌
-	mentsu* prev; //内部实用，置零即可
-	mentsu* next; //内部实用，
-				  // 获取面子的牌
-	pai& operator[] (const size_t index);
-};
-
-//面子表，内部数据结构。
-struct mentsutable {
-	mentsu* first;
-	mentsu* tail;
-};
-
-//役数据结构，内部数据类型
-struct yaku {
-	int yakuid;
-	int yakusubid;
-	int pt;
-	yaku* prev;
-	yaku* next;
 };
 
 //役数据结构，内部数据类型
@@ -117,14 +101,11 @@ struct yaku2 {
 	int yakuid;
 	int yakusubid;
 	int pt;
-	int extended = 0;
 };
 
 //役表数据结构，内部数据类型
 struct yakuTable {
-	bool yakuman = false;
-	yaku* first = NULL;
-	yaku* tail = NULL;
+	std::vector<yaku2> yakus;
 	int yakutotal = 0;
 	int huutotal = 0;
 	int basicpt = 0;
@@ -146,7 +127,7 @@ struct judgeRequest : public judgeRequestSimple
 {
 	int paicnt; //手牌数量，必须为 3n+1
 	pai pais[13]; //手牌，在判定役时，应是由 paiSort 排序过的有序数组
-	int mode; //检测模式 0为听牌种类检测 1为和了役检测，为0时，后面的参数无意义
+	int mode;
 	int fulucnt = 0; //副露数量 0 or 1 or 2 or 3 or 4
 	mentsu fulus[4]; //副露 mentsu[0~fulucnt] 该结构中的 prev / next 值没有意义
 	pai tgtpai; //和了役检测时 和了的那张牌
@@ -245,8 +226,9 @@ namespace ai
 		int pt; //和了点数（自摸时为基本点）
 		int reserved;
 		int yakucnt;
-		unsigned char yaku_id[16]; //和了役id，具体id参考mahjong目录内的 役种id.txt
-		unsigned char yaku_fan[16]; //对应的役的翻数
+		int yaku_id[16]; //和了役id，具体id参考mahjong目录内的 役种id.txt
+		int yaku_subid[16];
+		int yaku_fan[16]; //对应的役的翻数
 									/*上述两个成员均为数组类型，下标为0到fan-1*/
 	};
 
@@ -315,8 +297,10 @@ const char ji[4] = { 'D','N','X','B' };
 bool operator == (const pai& a, const pai& b);
 bool operator != (const pai& a, const pai& b);
 bool compare_pai (const pai& a, const pai& b);
+bool operator<   (const pai& a, const pai& b);
 
 bool operator == (const mentsu& a, const mentsu& b);
+bool operator<   (const mentsu& a, const mentsu& b);
 
 // 比较两张牌相同/不同 (含赤)
 // 本比较比较花色和数字，并比较赤的情况是否相同
@@ -325,6 +309,7 @@ bool comparePaiAka(const pai& a, const pai& b);
 // 比较两张牌相同/不同 (全同)
 // 本比较要求两张牌全等，除花色和数字外，trait 也要一样
 bool comparePaiSame(const pai& a, const pai& b);
+bool compareMentsuSame(const mentsu& a, const mentsu& b);
 
 // 获得牌的序号。1M-9M：0-8，1S-9S：9-17，1P-9P：18-26，之后依次为东南西北白发中：27-33。
 // 本函数不考虑是否为赤宝牌。
@@ -391,8 +376,6 @@ int getRelativePosition(int self, int other);
 // 获得幺九ID
 // pai : 牌
 // 返回值 : ID，19M19S19P东南西北白发中分别是 0-12，其他均为 13
-[[deprecated]]
-int get_yaotyuu_id(const pai& wpai);
 int getYaotyuuId(const pai& wpai);
 
 // 判断是否为幺九，(isYaotyuu 2，不含字牌)
@@ -426,3 +409,17 @@ int convertPaiStringPrepare(std::string& pstring);
 
 // 返回一个面子是否为手牌内的面子（非副露）
 bool isMenzenMentsu(const mentsu& mentsuJudgable);
+
+namespace std {
+
+	template <>
+	struct hash<pai>
+	{
+		std::size_t operator()(const pai& k) const;
+	};
+
+	inline std::size_t hash<pai>::operator()(const pai & k) const
+	{
+		return std::size_t(retrieveID2(k));
+	}
+}

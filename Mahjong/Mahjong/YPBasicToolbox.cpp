@@ -8,6 +8,9 @@ namespace utility
 	YakuBasicM _yb3;
 	YakuBasicMYM _yb4;
 	YakuBasicDora _yb5;
+	YakuBasicShape _yb6;
+	YakuBasicShapeYM _yb7;
+	SysPtProvider _yb8;
 }
 
 bool utility::prepareSystemYakuProvider()
@@ -19,11 +22,9 @@ bool utility::prepareSystemYakuProvider()
 	taj::systemProvider.registerProvider(&_yb3);
 	taj::systemProvider.registerProvider(&_yb4);
 	taj::systemProvider.registerProvider(&_yb5);
+	taj::systemProvider.registerProvider(&_yb6);
+	taj::systemProvider.registerProvider(&_yb7);
 	taj::systemProvider.rebuildProviders();
+	taj::systemProvider.ptProvider = &_yb8;
 	return true;
-}
-
-void utility::setDora(int dora)
-{
-	_yb5.doraCnt = dora;
 }

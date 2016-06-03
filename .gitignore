@@ -11,6 +11,7 @@
 *.bat
 lst.txt
 *.lib
+*.i
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

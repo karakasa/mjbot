@@ -6,6 +6,15 @@
 
 const int rebuildOrder[] = { 1, 3, 0, 2 }; // magic
 
+bool operator< (YakuProviderInternal& a, YakuProviderInternal& b)
+{
+	if ((a.traits & yakuTrait::yakumanLike) != (b.traits & yakuTrait::yakumanLike))
+		return (a.traits & yakuTrait::yakumanLike) > (b.traits & yakuTrait::yakumanLike);
+	if ((a.traits & yakuTrait::doraLike) != (b.traits & yakuTrait::doraLike))
+		return (a.traits & yakuTrait::doraLike) < (b.traits & yakuTrait::doraLike);
+	return false;
+}
+
 bool YakuProvider::registerProvider(YakuProviderBase* yaku)
 {
 	if (locked)
@@ -14,7 +23,10 @@ bool YakuProvider::registerProvider(YakuProviderBase* yaku)
 	provider.provider = yaku;
 	provider.traits = yaku->getTraits();
 	provider.type = yaku->getType();
-	yakuProviders.push_back(provider);
+	if (provider.traits & yakuTrait::shapeYaku)
+		shapeProviders.push_back(provider);
+	else
+		yakuProviders.push_back(provider);
 	return true;
 }
 
@@ -22,12 +34,25 @@ bool YakuProvider::unregisterProvider(YakuProviderBase* yaku)
 {
 	if (locked)
 		return false;
-	for (auto it = yakuProviders.begin(); it != yakuProviders.end(); it++)
+	if ((yaku->getTraits()) & yakuTrait::shapeYaku)
 	{
-		if (it->provider == yaku)
+		for (auto it = shapeProviders.begin(); it != shapeProviders.end(); it++)
 		{
-			yakuProviders.erase(it);
-			return true;
+			if (it->provider == yaku)
+			{
+				shapeProviders.erase(it);
+				return true;
+			}
+		}
+	}
+	else {
+		for (auto it = yakuProviders.begin(); it != yakuProviders.end(); it++)
+		{
+			if (it->provider == yaku)
+			{
+				yakuProviders.erase(it);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -38,32 +63,21 @@ bool YakuProvider::unregsiterAll(bool GC)
 	if (locked)
 		return false;
 	yakuProviders.resize(0);
+	shapeProviders.resize(0);
 	if (GC)
-		yakuProviders.shrink_to_fit();
-	return true;
-}
-
-void YakuProvider::internalRebuild(std::vector<YakuProviderInternal>& providerTable)
-{
-	std::vector<YakuProviderInternal> tempTable[4];
-	std::for_each(tempTable, tempTable + 4,                                         \
-		[&providerTable](auto &item) {item.reserve(providerTable.size()); });
-	for (auto& item : providerTable)
 	{
-		tempTable[rebuildOrder[                                                     \
-			((item.traits & yakuTrait::yakumanLike) ? 2 : 0) |                     \
-			((item.traits & yakuTrait::doraLike) ? 1 : 0)]].push_back(item);
+		yakuProviders.shrink_to_fit();
+		shapeProviders.shrink_to_fit();
 	}
-	std::for_each(tempTable + 1, tempTable + 4,                                     \
-		[&tempTable](auto &item) {tempTable[0].insert(tempTable[0].end(), item.begin(), item.end()); });
-	providerTable = std::move(tempTable[0]);
+	return true;
 }
 
 bool YakuProvider::rebuildProviders()
 {
 	if (locked)
 		return false;
-	internalRebuild(yakuProviders);
+	std::sort(yakuProviders.begin(), yakuProviders.end());
+	std::sort(shapeProviders.begin(), shapeProviders.end());
 	lockProvider();
 	return true;
 }
@@ -82,13 +96,9 @@ void YakuProvider::unlockProvider()
 	locked = false;
 }
 
-void YakuProvider::setSpecialCase(const judgeRequest& jreq)
+void YakuProvider::setSpecialCase(const judgeRequestSimple& jreq)
 {
-	currentStatus.akariStatus = jreq.akariStatus;
-	currentStatus.norelease = jreq.norelease;
-	currentStatus.jyouhuun = jreq.jyouhuun;
-	currentStatus.jihuun = jreq.jihuun;
-	currentStatus.flags = jreq.flags;
+	currentStatus = jreq;
 }
 
 void YakuProvider::forcedLock(bool lockStatus)
@@ -106,36 +116,20 @@ void YakuProvider::forcedLock(bool lockStatus)
 
 void YakuProvider::addYaku(yakuTable* current, int yaku_id, int yaku_point, int subid)
 {
-	yaku* yaku_tmp = new yaku;
-	MemoryLeakMonitor::addMonitor(yaku_tmp, sizeof(yaku), "YAKU_TMP CURRENT in Provider");
-	yaku_tmp->yakuid = yaku_id;
-	yaku_tmp->pt = yaku_point;
-	yaku_tmp->yakusubid = subid;
-	yaku_tmp->prev = NULL;
-	yaku_tmp->next = NULL;
-	if (current->first == NULL)
-	{
-		current->first = yaku_tmp;
-		current->tail = yaku_tmp;
-	}
-	else
-	{
-		current->tail->next = yaku_tmp;
-		yaku_tmp->prev = current->tail;
-		current->tail = yaku_tmp;
-	}
+	yaku2 yk;
+	yk.yakuid = yaku_id;
+	yk.yakusubid = subid;
+	yk.pt = yaku_point;
+	current->yakus.push_back(std::move(yk));
 	current->yakutotal += yaku_point;
 }
 
-void YakuProvider::judgeYaku(const pai* pais, int paicnt, const mentsu* mentsus, int mentsucnt, const pai* janto, int jantocnt, yakuTable* current)
+bool YakuProvider::doMainJudge(const pai* pais, const int paicnt, const mentsu* mentsus, const int mentsucnt, const pai* janto, int jantocnt, yakuTable* current, const std::vector<YakuProviderInternal>& dispatchTable, bool shapeMode = false)
 {
 	mentsu fulu[MAX_MENTSU];
 	int fulucnt = 0;
 	bool judgeResult;
-	bool colorOnly = mentsus == NULL;
-
-	pendingYaku.clear();
-	suppressedTokens.clear();
+	bool colorOnly = (mentsus == NULL) || (mentsucnt == 0) || shapeMode;
 
 	if (!colorOnly)
 	{
@@ -151,99 +145,151 @@ void YakuProvider::judgeYaku(const pai* pais, int paicnt, const mentsu* mentsus,
 			}
 	}
 
-	bool yakuMan = false, yakuExist = false, yakuShouldBeIncluded = false;
-
 	this->forcedLock(true);
 
-	currentYakuId = 0;
+	currentYakuId = shapeMode ? -1 : 0;
+	bool yakuMan = false, yakuExist = false;
 
-	for (auto c = yakuProviders.begin(); c != yakuProviders.end(); c++)
+	for (auto& c : dispatchTable)
 	{
-		yakuShouldBeIncluded = false;
 		judgeResult = false;
-		if (c->traits & yakuTrait::doraLike)
+		subidcnt = 0;
+
+		if (c.traits & yakuTrait::doraLike)
 			if (!yakuExist)
 				break;
 		if (yakuMan)
-			if (!(c->traits & yakuTrait::yakumanLike))
+			if (!(c.traits & yakuTrait::yakumanLike))
 				continue;
 
-		subidcnt = 0;
-		switch (c->type)
+		switch (c.type)
 		{
 		case yakuType::mentsuLike: // M
-			if(!colorOnly)
-				judgeResult = ((YakuProviderM*)(c->provider))->judgeYaku(mentsus, mentsucnt, janto, jantocnt, this);
+			if (!colorOnly)
+				judgeResult = ((YakuProviderM*)(c.provider))->judgeYaku(mentsus, mentsucnt, janto, jantocnt, this);
 			break;
 		case yakuType::colorLike: // C
-			judgeResult = ((YakuProviderC*)(c->provider))->judgeYaku(pais, paicnt, fulucnt == 0, this);
+			judgeResult = ((YakuProviderC*)(c.provider))->judgeYaku(pais, paicnt, fulucnt == 0, this);
 			break;
 		}
 		if (judgeResult)
 		{
-			if (!(c->traits & yakuTrait::doraLike))
+			if (tenpaiOnly)
+			{
+				this->forcedLock(false);
+				return true;
+			}
+			if (yakuExist || !(c.traits & yakuTrait::doraLike))
 			{
 				yakuExist = true;
-				if (c->traits & yakuTrait::yakumanLike)
-				{
-					yakuShouldBeIncluded = true;
-					yakuMan = true;
-				}
-				else {
-					yakuShouldBeIncluded = !yakuMan;
-				}
-			}
-			else {
-				if (yakuExist)
-				{
-					if (yakuMan)
+				yakuMan = yakuMan || ((c.traits & yakuTrait::yakumanLike) != 0);
+				if (!yakuMan || (c.traits & yakuTrait::yakumanLike) != 0)
+					for (int i = 0; i < subidcnt; i++)
 					{
-						yakuShouldBeIncluded = (c->traits & yakuTrait::yakumanLike) != 0;
+						if (immediateYaku[i])
+							addYaku(current, currentYakuId, yakus[i], subids[i]);
+						else
+						{
+							yaku2 p;
+							p.yakuid = currentYakuId;
+							p.yakusubid = subids[i];
+							p.pt = yakus[i];
+							pendingYaku[tokens[i]] = std::move(p);
+						}
 					}
-					else {
-						yakuShouldBeIncluded = true;
-					}
-				}
 			}
-			if (yakuShouldBeIncluded)
-				for (int i = 0; i < subidcnt; i++)
-				{
-					if(immediateYaku[i])
-						addYaku(current, currentYakuId, yakus[i], subids[i]);
-					else
-					{
-						yaku2 p;
-						p.yakuid = currentYakuId;
-						p.yakusubid = subids[i];
-						p.pt = yakus[i];
-						pendingYaku[tokens[i]] = std::move(p);
-					}
-				}
 		}
-		++currentYakuId;
+		if (shapeMode)
+			--currentYakuId;
+		else
+			++currentYakuId;
 	}
 
 	this->forcedLock(false);
 
-	for (int& token : suppressedTokens)
+	return yakuExist;
+}
+
+bool YakuProvider::judgeYaku(const pai* pais, const int paicnt, const mentsu* mentsus, const int mentsucnt, const pai* janto, int jantocnt, yakuTable* current)
+{
+	tenpaiOnly = false;
+	pendingYaku.clear();
+	suppressedTokens.clear();
+
+	doMainJudge(pais, paicnt, mentsus, mentsucnt, janto, jantocnt, current, yakuProviders, false);
+
+	for (auto& token : suppressedTokens)
 		pendingYaku.erase(token);
 	for (auto& yakuFinal : pendingYaku)
 		addYaku(current, yakuFinal.second.yakuid, yakuFinal.second.pt, yakuFinal.second.yakusubid);
+	if ((current->yakus).size() != 0)
+		ptProvider->judgePt(pais, paicnt, mentsus, mentsucnt, janto, jantocnt, current, this);
 
 	pendingYaku.clear();
 	suppressedTokens.clear();
+
+	return (current->yakus).size() != 0;
 }
 
-bool YakuProvider::queryName(unsigned int id, int subid, char* buffer, int bufferSize)
+bool YakuProvider::judgeYakuExtended(const pai* pais, const int paicnt, yakuTable* current)
 {
-	if (id < 0 || id > yakuProviders.size())
+	tenpaiOnly = current == NULL;
+	if (!tenpaiOnly)
+	{
+		pendingYaku.clear();
+		suppressedTokens.clear();
+	}
+	
+	bool result = doMainJudge(pais, paicnt, NULL, 0, NULL, 0, current, shapeProviders, true);
+	if (tenpaiOnly)
+		return result;
+	
+	if (result)
+	{
+		doMainJudge(pais, paicnt, NULL, 0, NULL, 0, current, yakuProviders, false);
+		for (auto& token : suppressedTokens)
+			pendingYaku.erase(token);
+		for (auto& yakuFinal : pendingYaku)
+			addYaku(current, yakuFinal.second.yakuid, yakuFinal.second.pt, yakuFinal.second.yakusubid);
+		if ((current->yakus).size() != 0)
+			ptProvider->judgePt(pais, paicnt, NULL, 0, NULL, 0, current, this);
+
+		pendingYaku.clear();
+		suppressedTokens.clear();
+		return (current->yakus).size() != 0;
+	}else{
+		pendingYaku.clear();
+		suppressedTokens.clear();
 		return false;
-	yakuProviders[id].provider->queryName(buffer, bufferSize, NULL, subid);
+	}
+}
+
+bool YakuProvider::queryName(int id, int subid, char* buffer, int bufferSize)
+{
+	bool shape = false;
+	if (id < 0)
+	{
+		shape = true;
+		id = -id - 1;
+	}
+	if (shape)
+	{
+		if (id >(signed int)shapeProviders.size())
+			return false;
+		shapeProviders[id].provider->queryName(buffer, bufferSize, NULL, subid);
+	}
+	else {
+		if (id > (signed int)yakuProviders.size())
+			return false;
+		yakuProviders[id].provider->queryName(buffer, bufferSize, NULL, subid);
+	}
 	return true;
 }
 
 bool YakuProvider::queueYaku(int yakuSubId, int yakuValue)
 {
+	if (tenpaiOnly)
+		return true;
 	if (subidcnt < MAX_SUBYAKU)
 	{
 		subids[subidcnt] = yakuSubId;
@@ -255,8 +301,10 @@ bool YakuProvider::queueYaku(int yakuSubId, int yakuValue)
 	return false;
 }
 
-bool YakuProvider::queueYaku(int yakuSubId, int yakuValue, int token)
+bool YakuProvider::queueYaku(int yakuSubId, int yakuValue, const char* token)
 {
+	if (tenpaiOnly)
+		return true;
 	if (subidcnt < MAX_SUBYAKU)
 	{
 		subids[subidcnt] = yakuSubId;
@@ -269,7 +317,29 @@ bool YakuProvider::queueYaku(int yakuSubId, int yakuValue, int token)
 	return false;
 }
 
-void YakuProvider::suppressYaku(int token)
+void YakuProvider::suppressYaku(const char* token)
 {
+	if (tenpaiOnly)
+		return;
 	suppressedTokens.push_back(token);
+}
+
+void YakuProvider::setExtendData(const char* token, int value)
+{
+	if (tenpaiOnly)
+		return;
+	extendData[token] = value;
+}
+
+int YakuProvider::getExtendData(const char* token)
+{
+	auto it = extendData.find(token);
+	if (it != extendData.end())
+		return it->second;
+	return 0;
+}
+
+void YakuProvider::clearExtendData()
+{
+	extendData.clear();
 }

@@ -8,5 +8,4 @@
 namespace utility
 {
 	bool prepareSystemYakuProvider();
-	void setDora(int dora);
 }

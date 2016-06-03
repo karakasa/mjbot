@@ -20,3 +20,12 @@ namespace MemoryLeakMonitor
 	// 返回值 : 0 为所有跟踪项均被成功回收。-1 为存在未能成功回收的项目。
 	int gc();
 }
+
+#define MLM_ARRAY_NEW(name, valname, valtype, length) \
+pai* (valname); \
+valname = new valtype[(length)]; \
+MemoryLeakMonitor::addMonitor(valname, (length) * sizeof(valtype), (name));
+
+#define MLM_ARRAY_END(valname) \
+MemoryLeakMonitor::removeMonitor(valname); \
+delete[] valname;

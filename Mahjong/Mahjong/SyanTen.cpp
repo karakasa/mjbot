@@ -16,7 +16,7 @@
 		int maicnt[14], daiji = false, typecnt = 0;
 		memset(maicnt, 0, sizeof(maicnt));
 		for (int i = 0; i<paicnt; i++)
-			++maicnt[get_yaotyuu_id(tpai[i])];
+			++maicnt[getYaotyuuId(tpai[i])];
 		for (int i = 0; i<13; i++)
 		{
 			if (maicnt[i] != 0)
@@ -374,7 +374,7 @@
 			int ycnt[14];
 			memset(ycnt, 0, sizeof(ycnt));
 			for (int i = 0; i<13; i++)
-				ycnt[get_yaotyuu_id((pais)[i])]++;
+				ycnt[getYaotyuuId((pais)[i])]++;
 			if (ycnt[0] == 1 && ycnt[1] == 1 && ycnt[2] == 1 && ycnt[3] == 1 && ycnt[4] == 1 && ycnt[5] == 1 && ycnt[6] == 1 && ycnt[7] == 1 && ycnt[8] == 1 && ycnt[9] == 1 && ycnt[10] == 1 && ycnt[11] == 1 && ycnt[12] == 1)
 			{
 				resultEx->cnt = 13;

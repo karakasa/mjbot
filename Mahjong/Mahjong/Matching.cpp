@@ -15,18 +15,10 @@ void match::stTenpaiStatus(int pos)
 	std::sort(tepai[pos] + 0, tepai[pos] + tepaicnt[pos], paiSort);
 	clientSyanTen[pos] = st.calculateSyanten(tepai[pos], tepaicnt[pos]);
 	if (clientSyanTen[pos] == 0)
-	{
-		judgeRequest jr;
-		judgeResult jres;
-
-		jr.mode = 0;
-		jr.paicnt = tepaicnt[pos];
-		std::copy(tepai[pos], tepai[pos] + tepaicnt[pos], jr.pais);
-
-		tajcore.tenpaiDetect(&jr, &jres);
-
-		clientTenpaiCnt[pos] = jres.cnt;
-		std::copy(jres.t + 0, jres.t + jres.cnt, clientTenpai[pos] + 0);
+	{	
+		std::unordered_set<pai> wresult = std::move(tajcore.tenpaiDetect(tepai[pos], tepaicnt[pos]));
+		clientTenpaiCnt[pos] = wresult.size();
+		std::copy(wresult.begin(), wresult.end(), clientTenpai[pos]);
 	}
 }
 
@@ -268,8 +260,9 @@ void match::pushbackKawa(int pos, pai& paiout)
 									jreq.doracnt++;
 						}
 
-					tajcore.tenpai_detect(&jreq, &jres);
-					if (jres.yakucnt != 0)
+					bool hasYaku;
+					tajcore.yakuDetect(jreq, &hasYaku);
+					if (hasYaku)
 						minRequest[i] |= 1;
 				}
 			if (minRequest[0] || minRequest[1] || minRequest[2] || minRequest[3])
@@ -388,7 +381,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 				if (clientResponse[i] >> 28 == 0)
 				{
 					judgeRequest jreq;
-					judgeResult jres;
+					yakuTable jres;
 					jreq.mode = 1;
 					jreq.paicnt = tepaicnt[i];
 					for (int pc = 0; pc<tepaicnt[i]; pc++)
@@ -443,7 +436,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.jihuun = akarijihuun[i];
 					//其他过程还未处理norelease 场风 flags
 					
-					tajcore.tenpai_detect(&jreq, &jres);
+					jres = std::move(tajcore.yakuDetect(jreq));
 
 					akariresult[index].from = cpos;
 					akariresult[index].to = i;
@@ -452,11 +445,12 @@ void match::pushbackKawa(int pos, pai& paiout)
 					akariresult[index].fan = jres.yakutotal;
 					akariresult[index].pt = roundPoint(jres.basicpt * ((i == 0) ? 6 : 4));
 					akariresult[index].reserved = 0;
-					akariresult[index].yakucnt = jres.yakucnt;
-					for (int j = 0; j<jres.yakucnt; j++)
+					akariresult[index].yakucnt = jres.yakus.size();
+					for (size_t j = 0; j<jres.yakus.size(); j++)
 					{
-						akariresult[index].yaku_id[j] = (unsigned char)jres.yakuid[j];
-						akariresult[index].yaku_fan[j] = (unsigned char)jres.pt[j];
+						akariresult[index].yaku_id[j] = jres.yakus[j].yakuid;
+						akariresult[index].yaku_subid[j] = jres.yakus[j].yakusubid;
+						akariresult[index].yaku_fan[j] = jres.yakus[j].pt;
 					}
 					if (index == 0)
 					{
@@ -781,7 +775,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 				else
 					lianzhuang = false;
 				judgeRequest jreq;
-				judgeResult jres;
+				yakuTable jres;
 				jreq.mode = 1;
 				jreq.paicnt = tepaicnt[cpos];
 				for (int pc = 0; pc<tepaicnt[cpos]; pc++)
@@ -836,8 +830,8 @@ void match::pushbackKawa(int pos, pai& paiout)
 				jreq.jyouhuun = akarijyouhuun;
 				jreq.jihuun = akarijihuun[cpos];
 				//其他过程还未处理norelease 场风 flags
-				tajcore.tenpai_detect(&jreq, &jres);
-				if (jres.yakucnt != 0)
+				jres = std::move(tajcore.yakuDetect(jreq));
+				if (jres.yakus.size() != 0)
 				{
 					ai::AKARI akariresult[1];
 					akariresult[0].from = cpos;
@@ -847,11 +841,12 @@ void match::pushbackKawa(int pos, pai& paiout)
 					akariresult[0].fan = jres.yakutotal;
 					akariresult[0].pt = jres.basicpt;
 					akariresult[0].reserved = 0;
-					akariresult[0].yakucnt = jres.yakucnt;
-					for (int i = 0; i<jres.yakucnt; i++)
+					akariresult[0].yakucnt = jres.yakus.size();
+					for (size_t i = 0; i<jres.yakus.size(); i++)
 					{
-						akariresult[0].yaku_id[i] = (unsigned char)jres.yakuid[i];
-						akariresult[0].yaku_fan[i] = (unsigned char)jres.pt[i];
+						akariresult[0].yaku_id[i] = jres.yakus[i].yakuid;
+						akariresult[0].yaku_id[i] = jres.yakus[i].yakusubid;
+						akariresult[0].yaku_fan[i] = jres.yakus[i].pt;
 					}
 					unsigned char* ppai;
 					ppai = new unsigned char[tepaicnt[cpos]];
@@ -1195,8 +1190,9 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.jyouhuun = akarijyouhuun;
 					jreq.jihuun = akarijihuun[i];
 					//其他过程还未处理norelease 场风 flags
-					tajcore.tenpai_detect(&jreq, &jres);
-					if (jres.yakucnt != 0)
+					bool hasYaku;
+					tajcore.yakuDetect(jreq, &hasYaku);
+					if (hasYaku)
 						minRequest[i] |= 1;
 				}
 			for (int pc = 0; pc<4; pc++)

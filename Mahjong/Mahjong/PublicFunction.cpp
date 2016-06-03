@@ -1,28 +1,14 @@
 ﻿#include "stdafx.h"
 #include "PublicFunction.h"
 
-pai& mentsu::operator[] (const size_t index)
-{
-	switch (index)
-	{
-	case 0:
-		return this->start;
-		break;
-	case 1:
-		return this->middle;
-		break;
-	case 2:
-	case 3:
-		return this->last;
-		break;
-	}
-	pai s;
-	return std::move(s);
-}
-
 bool operator == (const mentsu& a, const mentsu& b)
 {
 	return a.type == b.type && a.start == b.start;
+}
+
+bool operator<(const mentsu & a, const mentsu & b)
+{
+	return (a.type == b.type) ? (a.start < b.start) : (a.type < b.type);
 }
 
 bool operator == (const pai& a, const pai& b)
@@ -40,6 +26,20 @@ bool compare_pai (const pai& a, const pai& b)
 	return (a.type == b.type) && (a.fig == b.fig);
 }
 
+bool operator<(const pai & a, const pai & b)
+{
+	if (a.type == b.type)
+	{
+		if (a.fig == b.fig)
+			return a.trait < b.trait;
+		else
+			return a.fig < b.fig;
+	}
+	else {
+		return paiorder[a.type - 'A'] < paiorder[b.type - 'A'];
+	}
+}
+
 bool comparePaiAka(const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig) && ((a.trait & TRAIT_AKA) == (b.trait & TRAIT_AKA));
@@ -47,6 +47,11 @@ bool comparePaiAka(const pai& a, const pai& b)
 bool comparePaiSame(const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig) && (a.trait == b.trait);
+}
+bool compareMentsuSame(const mentsu & a, const mentsu & b)
+{
+	return (a.type == b.type) && comparePaiSame(a.start, b.start) \
+		&& comparePaiSame(a.middle, b.middle) && comparePaiSame(a.last, b.last);
 }
 int retrieveID(const pai& cpai)
 {
@@ -346,11 +351,6 @@ int getRelativePosition(int self, int other) //0下家 1对家 2上家 -1错误
 		return other;
 	}
 	return -1;
-}
-
-int get_yaotyuu_id(const pai& wpai)
-{
-	return getYaotyuuId(wpai);
 }
 
 int getYaotyuuId(const pai& wpai)

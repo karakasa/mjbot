@@ -21,7 +21,7 @@ bool judgeChiitoitsu(const pai* ppai, bool* nostrict)
 
 // 基本颜色类
 
-YAKU_DEFINE(YakuBasicShapeYM, yakuType::colorLike, yakuTrait::yakumanLike | yakuTrait::shapeYaku)
+YAKU_DEFINE(YakuBasicShapeYM, yakuType::colorLike, yakuTrait::yakumanLike + yakuTrait::shapeYaku)
 YAKU_SUBNAME_BEGIN(YakuBasicShapeYM)
 YAKU_SUBNAME(1, "国士无双")
 YAKU_SUBNAME(2, "国士无双十三面")
@@ -67,7 +67,7 @@ YAKU_JUDGE_BEGIN_C(YakuBasicShapeYM)
 }
 YAKU_JUDGE_END()
 
-YAKU_DEFINE(YakuBasicShape, yakuType::colorLike, yakuTrait::yakumanLike | yakuTrait::shapeYaku)
+YAKU_DEFINE(YakuBasicShape, yakuType::colorLike, yakuTrait::shapeYaku)
 YAKU_SUBNAME_BEGIN(YakuBasicShape)
 YAKU_SUBNAME(1, "七对子")
 YAKU_SUBNAME_END()
@@ -116,7 +116,7 @@ YAKU_JUDGE_BEGIN_C(YakuBasicCYM)
 	}
 	SUBYAKU("字一色")
 	{
-		if (std::any_of(pais, pais + paicnt, isJi))
+		if (std::all_of(pais, pais + paicnt, isJi))
 			YAKU_ADD(0, 13);
 	}
 	SUBYAKU("(纯正)九莲宝灯")
@@ -136,7 +136,7 @@ YAKU_JUDGE_BEGIN_C(YakuBasicCYM)
 			});
 			if (valid)
 			{
-				if (num_cnt[1] == 3 && num_cnt[9] == 3 && std::count(num_cnt + 2, num_cnt + 8, 1) == 7)
+				if (num_cnt[1] == 3 && num_cnt[9] == 3 && std::count(num_cnt + 2, num_cnt + 9, 1) == 7)
 				{
 					YAKU_ADD(4, YAKU_REDUCED(26));
 				}
@@ -234,7 +234,7 @@ YAKU_JUDGE_BEGIN_C(YakuBasicC)
 		YAKU_ADD_IF((YAKU_CURRENT.flags & 1) != 0, 5, 1);
 		YAKU_ADD_IF((YAKU_CURRENT.flags & 2) != 0, 6, 2);
 		YAKU_ADD_IF((YAKU_CURRENT.flags & 4) != 0, 7, 1);
-		YAKU_ADD_IF((YAKU_CURRENT.flags & 1) != 0 && YAKU_CURRENT.akariStatus == TSUMO, 8, 1);
+		YAKU_ADD_IF(YAKU_MENZEN && YAKU_CURRENT.akariStatus == TSUMO, 8, 1);
 		YAKU_ADD_IF((YAKU_CURRENT.flags & 64) != 0, 10, 1);
 		YAKU_ADD_IF((YAKU_CURRENT.flags & 8) != 0, 11, 1);
 		YAKU_ADD_IF((YAKU_CURRENT.flags & 16) != 0, 12, 1);
@@ -251,11 +251,11 @@ YAKU_JUDGE_BEGIN_C(YakuBasicC)
 	SUBYAKU("染手")
 	{
 		char type = '\0';
-		bool noji = false, valid = true;
+		bool noji = true, valid = true;
 		for (int i = 0; i < paicnt; i++)
 		{
 			if (isJi(pais[i]))
-				noji = true;
+				noji = false;
 			else
 			{
 				if (type == '\0')
@@ -351,7 +351,7 @@ YAKU_JUDGE_BEGIN_M(YakuBasicM)
 	{
 		static auto isItsuu = [](const mentsu& mc1, const mentsu& mc2, const mentsu& mc3) -> bool {
 			if (isShunz2(mc1) && isShunz2(mc2) && isShunz2(mc3))
-				if (mc1.start.type == mc2.start.type == mc3.start.type)
+				if (mc1.start.type == mc2.start.type && mc2.start.type == mc3.start.type)
 					if (mc1.start.fig == 1 && mc2.start.fig == 4 && mc3.start.fig == 7)
 						return true;
 			return false;
@@ -378,7 +378,7 @@ YAKU_JUDGE_BEGIN_M(YakuBasicM)
 	SUBYAKU("带幺九")
 	{
 		bool hasJi = isJi(janto[0])      || std::any_of(mentsus, mentsus + mentsucnt, [](const mentsu& mt) {return isJi(mt.start); });
-		bool isYao = isYaotyuu(janto[0]) || std::any_of(mentsus, mentsus + mentsucnt, [](const mentsu& mt) {return (mt.start.fig == 1) || (mt.last.fig == 9); });
+		bool isYao = isYaotyuu(janto[0]) && std::all_of(mentsus, mentsus + mentsucnt, [](const mentsu& mt) {return (mt.start.fig == 1) || (mt.last.fig == 9); });
 		YAKU_ADD_IF(isYao &  hasJi, 6, YAKU_REDUCED(2));
 		YAKU_ADD_IF(isYao & !hasJi, 7, YAKU_REDUCED(3));
 	}
@@ -407,7 +407,7 @@ YAKU_JUDGE_BEGIN_M(YakuBasicM)
 				return true;
 				break;
 			case 2:
-				YAKU_ADD(9, 2);
+				YAKU_ADD(10, 2);
 				return true;
 				break;
 			}
@@ -418,7 +418,7 @@ YAKU_JUDGE_BEGIN_M(YakuBasicM)
 	SUBYAKU("对对和")
 		YAKU_ADD_IF(std::all_of(mentsus, mentsus + mentsucnt, isKez2), 11, 2);
 	SUBYAKU("三暗刻")
-		YAKU_ADD_IF(std::count_if(mentsus, mentsus + mentsucnt, [=](auto& mt) {return isAnke(mt); }) == 3, 13, 2);
+		YAKU_ADD_IF(std::count_if(mentsus, mentsus + mentsucnt, [=](auto& mt) {return isAnke(mt); }) == 3, 12, 2);
 	SUBYAKU("三杠子")
 		YAKU_ADD_IF(std::count_if(mentsus, mentsus + mentsucnt, isKangz2) == 3, 13, 2);
 }
@@ -446,7 +446,7 @@ YAKU_JUDGE_BEGIN_M(YakuBasicMYM)
 		auto fengpai = std::count_if(mentsus, mentsus + mentsucnt, [](auto& mt) {return isFeng(mt.start); });
 		if (fengpai == 4)
 			YAKU_ADD(2, YAKU_REDUCED(26));
-		else
+		else if (fengpai == 3)
 			YAKU_ADD_IF(isFeng(janto[0]), 1, 13);
 	}
 	SUBYAKU("绿一色")

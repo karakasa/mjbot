@@ -148,21 +148,25 @@ void taj::mentsuDecideMentsu(pai* cpai, int cpcount)
 	}
 }
 
-void taj::mentsuDecideJanto(const pai* opai, int cpcount)
+void taj::mentsuDecideJanto(const pai* opai2, int cpcount)
 {
 	int count_m = 0, count_s = 0, count_p = 0, count_z = 0;
 	bool janto_available = false;
 
+	MLM_ARRAY_NEW("taj::mtsDecideJanto::opai", opai, pai, cpcount);
 	MLM_ARRAY_NEW("taj::mtsDecideJanto::ws", ws, pai, cpcount);
+
+	std::copy(opai2, opai2 + cpcount, opai);
+	std::sort(opai, opai + cpcount, paiSort);
 
 	if (tenpaiMode)
 	{
 		std::copy(opai, opai + cpcount, ws);
-		std::sort(ws, ws + cpcount, paiSort);
 		if (currentProvider->judgeYakuExtended(ws, cpcount, NULL))
 		{
 			solutionFound();
 			MLM_ARRAY_END(ws);
+			MLM_ARRAY_END(opai);
 			return;
 		}
 	}
@@ -193,6 +197,7 @@ void taj::mentsuDecideJanto(const pai* opai, int cpcount)
 	if ((count_m % 3 != 0) || (count_s % 3 != 0) || (count_p % 3 != 0) || (count_z % 3 != 0))
 	{
 		MLM_ARRAY_END(ws);
+		MLM_ARRAY_END(opai);
 		return;
 	}
 
@@ -207,6 +212,7 @@ void taj::mentsuDecideJanto(const pai* opai, int cpcount)
 			solutionFound();
 		}
 		MLM_ARRAY_END(ws);
+		MLM_ARRAY_END(opai);
 		return;
 	}
 
@@ -232,10 +238,13 @@ void taj::mentsuDecideJanto(const pai* opai, int cpcount)
 	}
 
 	MLM_ARRAY_END(ws);
+	MLM_ARRAY_END(opai);
 }
 
 yakuTable taj::yakuDetect(const judgeRequest& rpai, bool* result)
 {
+	yakuTable empty;
+
 	solutionAvailable = false;
 	tenpaiMode = false;
 
@@ -258,8 +267,8 @@ yakuTable taj::yakuDetect(const judgeRequest& rpai, bool* result)
 	calculate_yaku = true;
 
 	std::copy(rpai.pais, rpai.pais + rpai.paicnt, tepai);
-	tepai[rpai.paicnt + 1] = rpai.tgtpai;
-	tepai[rpai.paicnt + 1].trait &= TRAIT_AKARIPAI;
+	tepai[rpai.paicnt] = rpai.tgtpai;
+	tepai[rpai.paicnt].trait |= TRAIT_AKARIPAI;
 
 	std::copy(tepai, tepai + rpai.paicnt + 1, expandTepai);
 	int nid = rpai.paicnt + 1;
@@ -271,7 +280,7 @@ yakuTable taj::yakuDetect(const judgeRequest& rpai, bool* result)
 
 	std::sort(tepai, tepai + rpai.paicnt + 1, paiSort);
 	std::sort(expandTepai, expandTepai + nid, paiSort);
-	
+
 	yakuTable currentYaku;
 
 	currentProvider->setSpecialCase(jreq);
@@ -375,6 +384,7 @@ std::unordered_set<pai> taj::tenpaiDetect(const pai* pais, const int tpaicnt, bo
 	{
 		solutionAvailable = false;
 		tepai[tepos].type = funpai[i];
+		currentTenpai = tepai[tepos];
 		if (paicnt[retrieveID(tepai[tepos])] == 4) continue;
 		mentsuDecideJanto(tepai, tepos + 1);
 	}

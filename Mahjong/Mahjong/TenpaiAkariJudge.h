@@ -32,6 +32,7 @@ class taj
 		bool solutionAvailable = false;
 
 		mentsu mtsGlobal[4];
+		pai middleStepPais[4][14];
 		int mtsCnt = 0;
 		 
 		int effeci_cnt = 0;

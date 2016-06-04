@@ -9,6 +9,16 @@
 #define bit(x,y) (((x)&(y))==(y))
 
 #define JUDGE_PATTERN(x) if ((x) % 3 == 2) { if (janto_available) {return;}	else {(x) -= 2; janto_available = true; }}
+#define TRY_AVAILABLE(basecond,statement,lowlimit,uplimit) \
+                         tepai[tepos].basecond; \
+                         for (int i = (lowlimit); i <= (uplimit); i++) \
+                         { \
+	                         solutionAvailable = false; \
+	                         tepai[tepos].statement; \
+	                         currentTenpai = tepai[tepos]; \
+	                         if (paicnt[retrieveID(tepai[tepos])] == 4) continue; \
+	                         mentsuDecideJanto(tepai, tepos + 1); \
+                         }
 
 YakuProvider taj::systemProvider;
 
@@ -69,13 +79,8 @@ void taj::mentsuDecideMentsu(pai* cpai, int cpcount)
 				solutionFound();
 			}
 			else {
-				MLM_ARRAY_NEW("TEPAI3 1", tepai3, pai, cpcount - 3)
-				{
-					std::copy(cpai + 3, cpai + cpcount, tepai3);
-					mentsuDecideMentsu(tepai3, cpcount - 3);
-				}
-				MLM_ARRAY_END(tepai3);
-				
+				std::copy(cpai + 3, cpai + cpcount, middleStepPais[mtsCnt - 1]);
+				mentsuDecideMentsu(middleStepPais[mtsCnt - 1], cpcount - 3);
 			}
 			mtsCnt--;
 			if (tenpaiMode && solutionAvailable)
@@ -111,27 +116,23 @@ void taj::mentsuDecideMentsu(pai* cpai, int cpcount)
 									}
 									else
 									{
-										MLM_ARRAY_NEW("TEPAI3 2", tepai3, pai, cpcount - 3)
+										int tpos = 0;
+										for (int j = 1; j < i; j++)
 										{
-											int tpos = 0;
-											for (int j = 1; j < i; j++)
-											{
-												tepai3[tpos] = cpai[j];
-												tpos++;
-											}
-											for (int j = i + 1; j < p; j++)
-											{
-												tepai3[tpos] = cpai[j];
-												tpos++;
-											}
-											for (int j = p + 1; j < cpcount; j++)
-											{
-												tepai3[tpos] = cpai[j];
-												tpos++;
-											}
-											mentsuDecideMentsu(tepai3, cpcount - 3);
+											middleStepPais[mtsCnt - 1][tpos] = cpai[j];
+											tpos++;
 										}
-										MLM_ARRAY_END(tepai3);
+										for (int j = i + 1; j < p; j++)
+										{
+											middleStepPais[mtsCnt - 1][tpos] = cpai[j];
+											tpos++;
+										}
+										for (int j = p + 1; j < cpcount; j++)
+										{
+											middleStepPais[mtsCnt - 1][tpos] = cpai[j];
+											tpos++;
+										}
+										mentsuDecideMentsu(middleStepPais[mtsCnt - 1], cpcount - 3);
 									}
 									mtsCnt--;
 									if (tenpaiMode && solutionAvailable)
@@ -154,18 +155,15 @@ void taj::mentsuDecideJanto(const pai* opai2, int cpcount)
 	bool janto_available = false;
 
 	MLM_ARRAY_NEW("taj::mtsDecideJanto::opai", opai, pai, cpcount);
-	MLM_ARRAY_NEW("taj::mtsDecideJanto::ws", ws, pai, cpcount);
 
 	std::copy(opai2, opai2 + cpcount, opai);
 	std::sort(opai, opai + cpcount, paiSort);
 
 	if (tenpaiMode)
 	{
-		std::copy(opai, opai + cpcount, ws);
-		if (currentProvider->judgeYakuExtended(ws, cpcount, NULL))
+		if (currentProvider->judgeYakuExtended(opai, cpcount, NULL))
 		{
 			solutionFound();
-			MLM_ARRAY_END(ws);
 			MLM_ARRAY_END(opai);
 			return;
 		}
@@ -196,7 +194,6 @@ void taj::mentsuDecideJanto(const pai* opai2, int cpcount)
 
 	if ((count_m % 3 != 0) || (count_s % 3 != 0) || (count_p % 3 != 0) || (count_z % 3 != 0))
 	{
-		MLM_ARRAY_END(ws);
 		MLM_ARRAY_END(opai);
 		return;
 	}
@@ -211,7 +208,6 @@ void taj::mentsuDecideJanto(const pai* opai2, int cpcount)
 			janto_now[1] = opai[1];
 			solutionFound();
 		}
-		MLM_ARRAY_END(ws);
 		MLM_ARRAY_END(opai);
 		return;
 	}
@@ -220,6 +216,8 @@ void taj::mentsuDecideJanto(const pai* opai2, int cpcount)
 	lastvalid.fig = 0;
 	lastvalid.type = 'Q';
 	lastvalid.trait = 0;
+
+	MLM_ARRAY_NEW("taj::mtsDecideJanto::ws", ws, pai, cpcount);
 
 	for (int i = 0; i<cpcount - 1; i++)
 	{
@@ -349,45 +347,10 @@ std::unordered_set<pai> taj::tenpaiDetect(const pai* pais, const int tpaicnt, bo
 
 	tepai[tepos].trait = TRAIT_AKARIPAI;
 
-	tepai[tepos].type = 'M';
-	for (int i = 1; i <= 9; i++)
-	{
-		solutionAvailable = false;
-		tepai[tepos].fig = i;
-		currentTenpai = tepai[tepos];
-		if (paicnt[retrieveID(tepai[tepos])] == 4) continue;
-		mentsuDecideJanto(tepai, tepos + 1);
-	}
-
-	tepai[tepos].type = 'P';
-	for (int i = 1; i <= 9; i++)
-	{
-		solutionAvailable = false;
-		tepai[tepos].fig = i;
-		currentTenpai = tepai[tepos];
-		if (paicnt[retrieveID(tepai[tepos])] == 4) continue;
-		mentsuDecideJanto(tepai, tepos + 1);
-	}
-
-	tepai[tepos].type = 'S';
-	for (int i = 1; i <= 9; i++)
-	{
-		solutionAvailable = false;
-		tepai[tepos].fig = i;
-		currentTenpai = tepai[tepos];
-		if (paicnt[retrieveID(tepai[tepos])] == 4) continue;
-		mentsuDecideJanto(tepai, tepos + 1);
-	}
-
-	tepai[tepos].fig = 1;
-	for (int i = 0; i<7; i++)
-	{
-		solutionAvailable = false;
-		tepai[tepos].type = funpai[i];
-		currentTenpai = tepai[tepos];
-		if (paicnt[retrieveID(tepai[tepos])] == 4) continue;
-		mentsuDecideJanto(tepai, tepos + 1);
-	}
+	TRY_AVAILABLE(type = 'M', fig = i         , 1, 9);
+	TRY_AVAILABLE(type = 'S', fig = i         , 1, 9);
+	TRY_AVAILABLE(type = 'P', fig = i         , 1, 9);
+	TRY_AVAILABLE(fig = 1,    type = funpai[i], 0, 6);
 
 	if (result != NULL)
 		*result = tenpai.size() != 0;

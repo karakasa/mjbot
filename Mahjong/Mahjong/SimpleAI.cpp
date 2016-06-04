@@ -339,7 +339,7 @@ int SimpleAI::aiMessage(unsigned char msgType, int par1, int par2, bool* hasRetu
 				printf("\n");
 				for (int i = 0; i<hele[j].yakucnt; i++)
 				{
-					printf("%s %d\n", yakuname[hele[j].yaku_id[i]], hele[j].yaku_fan[i]);
+					//printf("%s %d\n", yakuname[hele[j].yaku_id[i]], hele[j].yaku_fan[i]);
 				}
 				printf("%d 翻 %d 符 %d 点\n", hele[j].fan, hele[j].huu, hele[j].pt);
 			}

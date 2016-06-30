@@ -484,6 +484,17 @@ YAKU_JUDGE_BEGIN_C(YakuBasicDora)
 }
 YAKU_JUDGE_END()
 
+YAKU_JUDGE_BEGIN_C(YakuCustom)
+{
+	customJudge(YAKU_PASS_C(), 1);
+}
+YAKU_JUDGE_END()
+
+void YakuCustom::customJudge(YAKU_PARAM_C, int customValue)
+{
+
+}
+
 void SysPtProvider::judgeFu(const pai * pais, int paicnt, const mentsu * mentsus, int mentsucnt, const pai * janto, int jantocnt, yakuTable* current, void * yakuProvider)
 {
 	bool fulu = false;

@@ -69,10 +69,7 @@ void taj::mentsuDecideMentsu(pai* cpai, int cpcount)
 				}
 			}
 
-			mtsGlobal[mtsCnt].type = mentsu_KEZ;
-			mtsGlobal[mtsCnt].start = cpai[0];
-			mtsGlobal[mtsCnt].middle = cpai[1];
-			mtsGlobal[mtsCnt].last = cpai[2];
+			mtsGlobal[mtsCnt] = MENTSU(mentsu_KEZ, cpai[0], cpai[1], cpai[2]);
 			mtsCnt++;
 			if (cpcount == 3)
 			{
@@ -104,10 +101,7 @@ void taj::mentsuDecideMentsu(pai* cpai, int cpcount)
 								if (!compare_pai_thesame(lastpai2, cpai[p]))
 								{
 									lastpai2 = cpai[p];
-									mtsGlobal[mtsCnt].type = mentsu_SHUNZ;
-									mtsGlobal[mtsCnt].start = cpai[0];
-									mtsGlobal[mtsCnt].middle = cpai[i];
-									mtsGlobal[mtsCnt].last = cpai[p];
+									mtsGlobal[mtsCnt] = MENTSU(mentsu_SHUNZ, cpai[0], cpai[i], cpai[p]);
 									mtsCnt++;
 
 									if (cpcount == 3)
@@ -328,29 +322,19 @@ std::unordered_set<pai> taj::tenpaiDetect(const pai* pais, const int tpaicnt, bo
 	effeci_cnt = 0;
 	calculate_yaku = false;
 	mtsCnt = 0;
+	tenpai.clear();
+
+	std::for_each(pais, pais + tpaicnt, [&](auto& p) {paicnt[retrieveID(p)]++; });
+	std::copy(pais, pais + tpaicnt, tepai);
+	int tepos = tpaicnt;
+	tepai[tepos].trait = TRAIT_AKARIPAI;
 
 	currentProvider->clearExtendData();
 
-	std::for_each(pais, pais + tpaicnt, [&](auto& p) {paicnt[retrieveID(p)]++; });
-	/* std::for_each(rpai.fulus, rpai.fulus + rpai.fulucnt, [&](const mentsu& p) {
-		paicnt[retrieveID(p.start)]++;
-		paicnt[retrieveID(p.middle)]++;
-		paicnt[retrieveID(p.last)]++;
-	}); */
-	
-	//if (specialized_tenpai_detect(rpai, resultEx))
-	//	return 0;
-
-	tenpai.clear();
-	std::copy(pais, pais + tpaicnt, tepai);
-	int tepos = tpaicnt;
-
-	tepai[tepos].trait = TRAIT_AKARIPAI;
-
-	TRY_AVAILABLE(type = 'M', fig = i         , 1, 9);
-	TRY_AVAILABLE(type = 'S', fig = i         , 1, 9);
-	TRY_AVAILABLE(type = 'P', fig = i         , 1, 9);
-	TRY_AVAILABLE(fig = 1,    type = funpai[i], 0, 6);
+	TRY_AVAILABLE(type = 'M', fig  = i        , 1, 9);
+	TRY_AVAILABLE(type = 'S', fig  = i        , 1, 9);
+	TRY_AVAILABLE(type = 'P', fig  = i        , 1, 9);
+	TRY_AVAILABLE(fig  =  1 , type = funpai[i], 0, 6);
 
 	if (result != NULL)
 		*result = tenpai.size() != 0;

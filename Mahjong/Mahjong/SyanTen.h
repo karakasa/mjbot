@@ -5,6 +5,13 @@
 
 #include "PublicFunction.h"
 
+struct koritsu
+{
+	pai paiOut;
+	int totalNumber;
+	std::vector<pai> expectedPai;
+};
+
 class Syanten
 {
 	private:
@@ -28,7 +35,7 @@ class Syanten
 		int normalCalculate(const pai* tpai, const int paicnt);
 
 		// 计算国士听牌内容（本函数已经废弃，仅做兼容性使用，已经统一到 taj::tenpaiDetect 中）
-		bool specialized_tenpai_detect(pai* pais, int paicnt, judgeResult* resultEx);
+		bool specialized_tenpai_detect(pai* pais, int paicnt, std::unordered_set<pai>& resultEx);
 		
 
 	public:
@@ -41,10 +48,12 @@ class Syanten
 		int calculateSyanten(const pai* tpai, const int paicnt, bool normalonly = false);
 
 		// 计算有效进张。本过程也可以计算听牌种类，不过效率低于 taj.tenpai_detect()
-		// tpai : 手牌数组。不需要有序，paicnt : 数组长度。
-		// 或者 judgeRequest : 形同 tenpai_detect 的调用，mode 成员必须为 0，否则函数将失败。
-		// jres : cnt 与 t 成员分别存放了有效进张的种类数，和具体有效进张
-		// 返回值 : 成功与否
-		bool kouritsuDetect(pai* tpai, const int paicnt, judgeResult* jres);
-		bool kouritsuDetect(judgeRequest* jreq, judgeResult* jres);
+		// tpai : 手牌数组。
+	    // paicnt : 数组长度。应该为 3n+1
+		std::unordered_set<pai> kouritsuDetect(pai* tpai, const int paicnt);
+
+		// 计算最优切牌。类似于天凤牌理
+		// tpai : 手牌数组。
+		// paicnt : 数组长度。应该为 3n+2
+		std::vector<> kouritsuDetect2(pai* tpai, const int paicnt);
 };

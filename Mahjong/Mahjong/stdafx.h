@@ -32,4 +32,9 @@
 #include <set>
 #include <unordered_set>
 
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+#include <wx/wx.h>
+#endif
+
 // TODO:  在此处引用程序需要的其他头文件

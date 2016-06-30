@@ -207,8 +207,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 				if (i != cpos && clientSyanTen[i] == 0 && !furiten[i])
 				{
 					judgeRequest jreq;
-					judgeResult jres;
-					jreq.mode = 1;
 					jreq.paicnt = tepaicnt[i];
 					for (int pc = 0; pc<tepaicnt[i]; pc++)
 						jreq.pais[pc] = tepai[i][pc];
@@ -224,7 +222,7 @@ void match::pushbackKawa(int pos, pai& paiout)
 					jreq.flags = clientRiichi[i] | (clientIhatsu[i] ? 4 : 0) | (clientHaidei ? 8 : 0) | (clientHoudei ? 16 : 0) | (clientRinsyou ? 32 : 0) | (clientTyankan ? 64 : 0);
 					jreq.jyouhuun = akarijyouhuun;
 					jreq.jihuun = akarijihuun[i];
-					//其他过程还未处理norelease 场风 flags
+
 
 					pai doras;
 					for (int p = 0; p < yama.kancount + 1; p++)
@@ -382,7 +380,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 				{
 					judgeRequest jreq;
 					yakuTable jres;
-					jreq.mode = 1;
 					jreq.paicnt = tepaicnt[i];
 					for (int pc = 0; pc<tepaicnt[i]; pc++)
 						jreq.pais[pc] = tepai[i][pc];
@@ -776,7 +773,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 					lianzhuang = false;
 				judgeRequest jreq;
 				yakuTable jres;
-				jreq.mode = 1;
 				jreq.paicnt = tepaicnt[cpos];
 				for (int pc = 0; pc<tepaicnt[cpos]; pc++)
 					jreq.pais[pc] = tepai[cpos][pc];
@@ -1172,8 +1168,6 @@ void match::pushbackKawa(int pos, pai& paiout)
 				if (i != cpos && clientSyanTen[i] == 0 && !furiten[i])
 				{
 					judgeRequest jreq;
-					judgeResult jres;
-					jreq.mode = 1;
 					jreq.paicnt = tepaicnt[i];
 					for (int pc = 0; pc<tepaicnt[i]; pc++)
 						jreq.pais[pc] = tepai[i][pc];

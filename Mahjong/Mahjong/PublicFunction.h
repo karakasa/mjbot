@@ -42,6 +42,11 @@ const int funpai[7] = { 'D','N','X','B','W','F','Z' };
 #define TRAIT_AKARIPAI 2
 #define TRAIT_OPEN 4
 
+#define PAI(t, f) (std::move(constructPai((t), (f))))
+#define PAI2(ty, f, tr) (std::move(constructPai((t), (f), (tr))))
+#define PAI_ID(id) (std::move(retrievePai3((id))))
+#define MENTSU(t, a, b, c) (std::move(constructMentsu((t), (a), (b), (c))))
+
 
 // 接口虚类定义
 // EventBus 用户的接口，如 UI、AI、网络等，对于非即时返回的而言，*hasReturn 总为 false。
@@ -271,43 +276,43 @@ const char ji[4] = { 'D','N','X','B' };
 
 // 比较两张牌相同/不同
 // 本比较只比较花色和数字，不管是否为赤
-bool operator == (const pai& a, const pai& b);
-bool operator != (const pai& a, const pai& b);
-bool compare_pai (const pai& a, const pai& b);
-bool operator<   (const pai& a, const pai& b);
+extern inline bool operator == (const pai& a, const pai& b);
+extern inline bool operator != (const pai& a, const pai& b);
+extern inline bool compare_pai (const pai& a, const pai& b);
+extern inline bool operator<   (const pai& a, const pai& b);
 
-bool operator == (const mentsu& a, const mentsu& b);
-bool operator<   (const mentsu& a, const mentsu& b);
+extern inline bool operator == (const mentsu& a, const mentsu& b);
+extern inline bool operator<   (const mentsu& a, const mentsu& b);
 
 // 比较两张牌相同/不同 (含赤)
 // 本比较比较花色和数字，并比较赤的情况是否相同
-bool comparePaiAka(const pai& a, const pai& b);
+extern inline bool comparePaiAka(const pai& a, const pai& b);
 
 // 比较两张牌相同/不同 (全同)
 // 本比较要求两张牌全等，除花色和数字外，trait 也要一样
-bool comparePaiSame(const pai& a, const pai& b);
-bool compareMentsuSame(const mentsu& a, const mentsu& b);
+extern inline bool comparePaiSame(const pai& a, const pai& b);
+extern inline bool compareMentsuSame(const mentsu& a, const mentsu& b);
 
 // 获得牌的序号。1M-9M：0-8，1S-9S：9-17，1P-9P：18-26，之后依次为东南西北白发中：27-33。
 // 本函数不考虑是否为赤宝牌。
 // 本函数主要是 TenpaiAkariJudge 模块内部实用。外部使用（网络、界面）请尽量使用 retrieveID3
 // cpai : 牌
 // 返回值 : 牌的序号
-int retrieveID(const pai& cpai);
+extern inline int retrieveID(const pai& cpai);
 
 // 获得牌的序号。等于 retrieveID + 1，即比上面一个函数大一。
 // 本函数不考虑是否为赤宝牌。
 // 本函数主要用于外部过程，如界面、网络等（因为 0 在外部过程中可能有别的意义）
 // cpai : 牌
 // 返回值 : 牌的序号
-int retrieveID3(const pai& cpai);
+extern inline int retrieveID3(const pai& cpai);
 
 // 获得牌的序号。
 // 本函数考虑是否为赤宝牌，是对 retrieveID3 函数的扩展，retrieveID3 的范围为 1-33，
 // 在本函数中，赤5M、5S、5P分别为 34, 35, 36
 // cpai : 牌
 // 返回值 : 牌的序号
-int retrieveID2(const pai& cpai);
+extern inline int retrieveID2(const pai& cpai);
 
 //bool retrievePai(pai* pai, int id);
 
@@ -315,7 +320,8 @@ int retrieveID2(const pai& cpai);
 // pai : 接收的返回值
 // id : 需要转换的 id
 // 返回值 : 输入的 id 是否有效
-bool retrievePai3(pai* pai, int id);
+extern inline bool retrievePai3(pai* pai, int id);
+extern inline pai retrievePai3(int id);
 
 // 取得宝牌，当指示牌无效时，结果未定义
 // show : 宝牌指示牌
@@ -328,48 +334,48 @@ void doraNext(const pai& show, pai* result);
 // a : 牌 1
 // b : 牌 2
 // 返回值 : 小于等于为真，大于为假
-bool paiSort(const pai& a, const pai& b);
+extern inline bool paiSort(const pai& a, const pai& b);
 
-bool isShunz2(const mentsu& mc);
+extern inline bool isShunz2(const mentsu& mc);
 
 // 判断一个面子是不是刻子（包括杠）
 // mc : 面子的指针
 // 返回值 : 真或假
-bool isKez(const mentsu* mc);
-bool isKez2(const mentsu& mc);
+extern inline bool isKez(const mentsu* mc);
+extern inline bool isKez2(const mentsu& mc);
 
 // 判断一个面子是不是杠（包括暗杠）
 // mc : 面子的指针
 // 返回值 : 真或假
-bool isKangz(const mentsu* mc);
-bool isKangz2(const mentsu& mc);
+extern inline bool isKangz(const mentsu* mc);
+extern inline bool isKangz2(const mentsu& mc);
 
 // 获得其他家的相对位置，输入参数为逆时针 0-4
 // self : 自家位置
 // other : 他家位置
 // 返回值 : 0下家 1对家 2上家 -1错误 
-int getRelativePosition(int self, int other);
+extern inline int getRelativePosition(int self, int other);
 
 // 获得幺九ID
 // pai : 牌
 // 返回值 : ID，19M19S19P东南西北白发中分别是 0-12，其他均为 13
-int getYaotyuuId(const pai& wpai);
+extern inline int getYaotyuuId(const pai& wpai);
 
 // 判断是否为幺九，(isYaotyuu 2，不含字牌)
 // pai : 牌
 // 返回值 : 真或假
-bool isYaotyuu(const pai& pai);
-bool isYaotyuu2(const pai& pai);
+extern inline bool isYaotyuu(const pai& pai);
+extern inline bool isYaotyuu2(const pai& pai);
 
 // 判断是否为字
 // pai : 牌
 // 返回值 : 真或假
-bool isJi(const pai& pai);
+extern inline bool isJi(const pai& pai);
 
 // 获得面子的类型，可以是无序的
 // a,b,c : 牌的 ID，与 retrieveID3 相同
 // 返回值 : 1为刻子，2为顺子，-1为不是面子
-int getMentsuType(int a, int b, int c);
+extern inline int getMentsuType(int a, int b, int c);
 
 // 将天凤手牌字符串转换为牌数组。保持输入顺序。
 // pstring : 手牌，字母必须为小写字母。1-9m 1-9s 1-9p 1-7z 0m0s0p
@@ -385,7 +391,10 @@ bool convertPaiString(std::string& pstring, pai* parr, int* buffersize);
 int convertPaiStringPrepare(std::string& pstring);
 
 // 返回一个面子是否为手牌内的面子（非副露）
-bool isMenzenMentsu(const mentsu& mentsuJudgable);
+extern inline bool isMenzenMentsu(const mentsu& mentsuJudgable);
+
+extern inline pai constructPai(unsigned char type, unsigned fig, int trait = 0);
+extern inline mentsu constructMentsu(char type, const pai& p1, const pai& p2, const pai& p3);
 
 namespace std {
 

@@ -35,7 +35,6 @@ class taj
 		pai middleStepPais[4][14];
 		int mtsCnt = 0;
 		 
-		int effeci_cnt = 0;
 		bool calculate_yaku = true;
 		bool akari_status;
 
@@ -56,6 +55,8 @@ class taj
 		void mentsuDecideJanto(const pai* opai, int cpcount);
 	
 	public:
+
+		int effeci_cnt = 0;
 
 		static YakuProvider systemProvider;
 

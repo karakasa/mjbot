@@ -169,6 +169,11 @@ public:
 #define YAKU_JUDGE_BEGIN_C(className) bool className::judgeYaku(const pai* pais, int paicnt, bool menzen, void* yakuProvider) { \
                                           const int __yakuType = 1; bool __retVal = false; \
                                           const bool __menzen = menzen;
+#define YAKU_PARAM_M  const mentsu* mentsus, int mentsucnt, const pai* janto, int jantocnt, void* yakuProvider, const int __yakuType, bool& __retVal, const bool __menzen
+#define YAKU_PARAM_C  const pai* pais, int paicnt, bool menzen, void* yakuProvider, const int __yakuType, bool& __retVal, const bool __menzen
+#define YAKU_PASS_M() mentsus, mentsucnt, janto, jantocnt, yakuProvider, __yakuType, __retVal, __menzen
+#define YAKU_PASS_C() pais, paicnt, menzen, yakuProvider, __yakuType, __retVal, __menzen
+
 #define YAKU_JUDGE_END() return __retVal; }
 #define YAKU_ADD(subyakuid,yakuvalue)                               (__retVal = ((YakuProvider*)yakuProvider)->queueYaku((subyakuid),(yakuvalue)))
 #define YAKU_ADD_PEND(subyakuid,yakuvalue,token)                    (__retVal = ((YakuProvider*)yakuProvider)->queueYaku((subyakuid),(yakuvalue),(token)))

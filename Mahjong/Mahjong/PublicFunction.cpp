@@ -1,6 +1,209 @@
 ﻿#include "stdafx.h"
 #include "PublicFunction.h"
 
+//bool retrievePai(pai* pai, int id)
+//{
+//	return retrievePai(pai, id + 1);
+//}
+
+void doraNext(const pai& show, pai* result)
+{
+	result->trait = 0;
+	switch (show.type)
+	{
+	case 'M':
+	case 'S':
+	case 'P':
+		result->type = show.type;
+		if (show.fig == 9)
+			result->fig = 1;
+		else
+			result->fig = (show.fig) + 1;
+		break;
+	case 'D':
+		result->fig = 1;
+		result->type = 'N';
+		break;
+	case 'N':
+		result->fig = 1;
+		result->type = 'X';
+		break;
+	case 'X':
+		result->fig = 1;
+		result->type = 'B';
+		break;
+	case 'B':
+		result->fig = 1;
+		result->type = 'D';
+		break;
+	case 'W':
+		result->fig = 1;
+		result->type = 'F';
+		break;
+	case 'F':
+		result->fig = 1;
+		result->type = 'Z';
+		break;
+	case 'Z':
+		result->fig = 1;
+		result->type = 'W';
+		break;
+	}
+}
+
+int getMentsuType(int a, int b, int c) //返回1为刻子，2为顺子，-1为不是面子
+{
+	pai pa, pb, pc;
+	retrievePai3(&pa, a);
+	retrievePai3(&pb, b);
+	retrievePai3(&pc, c);
+	if (pa.type == pb.type && pb.type == pc.type)
+	{
+		if (pa.fig == pb.fig && pb.fig == pc.fig)
+		{
+			return 1;
+		}
+		else {
+			bool valid[10];
+			memset(valid, 0, sizeof(valid));
+			valid[pa.fig]++;
+			valid[pb.fig]++;
+			valid[pc.fig]++;
+			for (int i = 1; i<7; i++)
+				if (valid[i] && valid[i + 1] && valid[i + 2])
+					return 2;
+			return -1;
+		}
+	}
+	return -1;
+}
+
+bool convertPaiString(std::string& pstring, pai* parr, int* buffersize)
+{
+	for (unsigned int i = 0; i < pstring.length(); i++)
+	{
+		if(!(pstring[i] >= '0' && pstring[i] <= '9'))
+			if (pstring[i] != 'm')
+			if (pstring[i] != 's')
+			if (pstring[i] != 'p')
+				if (pstring[i] != 'z')
+				{
+					*buffersize = -1;
+					return false;
+				}
+	}
+	unsigned int cpos = 0, fpos = 0, cnt = 0;
+	while (cpos < pstring.length())
+	{
+		fpos = -1;
+		for (unsigned int i = cpos; i<pstring.length() ; i++)
+		{
+			if (pstring[i] == 'm' || pstring[i] == 's' || pstring[i] == 'p' || pstring[i] == 'z')
+			{
+				fpos = i;
+				if (fpos == cpos) 
+				{
+					*buffersize = -1;
+					return false;
+				}
+				break;
+			}	
+		}
+		if (fpos == -1)
+		{
+			*buffersize = -1;
+			return false;
+		}
+		for (unsigned int i = cpos; i < fpos; i++)
+		{
+			if((signed int)cnt + 1 > *buffersize)
+			{
+				*buffersize = 0;
+				return false;
+			}
+
+			if (pstring[fpos] == 'z')
+			{
+				if (pstring[i] > '0' && pstring[i] < '8')
+				{
+					parr[cnt].trait = 0;
+					parr[cnt].type = funpai[pstring[i] - '1'];
+					parr[cnt].fig = 1;
+				}
+				else {
+					*buffersize = -1;
+					return false;
+				}
+			}
+			else {
+				if (pstring[i] == '0')
+				{
+					parr[cnt].fig = 5;
+					parr[cnt].trait = TRAIT_AKA;
+				}
+				else {
+					parr[cnt].fig = pstring[i] - '0';
+					parr[cnt].trait = 0;
+				}
+				parr[cnt].type = pstring[fpos] + 'A' - 'a';
+			}
+
+			cnt++;
+		}
+
+		cpos = fpos + 1;
+	}
+	*buffersize = cpos;
+	return true;
+}
+
+int convertPaiStringPrepare(std::string& pstring)
+{
+	if (pstring.length() == 0)
+		return 0;
+	for (unsigned int i = 0; i < pstring.length(); i++)
+	{
+		if (!(pstring[i] >= '0' && pstring[i] <= '9'))
+			if (pstring[i] != 'm')
+				if (pstring[i] != 's')
+					if (pstring[i] != 'p')
+						if (pstring[i] != 'z')
+						{
+							return -2;
+						}
+	}
+	unsigned int cpos = 0, fpos = 0, cnt = 0;
+	while (cpos < pstring.length())
+	{
+		fpos = -1;
+		for (unsigned int i = cpos; i<pstring.length(); i++)
+		{
+			if (pstring[i] == 'm' || pstring[i] == 's' || pstring[i] == 'p' || pstring[i] == 'z')
+			{
+				fpos = i;
+				if (fpos == cpos)
+				{
+					return -2;
+				}
+				break;
+			}
+		}
+		if (fpos == -1)
+		{
+			return -2;
+		}
+		for (unsigned int i = cpos; i < fpos; i++)
+		{
+			if (pstring[fpos] == 'z')
+				if (pstring[i] <= '0' || pstring[i] >= '8')
+					return -1;
+			cnt++;
+		}
+		cpos = fpos + 1;
+	}
+	return (signed int)cnt;
+}
+
 bool operator == (const mentsu& a, const mentsu& b)
 {
 	return a.type == b.type && a.start == b.start;
@@ -21,7 +224,7 @@ bool operator != (const pai& a, const pai& b)
 	return (a.type != b.type) || (a.fig != b.fig);
 }
 
-bool compare_pai (const pai& a, const pai& b)
+bool compare_pai(const pai& a, const pai& b)
 {
 	return (a.type == b.type) && (a.fig == b.fig);
 }
@@ -197,55 +400,13 @@ bool retrievePai3(pai* pai, int id)
 	return true;
 }
 
-//bool retrievePai(pai* pai, int id)
-//{
-//	return retrievePai(pai, id + 1);
-//}
-
-void doraNext(const pai& show, pai* result)
+pai retrievePai3(int id)
 {
-	result->trait = 0;
-	switch (show.type)
-	{
-	case 'M':
-	case 'S':
-	case 'P':
-		result->type = show.type;
-		if (show.fig == 9)
-			result->fig = 1;
-		else
-			result->fig = (show.fig) + 1;
-		break;
-	case 'D':
-		result->fig = 1;
-		result->type = 'N';
-		break;
-	case 'N':
-		result->fig = 1;
-		result->type = 'X';
-		break;
-	case 'X':
-		result->fig = 1;
-		result->type = 'B';
-		break;
-	case 'B':
-		result->fig = 1;
-		result->type = 'D';
-		break;
-	case 'W':
-		result->fig = 1;
-		result->type = 'F';
-		break;
-	case 'F':
-		result->fig = 1;
-		result->type = 'Z';
-		break;
-	case 'Z':
-		result->fig = 1;
-		result->type = 'W';
-		break;
-	}
+	pai __p;
+	retrievePai3(&__p, id);
+	return __p;
 }
+
 
 bool paiSort(const pai& a, const pai& b)
 {
@@ -405,164 +566,30 @@ int getYaotyuuId(const pai& wpai)
 	return 13;
 }
 
-int getMentsuType(int a, int b, int c) //返回1为刻子，2为顺子，-1为不是面子
-{
-	pai pa, pb, pc;
-	retrievePai3(&pa, a);
-	retrievePai3(&pb, b);
-	retrievePai3(&pc, c);
-	if (pa.type == pb.type && pb.type == pc.type)
-	{
-		if (pa.fig == pb.fig && pb.fig == pc.fig)
-		{
-			return 1;
-		}
-		else {
-			bool valid[10];
-			memset(valid, 0, sizeof(valid));
-			valid[pa.fig]++;
-			valid[pb.fig]++;
-			valid[pc.fig]++;
-			for (int i = 1; i<7; i++)
-				if (valid[i] && valid[i + 1] && valid[i + 2])
-					return 2;
-			return -1;
-		}
-	}
-	return -1;
-}
-
-bool convertPaiString(std::string& pstring, pai* parr, int* buffersize)
-{
-	for (unsigned int i = 0; i < pstring.length(); i++)
-	{
-		if(!(pstring[i] >= '0' && pstring[i] <= '9'))
-			if (pstring[i] != 'm')
-			if (pstring[i] != 's')
-			if (pstring[i] != 'p')
-				if (pstring[i] != 'z')
-				{
-					*buffersize = -1;
-					return false;
-				}
-	}
-	unsigned int cpos = 0, fpos = 0, cnt = 0;
-	while (cpos < pstring.length())
-	{
-		fpos = -1;
-		for (unsigned int i = cpos; i<pstring.length() ; i++)
-		{
-			if (pstring[i] == 'm' || pstring[i] == 's' || pstring[i] == 'p' || pstring[i] == 'z')
-			{
-				fpos = i;
-				if (fpos == cpos) 
-				{
-					*buffersize = -1;
-					return false;
-				}
-				break;
-			}	
-		}
-		if (fpos == -1)
-		{
-			*buffersize = -1;
-			return false;
-		}
-		for (unsigned int i = cpos; i < fpos; i++)
-		{
-			if((signed int)cnt + 1 > *buffersize)
-			{
-				*buffersize = 0;
-				return false;
-			}
-
-			if (pstring[fpos] == 'z')
-			{
-				if (pstring[i] > '0' && pstring[i] < '8')
-				{
-					parr[cnt].trait = 0;
-					parr[cnt].type = funpai[pstring[i] - '1'];
-					parr[cnt].fig = 1;
-				}
-				else {
-					*buffersize = -1;
-					return false;
-				}
-			}
-			else {
-				if (pstring[i] == '0')
-				{
-					parr[cnt].fig = 5;
-					parr[cnt].trait = TRAIT_AKA;
-				}
-				else {
-					parr[cnt].fig = pstring[i] - '0';
-					parr[cnt].trait = 0;
-				}
-				parr[cnt].type = pstring[fpos] + 'A' - 'a';
-			}
-
-			cnt++;
-		}
-
-		cpos = fpos + 1;
-	}
-	*buffersize = cpos;
-	return true;
-}
-
-int convertPaiStringPrepare(std::string& pstring)
-{
-	if (pstring.length() == 0)
-		return 0;
-	for (unsigned int i = 0; i < pstring.length(); i++)
-	{
-		if (!(pstring[i] >= '0' && pstring[i] <= '9'))
-			if (pstring[i] != 'm')
-				if (pstring[i] != 's')
-					if (pstring[i] != 'p')
-						if (pstring[i] != 'z')
-						{
-							return -2;
-						}
-	}
-	unsigned int cpos = 0, fpos = 0, cnt = 0;
-	while (cpos < pstring.length())
-	{
-		fpos = -1;
-		for (unsigned int i = cpos; i<pstring.length(); i++)
-		{
-			if (pstring[i] == 'm' || pstring[i] == 's' || pstring[i] == 'p' || pstring[i] == 'z')
-			{
-				fpos = i;
-				if (fpos == cpos)
-				{
-					return -2;
-				}
-				break;
-			}
-		}
-		if (fpos == -1)
-		{
-			return -2;
-		}
-		for (unsigned int i = cpos; i < fpos; i++)
-		{
-			if (pstring[fpos] == 'z')
-				if (pstring[i] <= '0' || pstring[i] >= '8')
-					return -1;
-			cnt++;
-		}
-		cpos = fpos + 1;
-	}
-	return (signed int)cnt;
-}
-
 bool isMenzenMentsu(const mentsu& mentsuJudgable)
 {
 	return mentsuJudgable.type == mentsu_TYPE::mentsu_KEZ || \
-		   mentsuJudgable.type == mentsu_TYPE::mentsu_KEZ_KANG_S || \
-		   mentsuJudgable.type == mentsu_TYPE::mentsu_SHUNZ;
+		mentsuJudgable.type == mentsu_TYPE::mentsu_KEZ_KANG_S || \
+		mentsuJudgable.type == mentsu_TYPE::mentsu_SHUNZ;
+}
+
+pai constructPai(unsigned char type, unsigned fig, int trait)
+{
+	pai __tpai;
+	__tpai.type = type;
+	__tpai.fig = fig;
+	__tpai.trait = trait;
+	return __tpai;
+}
+
+mentsu constructMentsu(char type, const pai & p1, const pai & p2, const pai & p3)
+{
+	mentsu __mt;
+	__mt.type = type;
+	__mt.start = p1;
+	__mt.middle = p2;
+	__mt.last = p3;
+	return __mt;
 }
 
 bool isYaotyuu(const pai& pai)

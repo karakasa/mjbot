@@ -25,3 +25,7 @@ YAKU_CLASS_M(YakuBasicM)
 YAKU_CLASS_M(YakuBasicMYM)
 
 YAKU_CLASS_C(YakuBasicDora)
+
+YAKU_CLASS_C_DEF(YakuCustom)
+void customJudge(YAKU_PARAM_C, int customValue);
+YAKU_CLASS_DEF_END()
